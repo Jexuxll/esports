@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${torneo.id != 0} ? 'Editar Torneo' : 'Nuevo Torneo'">Torneo - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2 th:text="${torneo.id != 0} ? 'Editar Torneo' : 'Nuevo Torneo'">Torneo</h2>
+
+        <form th:action="${torneo.id != 0} ? @{/torneos/actualizar} : @{/torneos/guardar}"
+              th:object="${torneo}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nombre">Nombre del torneo</label>
+                <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                       placeholder="Ej: Champions Spring 2026" required>
+            </div>
+
+            <div class="form-group">
+                <label for="juego">Juego</label>
+                <input type="text" id="juego" th:field="*{juego}" class="form-control"
+                       placeholder="Ej: League of Legends" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de inicio</label>
+                <input type="date" id="fechaInicio" th:field="*{fechaInicio}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaFin">Fecha de fin</label>
+                <input type="date" id="fechaFin" th:field="*{fechaFin}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select id="estado" th:field="*{estado}" class="form-control" required>
+                    <option value="">-- Selecciona estado --</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Finalizado">Finalizado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fotoFile">Imagen del torneo</label>
+                <input type="file" id="fotoFile" name="fotoFile" class="form-control"
+                       accept="image/*">
+                <div th:if="${torneo.foto != null and torneo.foto != ''}" style="margin-top: 0.5rem;">
+                    <small style="color: var(--text-muted);">Imagen actual:</small><br>
+                    <img th:src="@{/Imagenes/{f}(f=${torneo.foto})}" class="img-thumb-lg" alt="Imagen actual"
+                         style="margin-top:0.3rem;">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${torneo.id != 0} ? 'Guardar cambios' : 'Crear torneo'">Guardar</span>
+                </button>
+                <a th:href="@{/torneos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

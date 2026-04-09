@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugadores - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Jugadores <span>Registrados</span></h1>
+        <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">+ Nuevo Jugador</a>
+    </div>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(jugadores)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nickname</th>
+                    <th>Nombre completo</th>
+                    <th>Rol</th>
+                    <th>Equipo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="jugador : ${jugadores}">
+                    <td>
+                        <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+                             class="img-thumb" alt="Foto">
+                        <div th:unless="${jugador.foto != null and jugador.foto != ''}" class="no-img">—</div>
+                    </td>
+                    <td style="font-weight:700;" th:text="${jugador.nickname}">Nickname</td>
+                    <td th:text="${jugador.nombre + ' ' + jugador.apellido}">Nombre</td>
+                    <td>
+                        <span class="badge badge-info" th:text="${jugador.rol}">Rol</span>
+                    </td>
+                    <td>
+                        <span th:if="${jugador.equipo != null}" class="team-tag" th:text="${jugador.equipo.tag}">TAG</span>
+                        <span th:unless="${jugador.equipo != null}" style="color:var(--text-muted);">—</span>
+                    </td>
+                    <td class="actions">
+                        <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                        <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Eliminar este jugador?')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(jugadores)}">
+        <p>No hay jugadores registrados aún.</p>
+        <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">Registrar primer jugador</a>
+    </div>
+</div>
+
+</body>
+</html>

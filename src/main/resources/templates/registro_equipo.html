@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${equipo.id != 0} ? 'Editar Equipo' : 'Nuevo Equipo'">Equipo - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2 th:text="${equipo.id != 0} ? 'Editar Equipo' : 'Nuevo Equipo'">Equipo</h2>
+
+        <form th:action="${equipo.id != 0} ? @{/equipos/actualizar} : @{/equipos/guardar}"
+              th:object="${equipo}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nombre">Nombre del equipo</label>
+                <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                       placeholder="Ej: Team Liquid" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tag">Tag (abreviatura)</label>
+                <input type="text" id="tag" th:field="*{tag}" class="form-control"
+                       placeholder="Ej: TL" maxlength="6" required>
+            </div>
+
+            <div class="form-group">
+                <label for="pais">País</label>
+                <input type="text" id="pais" th:field="*{pais}" class="form-control"
+                       placeholder="Ej: España" required>
+            </div>
+
+            <div class="form-group">
+                <label for="logoFile">Logo del equipo</label>
+                <input type="file" id="logoFile" name="logoFile" class="form-control"
+                       accept="image/*">
+                <div th:if="${equipo.foto != null and equipo.foto != ''}" style="margin-top: 0.5rem;">
+                    <small style="color: var(--text-muted);">Logo actual:</small><br>
+                    <img th:src="@{/Imagenes/{f}(f=${equipo.foto})}" class="img-thumb-lg" alt="Logo actual"
+                         style="margin-top:0.3rem;">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${equipo.id != 0} ? 'Guardar cambios' : 'Crear equipo'">Guardar</span>
+                </button>
+                <a th:href="@{/equipos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneos - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Torneos <span>Registrados</span></h1>
+        <a th:href="@{/torneos/nuevo}" class="btn btn-primary">+ Nuevo Torneo</a>
+    </div>
+
+    <div class="grid-cards" th:if="${not #lists.isEmpty(torneos)}">
+        <div class="card" th:each="torneo : ${torneos}">
+            <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                 th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                 class="card-img" alt="Foto torneo">
+            <div th:unless="${torneo.foto != null and torneo.foto != ''}" class="card-img-placeholder">🏆</div>
+
+            <div class="card-body">
+                <div class="card-title" th:text="${torneo.nombre}">Nombre torneo</div>
+                <div class="card-subtitle" th:text="${torneo.juego}">Juego</div>
+
+                <div style="display:flex; flex-direction:column; gap:0.3rem; font-size:0.85rem; color:var(--text-secondary);">
+                    <span>
+                        📅 <span th:text="${torneo.fechaInicio}">Inicio</span>
+                        → <span th:text="${torneo.fechaFin}">Fin</span>
+                    </span>
+                    <span>
+                        <span th:switch="${torneo.estado}">
+                            <span th:case="'Activo'" class="badge badge-success">Activo</span>
+                            <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
+                            <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                            <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <a th:href="@{/torneos/editar/{id}(id=${torneo.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                <a th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('¿Eliminar este torneo?')">Eliminar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(torneos)}">
+        <p>No hay torneos registrados aún.</p>
+        <a th:href="@{/torneos/nuevo}" class="btn btn-primary">Crear primer torneo</a>
+    </div>
+</div>
+
+</body>
+</html>

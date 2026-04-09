@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Partido - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2>Nuevo Partido</h2>
+
+        <form th:action="@{/partidos/guardar}" th:object="${partido}" method="post">
+
+            <div class="form-group">
+                <label for="torneoId">ID del Torneo</label>
+                <input type="number" id="torneoId" name="torneo.id" class="form-control"
+                       placeholder="ID del torneo" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="equipoLocalId">ID Equipo Local</label>
+                <input type="number" id="equipoLocalId" name="equipoLocal.id" class="form-control"
+                       placeholder="ID equipo local" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="equipoVisitanteId">ID Equipo Visitante</label>
+                <input type="number" id="equipoVisitanteId" name="equipoVisitante.id" class="form-control"
+                       placeholder="ID equipo visitante" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ronda">Ronda</label>
+                <select id="ronda" th:field="*{ronda}" class="form-control">
+                    <option value="">-- Selecciona ronda --</option>
+                    <option value="Grupos">Grupos</option>
+                    <option value="Octavos">Octavos de final</option>
+                    <option value="Cuartos">Cuartos de final</option>
+                    <option value="Semifinal">Semifinal</option>
+                    <option value="Final">Final</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaPartido">Fecha y hora del partido</label>
+                <input type="datetime-local" id="fechaPartido" th:field="*{fechaPartido}"
+                       class="form-control" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Crear partido</button>
+                <a th:href="@{/partidos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

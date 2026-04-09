@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${jugador.id != 0} ? 'Editar Jugador' : 'Nuevo Jugador'">Jugador - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2 th:text="${jugador.id != 0} ? 'Editar Jugador' : 'Nuevo Jugador'">Jugador</h2>
+
+        <form th:action="${jugador.id != 0} ? @{/jugadores/actualizar} : @{/jugadores/guardar}"
+              th:object="${jugador}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" th:field="*{nickname}" class="form-control"
+                       placeholder="Ej: s1mple" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                       placeholder="Nombre real" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" th:field="*{apellido}" class="form-control"
+                       placeholder="Apellido" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rol">Rol</label>
+                <select id="rol" th:field="*{rol}" class="form-control" required>
+                    <option value="">-- Selecciona un rol --</option>
+                    <option value="Top">Top</option>
+                    <option value="Jungle">Jungle</option>
+                    <option value="Mid">Mid</option>
+                    <option value="ADC">ADC</option>
+                    <option value="Support">Support</option>
+                    <option value="IGL">IGL</option>
+                    <option value="Entry">Entry</option>
+                    <option value="Lurker">Lurker</option>
+                    <option value="AWPer">AWPer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="equipoId">Equipo</label>
+                <select id="equipoId" name="equipo.id" class="form-control" required>
+                    <option value="">-- Selecciona un equipo --</option>
+                    <option th:each="eq : ${equipos}"
+                            th:value="${eq.id}"
+                            th:text="${eq.nombre + ' [' + eq.tag + ']'}"
+                            th:selected="${jugador.equipo != null and jugador.equipo.id == eq.id}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fotoFile">Foto del jugador</label>
+                <input type="file" id="fotoFile" name="fotoFile" class="form-control"
+                       accept="image/*">
+                <div th:if="${jugador.foto != null and jugador.foto != ''}" style="margin-top: 0.5rem;">
+                    <small style="color: var(--text-muted);">Foto actual:</small><br>
+                    <img th:src="@{/Imagenes/{f}(f=${jugador.foto})}" class="img-thumb-lg" alt="Foto actual"
+                         style="margin-top:0.3rem;">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${jugador.id != 0} ? 'Guardar cambios' : 'Crear jugador'">Guardar</span>
+                </button>
+                <a th:href="@{/jugadores}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

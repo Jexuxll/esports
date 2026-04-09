@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partidos - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Partidos <span>Registrados</span></h1>
+        <a th:href="@{/partidos/nuevo}" class="btn btn-primary">+ Nuevo Partido</a>
+    </div>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(partidos)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Torneo</th>
+                    <th>Ronda</th>
+                    <th>Enfrentamiento</th>
+                    <th>Marcador</th>
+                    <th>Fecha</th>
+                    <th>Ganador</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="partido : ${partidos}">
+                    <td th:text="${partido.torneo != null ? partido.torneo.nombre : '—'}">Torneo</td>
+                    <td>
+                        <span class="badge badge-info" th:text="${partido.ronda != null ? partido.ronda : '—'}">Ronda</span>
+                    </td>
+                    <td>
+                        <div class="score">
+                            <span th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : '?'}">Local</span>
+                            <span class="score-vs">vs</span>
+                            <span th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : '?'}">Visitante</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div th:if="${partido.marcadorLocal != null and partido.marcadorVisitante != null}" class="score">
+                            <span class="score-num" th:text="${partido.marcadorLocal}">0</span>
+                            <span class="score-vs">—</span>
+                            <span class="score-num" th:text="${partido.marcadorVisitante}">0</span>
+                        </div>
+                        <span th:unless="${partido.marcadorLocal != null and partido.marcadorVisitante != null}"
+                              style="color:var(--text-muted);">Pendiente</span>
+                    </td>
+                    <td style="font-size:0.85rem;" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
+                    <td>
+                        <span th:if="${partido.ganador != null}" class="team-tag" th:text="${partido.ganador.tag}">TAG</span>
+                        <span th:unless="${partido.ganador != null}" style="color:var(--text-muted);">—</span>
+                    </td>
+                    <td class="actions">
+                        <a th:href="@{/partidos/editar/{id}(id=${partido.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                        <a th:href="@{/partidos/eliminar/{id}(id=${partido.id})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Eliminar este partido?')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(partidos)}">
+        <p>No hay partidos registrados aún.</p>
+        <a th:href="@{/partidos/nuevo}" class="btn btn-primary">Registrar primer partido</a>
+    </div>
+</div>
+
+</body>
+</html>
