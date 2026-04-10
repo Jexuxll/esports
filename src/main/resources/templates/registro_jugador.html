@@ -67,10 +67,10 @@
                 <label for="equipoId">Equipo</label>
                 <select id="equipoId" name="equipo.id" class="form-control" required>
                     <option value="">-- Selecciona un equipo --</option>
-                    <option th:each="eq : ${equipos}"
-                            th:value="${eq.id}"
-                            th:text="${eq.nombre + ' [' + eq.tag + ']'}"
-                            th:selected="${jugador.equipo != null and jugador.equipo.id == eq.id}">
+                    <option th:each="e : ${equipos}"
+                            th:value="${e.id}"
+                            th:text="${e.nombre + ' [' + e.tag + ']'}"
+                            th:selected="${jugador.equipo != null and jugador.equipo.id == e.id}">
                     </option>
                 </select>
             </div>

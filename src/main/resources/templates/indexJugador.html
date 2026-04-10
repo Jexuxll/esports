@@ -51,7 +51,7 @@
                     </td>
                     <td>
                         <span th:if="${jugador.equipo != null}" class="team-tag" th:text="${jugador.equipo.tag}">TAG</span>
-                        <span th:unless="${jugador.equipo != null}" style="color:var(--text-muted);">—</span>
+                        <span th:unless="${jugador.equipo != null}" style="color:var(--text-muted);">Equipo</span>
                     </td>
                     <td class="actions">
                         <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>

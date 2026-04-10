@@ -92,6 +92,9 @@ public class EquipoController {
 
             Files.copy(logoFile.getInputStream(), dir.resolve(nombre), StandardCopyOption.REPLACE_EXISTING);
             equipo.setFoto(nombre);
+            
+        } else {
+            equipo.setFoto(equipoExistente.getFoto());
         }
 
         equipoService.actualizar(equipo);
