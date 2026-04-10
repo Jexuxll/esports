@@ -83,7 +83,9 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
     @Override
     public Jugador obtenerPorId(int id) {
-        String sql = "SELECT * FROM jugadores WHERE id_jugador=?";
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+                     "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
+                     "WHERE j.id_jugador=?";
         Jugador jugador = null;
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
@@ -100,9 +102,10 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setRol(rs.getString("rol"));
                 jugador.setFoto(rs.getString("foto"));
 
-                // Relación con Equipo (solo cargamos el id)
                 Equipo equipo = new Equipo();
                 equipo.setId(rs.getInt("id_equipo"));
+                equipo.setNombre(rs.getString("equipo_nombre"));
+                equipo.setTag(rs.getString("equipo_tag"));
                 jugador.setEquipo(equipo);
             }
 
@@ -116,7 +119,8 @@ public class JugadorDAOJdbc implements JugadorDAO {
     @Override
     public List<Jugador> listarTodos() {
         List<Jugador> lista = new ArrayList<>();
-        String sql = "SELECT * FROM jugadores";
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+                     "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo";
 
         try (PreparedStatement pstmt = getConnection().prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -132,6 +136,8 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
                 Equipo equipo = new Equipo();
                 equipo.setId(rs.getInt("id_equipo"));
+                equipo.setNombre(rs.getString("equipo_nombre"));
+                equipo.setTag(rs.getString("equipo_tag"));
                 jugador.setEquipo(equipo);
 
                 lista.add(jugador);

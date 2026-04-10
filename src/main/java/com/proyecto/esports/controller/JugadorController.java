@@ -81,6 +81,9 @@ public class JugadorController {
     @PostMapping("/jugadores/actualizar")
     public String actualizarJugador(@ModelAttribute Jugador jugador,
                                    @RequestParam("fotoFile") MultipartFile fotoFile) throws IOException {
+        
+        Jugador jugadorExistente = jugadorService.obtenerPorId(jugador.getId());
+
         if (fotoFile != null && !fotoFile.isEmpty()) {
             String nombre = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
 
@@ -89,6 +92,9 @@ public class JugadorController {
 
             Files.copy(fotoFile.getInputStream(), dir.resolve(nombre), StandardCopyOption.REPLACE_EXISTING);
             jugador.setFoto(nombre);
+
+        } else {
+            jugador.setFoto(jugadorExistente.getFoto());
         }
 
         jugadorService.actualizar(jugador);

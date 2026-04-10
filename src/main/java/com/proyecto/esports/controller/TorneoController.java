@@ -74,6 +74,9 @@ public class TorneoController {
     @PostMapping("/torneos/actualizar")
     public String actualizarTorneo(@ModelAttribute Torneo torneo,
                                   @RequestParam("fotoFile") MultipartFile fotoFile) throws IOException {
+
+        Torneo torneoExistente = torneoService.obtenerPorId(torneo.getId());
+        
         if (fotoFile != null && !fotoFile.isEmpty()) {
             String nombre = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
 
@@ -83,7 +86,10 @@ public class TorneoController {
             Files.copy(fotoFile.getInputStream(), dir.resolve(nombre), StandardCopyOption.REPLACE_EXISTING);
             torneo.setFoto(nombre);
 
+        } else {
+            torneo.setFoto(torneoExistente.getFoto());
         }
+
         torneoService.actualizar(torneo);
         return "redirect:/torneos";
     }
