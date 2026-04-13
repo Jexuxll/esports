@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.proyecto.esports.model.Torneo;
 import com.proyecto.esports.service.TorneoService;
 
+@Controller
 public class TorneoController {
     private final TorneoService torneoService;
 
@@ -77,6 +79,13 @@ public class TorneoController {
 
         Torneo torneoExistente = torneoService.obtenerPorId(torneo.getId());
         
+        if (torneo.getFechaInicio() == null) {
+            torneo.setFechaInicio(torneoExistente.getFechaInicio());
+        }
+        if (torneo.getFechaFin() == null) {
+            torneo.setFechaFin(torneoExistente.getFechaFin());
+        }
+
         if (fotoFile != null && !fotoFile.isEmpty()) {
             String nombre = System.currentTimeMillis() + "_" + fotoFile.getOriginalFilename();
 
