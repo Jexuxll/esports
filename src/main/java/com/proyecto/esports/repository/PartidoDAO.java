@@ -15,4 +15,5 @@ public interface PartidoDAO {
     void eliminar(int id);
     Partido obtenerPorId(int id);
     List<Partido> listarTodos();
+    List<Partido> listarPorTorneo(int idTorneo);
 }

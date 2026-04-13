@@ -22,9 +22,9 @@
     <div class="form-card">
         <h2>Nuevo Partido</h2>
 
-        <form th:action="@{/partidos/guardar}" th:object="${partido}" method="post">
+        <form th:action="${torneo != null} ? @{/torneos/{idTorneo}/partidos/guardar(idTorneo=${torneo.id})} : @{/partidos/guardar}" th:object="${partido}" method="post">
 
-            <div class="form-group">
+            <div class="form-group" th:if="${torneo == null}">
                 <label for="torneoId">Torneo</label>
                 <select id="torneoId" name="torneo.id" class="form-control" required>
                     <option value="">-- Selecciona torneo --</option>
@@ -32,7 +32,12 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" th:if="${torneo != null}">
+                <label>Torneo</label>
+                <input type="text" class="form-control" th:value="${torneo.nombre}" readonly>
+            </div>
+
+            <div class="form-group" th:if="${torneo == null}">
                 <label for="equipoLocalId">Equipo Local</label>
                 <select id="equipoLocalId" name="equipoLocal.id" class="form-control" required>
                     <option value="">-- Selecciona equipo local --</option>
@@ -40,11 +45,27 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" th:if="${torneo != null}">
+                <label for="equipoLocalIdTorneo">Equipo Local</label>
+                <select id="equipoLocalIdTorneo" name="equipoLocalId" class="form-control" required>
+                    <option value="">-- Selecciona equipo local --</option>
+                    <option th:each="et : ${equiposInscritos}" th:value="${et.equipo.id}" th:text="${et.equipo.nombre}"></option>
+                </select>
+            </div>
+
+            <div class="form-group" th:if="${torneo == null}">
                 <label for="equipoVisitanteId">Equipo Visitante</label>
                 <select id="equipoVisitanteId" name="equipoVisitante.id" class="form-control" required>
                     <option value="">-- Selecciona equipo visitante --</option>
                     <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}"></option>
+                </select>
+            </div>
+
+            <div class="form-group" th:if="${torneo != null}">
+                <label for="equipoVisitanteIdTorneo">Equipo Visitante</label>
+                <select id="equipoVisitanteIdTorneo" name="equipoVisitanteId" class="form-control" required>
+                    <option value="">-- Selecciona equipo visitante --</option>
+                    <option th:each="et : ${equiposInscritos}" th:value="${et.equipo.id}" th:text="${et.equipo.nombre}"></option>
                 </select>
             </div>
 
@@ -68,7 +89,8 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Crear partido</button>
-                <a th:href="@{/partidos}" class="btn btn-secondary">Cancelar</a>
+                <a th:if="${torneo == null}" th:href="@{/partidos}" class="btn btn-secondary">Cancelar</a>
+                <a th:if="${torneo != null}" th:href="@{/torneos/{id}(id=${torneo.id})}" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>

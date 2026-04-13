@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${equipo.nombre} + ' - ESports Manager'">Detalle Equipo</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1 th:text="${equipo.nombre}">Nombre equipo</h1>
+        <a th:href="@{/equipos}" class="btn btn-secondary">← Volver</a>
+    </div>
+
+    <div class="form-card" style="margin-bottom: 2rem; display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap; max-width:100%;">
+        <img th:if="${equipo.foto != null and equipo.foto != ''}"
+             th:src="@{/Imagenes/{f}(f=${equipo.foto})}"
+             class="img-thumb-lg" alt="Logo equipo" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+        <div th:unless="${equipo.foto != null and equipo.foto != ''}"
+             style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--surface); border-radius:8px;">🛡️</div>
+        <div style="flex:1;">
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
+                Tag: <span class="team-tag" th:text="${equipo.tag}">TAG</span>
+            </p>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
+                🌍 <span th:text="${equipo.pais}">País</span>
+            </p>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom:1rem;">Jugadores <span>del Equipo</span></h2>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(jugadores)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nickname</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="jugador : ${jugadores}">
+                    <td>
+                        <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                             th:src="@{/Imagenes/{img}(img=${jugador.foto})}"
+                             class="img-thumb" alt="Foto jugador">
+                        <span th:unless="${jugador.foto != null and jugador.foto != ''}">—</span>
+                    </td>
+                    <td><strong th:text="${jugador.nickname}">Nickname</strong></td>
+                    <td th:text="${jugador.nombre}">Nombre</td>
+                    <td th:text="${jugador.apellido}">Apellido</td>
+                    <td th:text="${jugador.rol}">Rol</td>
+                    <td class="actions">
+                        <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(jugadores)}">
+        <p>Este equipo no tiene jugadores registrados.</p>
+        <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">Añadir jugador</a>
+    </div>
+
+</div>
+
+</body>
+</html>
+

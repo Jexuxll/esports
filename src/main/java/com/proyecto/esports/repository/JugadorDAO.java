@@ -4,8 +4,9 @@
  */
 package com.proyecto.esports.repository;
 
-import com.proyecto.esports.model.Jugador;
 import java.util.List;
+
+import com.proyecto.esports.model.Jugador;
 
 
 public interface JugadorDAO {
@@ -14,4 +15,5 @@ public interface JugadorDAO {
     void eliminar(int id);
     Jugador obtenerPorId(int id);
     List<Jugador> listarTodos();
+    List<Jugador> listarPorEquipo(int idEquipo);
 }

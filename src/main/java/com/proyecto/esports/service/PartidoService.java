@@ -42,4 +42,8 @@ public class PartidoService {
     public List<Partido> listarTodos() {
         return partidoDAO.listarTodos();
     }
+
+    public List<Partido> listarPorTorneo(int idTorneo) {
+        return partidoDAO.listarPorTorneo(idTorneo);
+    }
 }

@@ -42,4 +42,8 @@ public class JugadorService {
     public List<Jugador> listarTodos() {
         return jugadorDAO.listarTodos();
     }
+
+    public List<Jugador> listarPorEquipo(int idEquipo) {
+        return jugadorDAO.listarPorEquipo(idEquipo);
+    }
 }
