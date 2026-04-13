@@ -10,4 +10,6 @@ public interface EquipoTorneoDAO {
     void eliminar(int id);
     EquipoTorneo obtenerPorId(int id);
     List<EquipoTorneo> listarTodos();
+    List<EquipoTorneo> listarPorTorneo(int idTorneo);
+    boolean existeInscripcion(int idTorneo, int idEquipo);
 }

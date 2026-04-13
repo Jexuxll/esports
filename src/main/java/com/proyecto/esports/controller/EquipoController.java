@@ -9,6 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,16 +28,31 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.proyecto.esports.model.Equipo;
 import com.proyecto.esports.service.EquipoService;
+import com.proyecto.esports.service.JugadorService;
 
 
 @Controller
 public class EquipoController {
     private final EquipoService equipoService;
+    private final JugadorService jugadorService;
     
     @Autowired
-    public EquipoController(EquipoService equipoService) {
+    public EquipoController(EquipoService equipoService, JugadorService jugadorService) {
         this.equipoService = equipoService;
+        this.jugadorService = jugadorService;
     }
+
+    @ModelAttribute("paises")
+    public List<String> cargarPaises() {
+        Locale localeEs = new Locale("es", "ES");
+        return Arrays.stream(Locale.getISOCountries())
+                .map(codigo -> new Locale("", codigo).getDisplayCountry(localeEs))
+                .filter(nombre -> nombre != null && !nombre.isBlank())
+                .distinct()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+    }
+
 
     @GetMapping("/equipos")
     public String listarEquipos(Model model) {
@@ -113,5 +133,12 @@ public class EquipoController {
         }
         equipoService.eliminar(id);
         return "redirect:/equipos";
+    }
+
+    @GetMapping("/equipos/{id}")
+    public String verDetalleEquipo(@PathVariable int id, Model model) {
+        model.addAttribute("equipo", equipoService.obtenerPorId(id));
+        model.addAttribute("jugadores", jugadorService.listarPorEquipo(id));
+        return "detalle_equipo";
     }
 }

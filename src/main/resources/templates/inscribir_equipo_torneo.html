@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscribir Equipo - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2>Inscribir Equipo</h2>
+
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Torneo: <strong th:text="${torneo.nombre}">Nombre torneo</strong>
+        </p>
+
+        <form th:action="@{/torneos/{id}/inscribir(id=${torneo.id})}" method="post">
+            <div class="form-group">
+                <label for="equipoId">Equipo</label>
+                <select id="equipoId" name="equipoId" class="form-control" required>
+                    <option value="">-- Selecciona un equipo --</option>
+                    <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre + ' (' + e.tag + ')'}"></option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Inscribir</button>
+                <a th:href="@{/torneos/{id}(id=${torneo.id})}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

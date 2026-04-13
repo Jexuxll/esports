@@ -14,7 +14,7 @@ import com.proyecto.esports.repository.TorneoDAO;
 public class TorneoService {
     private final TorneoDAO torneoDAO;
 
-    public TorneoService(@Qualifier("torneoDAOJdbc") TorneoDAO torneoDAO) {
+    public TorneoService(@Qualifier("TorneoDAOJdbc") TorneoDAO torneoDAO) {
         this.torneoDAO = torneoDAO;
     }
 

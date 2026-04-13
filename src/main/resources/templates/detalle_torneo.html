@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${torneo.nombre} + ' - ESports Manager'">Detalle Torneo</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1 th:text="${torneo.nombre}">Nombre torneo</h1>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a th:href="@{/torneos/{id}/inscribir(id=${torneo.id})}" class="btn btn-primary">Inscribir equipo</a>
+            <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear partido</a>
+            <a th:href="@{/torneos}" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+
+    <div class="form-card" style="margin-bottom: 2rem; display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap; max-width:100%;">
+        <img th:if="${torneo.foto != null and torneo.foto != ''}"
+             th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+             class="img-thumb-lg" alt="Logo torneo" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+        <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+             style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--bg-secondary); border-radius:8px;">🏆</div>
+        <div style="flex:1;">
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
+                🎮 <strong th:text="${torneo.juego}">Juego</strong>
+            </p>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
+                📅 <span th:text="${torneo.fechaInicio}">Inicio</span>
+                → <span th:text="${torneo.fechaFin}">Fin</span>
+            </p>
+            <span th:switch="${torneo.estado}">
+                <span th:case="'Activo'" class="badge badge-success">Activo</span>
+                <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
+                <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+            </span>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom:1rem;">Equipos <span>Inscritos</span></h2>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(equiposInscritos)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Nombre</th>
+                    <th>Tag</th>
+                    <th>País</th>
+                    <th>Fecha inscripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="et : ${equiposInscritos}">
+                    <td>
+                        <img th:if="${et.equipo.foto != null and et.equipo.foto != ''}"
+                             th:src="@{/Imagenes/{img}(img=${et.equipo.foto})}"
+                             class="img-thumb" alt="Logo equipo">
+                        <span th:unless="${et.equipo.foto != null and et.equipo.foto != ''}">—</span>
+                    </td>
+                    <td th:text="${et.equipo.nombre}">Nombre</td>
+                    <td><span class="team-tag" th:text="${et.equipo.tag}">TAG</span></td>
+                    <td th:text="${et.equipo.pais}">País</td>
+                    <td th:text="${et.fechaInscripcion}">Fecha</td>
+                    <td class="actions">
+                        <a th:href="@{/equipos/{id}(id=${et.equipo.id})}" class="btn btn-secondary btn-sm">Ver equipo</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(equiposInscritos)}">
+        <p>No hay equipos inscritos en este torneo.</p>
+    </div>
+
+    <h2 style="margin-top:2rem; margin-bottom:1rem;">Partidos <span>del Torneo</span></h2>
+
+    <div class="table-wrapper" th:if="${partidosTorneo != null and not #lists.isEmpty(partidosTorneo)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Ronda</th>
+                    <th>Local</th>
+                    <th>Visitante</th>
+                    <th>Marcador</th>
+                    <th>Ganador</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${partidosTorneo}">
+                    <td th:text="${p.fechaPartido != null ? #temporals.format(p.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
+                    <td th:text="${p.ronda}">Ronda</td>
+                    <td th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : '-'}">Local</td>
+                    <td th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : '-'}">Visitante</td>
+                    <td>
+                        <span th:text="${p.marcadorLocal != null ? p.marcadorLocal : '-'}">0</span>
+                        -
+                        <span th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">0</span>
+                    </td>
+                    <td th:text="${p.ganador != null ? p.ganador.nombre : '—'}">Ganador</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${partidosTorneo == null or #lists.isEmpty(partidosTorneo)}">
+        <p>No hay partidos creados para este torneo.</p>
+        <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear primer partido</a>
+    </div>
+
+</div>
+
+</body>
+</html>
+

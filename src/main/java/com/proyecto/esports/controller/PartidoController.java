@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.proyecto.esports.model.Equipo;
 import com.proyecto.esports.model.Partido;
 import com.proyecto.esports.service.EquipoService;
+import com.proyecto.esports.service.EquipoTorneoService;
 import com.proyecto.esports.service.PartidoService;
 import com.proyecto.esports.service.TorneoService;
 
@@ -24,12 +25,15 @@ public class PartidoController {
     private final PartidoService partidoService;
     private final TorneoService torneoService;
     private final EquipoService equipoService;
+    private final EquipoTorneoService equipoTorneoService;
+
 
     @Autowired
-    public PartidoController(PartidoService partidoService, TorneoService torneoService, EquipoService equipoService) {
+    public PartidoController(PartidoService partidoService, TorneoService torneoService, EquipoService equipoService, EquipoTorneoService equipoTorneoService) {
         this.partidoService = partidoService;
         this.torneoService = torneoService;
         this.equipoService = equipoService;
+        this.equipoTorneoService = equipoTorneoService;
     }
 
     @GetMapping("/partidos")
@@ -68,7 +72,16 @@ public class PartidoController {
             Partido existing = partidoService.obtenerPorId(partido.getId());
             partido.setFechaPartido(existing.getFechaPartido());
         }
+
+        Integer localId = (partido.getEquipoLocal() != null) ? partido.getEquipoLocal().getId() : null;
+        Integer visitanteId = (partido.getEquipoVisitante() != null) ? partido.getEquipoVisitante().getId() : null;
+
         if (ganadorId != null) {
+            boolean ganadorValido = (localId != null && ganadorId.equals(localId))
+                    || (visitanteId != null && ganadorId.equals(visitanteId));
+            if (!ganadorValido){
+
+            }
             Equipo ganador = new Equipo();
             ganador.setId(ganadorId);
             partido.setGanador(ganador);
@@ -84,4 +97,32 @@ public class PartidoController {
         partidoService.eliminar(id);
         return "redirect:/partidos";
     }
+
+    @GetMapping("/torneos/{idTorneo}/partidos/nuevo")
+    public String nuevoPartidoDesdeTorneo(@PathVariable int idTorneo, Model model) {
+        Partido partido = new Partido();
+        partido.setTorneo(torneoService.obtenerPorId(idTorneo));
+
+        model.addAttribute("partido", partido);
+        model.addAttribute("torneo", torneoService.obtenerPorId(idTorneo));
+        model.addAttribute("equiposInscritos", equipoTorneoService.listarPorTorneo(idTorneo));
+        return "registro_partido";
+    }
+
+    @PostMapping("/torneos/{idTorneo}/partidos/guardar")
+    public String guardarPartidoDesdeTorneo(@PathVariable int idTorneo, @ModelAttribute Partido partido, @RequestParam("equipoLocalId") int equipoLocalId, @RequestParam("equipoVisitanteId") int equipoVisitanteId) {
+        partido.setTorneo(torneoService.obtenerPorId(idTorneo));
+
+        Equipo local = new Equipo();
+        local.setId(equipoLocalId);
+        partido.setEquipoLocal(local);
+
+        Equipo visitante = new Equipo();
+        visitante.setId(equipoVisitanteId);
+        partido.setEquipoVisitante(visitante);
+
+        partidoService.guardar(partido);
+        return "redirect:/torneos/" + idTorneo;
+    }
+
 }

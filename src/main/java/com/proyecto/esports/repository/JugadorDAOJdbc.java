@@ -149,5 +149,35 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
         return lista;
     }
-    
+
+    @Override
+    public List<Jugador> listarPorEquipo(int idEquipo) {
+        List<Jugador> lista = new ArrayList<>();
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+                     "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
+                     "WHERE j.id_equipo = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, idEquipo);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Jugador jugador = new Jugador();
+                jugador.setId(rs.getInt("id_jugador"));
+                jugador.setNickname(rs.getString("nickname"));
+                jugador.setNombre(rs.getString("nombre"));
+                jugador.setApellido(rs.getString("apellido"));
+                jugador.setRol(rs.getString("rol"));
+                jugador.setFoto(rs.getString("foto"));
+                Equipo equipo = new Equipo();
+                equipo.setId(rs.getInt("id_equipo"));
+                equipo.setNombre(rs.getString("equipo_nombre"));
+                equipo.setTag(rs.getString("equipo_tag"));
+                jugador.setEquipo(equipo);
+                lista.add(jugador);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
 }

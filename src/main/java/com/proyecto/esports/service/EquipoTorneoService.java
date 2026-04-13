@@ -36,4 +36,12 @@ public class EquipoTorneoService {
     public java.util.List<EquipoTorneo> listarTodos() {
         return equipoTorneoDAO.listarTodos();
     }
+
+    public java.util.List<EquipoTorneo> listarPorTorneo(int idTorneo) {
+        return equipoTorneoDAO.listarPorTorneo(idTorneo);
+    }
+
+    public boolean existeInscripcion(int idTorneo, int idEquipo) {
+        return equipoTorneoDAO.existeInscripcion(idTorneo, idEquipo);
+    }
 }
