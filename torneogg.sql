@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-04-2026 a las 08:32:57
+-- Tiempo de generación: 13-04-2026 a las 12:52:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -99,6 +99,14 @@ CREATE TABLE `partidos` (
   `ganador_id_equipo` int(11) DEFAULT NULL
 ) ;
 
+--
+-- Volcado de datos para la tabla `partidos`
+--
+
+INSERT INTO `partidos` (`id_partido`, `id_torneo`, `id_equipo_local`, `id_equipo_visitante`, `fecha_partido`, `ronda`, `marcador_local`, `marcador_visitante`, `ganador_id_equipo`) VALUES
+(2, 1, 6, 8, '2026-06-03 13:30:00', 'Grupos', 1, 2, 6),
+(3, 2, 10, 6, '2026-05-14 15:50:00', 'Cuartos', NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -111,8 +119,17 @@ CREATE TABLE `torneos` (
   `juego` varchar(100) NOT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
-  `estado` enum('PLANIFICADO','EN_CURSO','FINALIZADO') DEFAULT 'PLANIFICADO'
+  `estado` enum('PENDIENTE','ACTIVO','FINALIZADO') DEFAULT 'PENDIENTE',
+  `foto` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `torneos`
+--
+
+INSERT INTO `torneos` (`id_torneo`, `nombre`, `juego`, `fecha_inicio`, `fecha_fin`, `estado`, `foto`) VALUES
+(1, 'Champions', 'Counter Strike Global Ofensive', '2026-06-02', '2026-06-30', 'FINALIZADO', '1776074954124_creeper.jpg'),
+(2, 'lolete', 'lol', '2026-03-02', '2026-03-07', 'ACTIVO', '1776076302594_zorrita.jpg');
 
 --
 -- Índices para tablas volcadas
@@ -189,7 +206,7 @@ ALTER TABLE `partidos`
 -- AUTO_INCREMENT de la tabla `torneos`
 --
 ALTER TABLE `torneos`
-  MODIFY `id_torneo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_torneo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
