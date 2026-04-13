@@ -27,24 +27,30 @@
             <input type="hidden" th:field="*{id}">
 
             <div class="form-group">
-                <label for="torneoId">ID del Torneo</label>
-                <input type="number" id="torneoId" name="torneo.id"
-                       th:value="${partido.torneo != null ? partido.torneo.id : ''}"
-                       class="form-control" min="1" required>
+                <label for="torneoId">Torneo</label>
+                <select id="torneoId" name="torneo.id" class="form-control" required>
+                    <option value="">-- Selecciona torneo --</option>
+                    <option th:each="t : ${torneos}" th:value="${t.id}" th:text="${t.nombre}"
+                            th:selected="${partido.torneo != null and partido.torneo.id == t.id}"></option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="equipoLocalId">ID Equipo Local</label>
-                <input type="number" id="equipoLocalId" name="equipoLocal.id"
-                       th:value="${partido.equipoLocal != null ? partido.equipoLocal.id : ''}"
-                       class="form-control" min="1" required>
+                <label for="equipoLocalId">Equipo Local</label>
+                <select id="equipoLocalId" name="equipoLocal.id" class="form-control" required>
+                    <option value="">-- Selecciona equipo local --</option>
+                    <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}"
+                            th:selected="${partido.equipoLocal != null and partido.equipoLocal.id == e.id}"></option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="equipoVisitanteId">ID Equipo Visitante</label>
-                <input type="number" id="equipoVisitanteId" name="equipoVisitante.id"
-                       th:value="${partido.equipoVisitante != null ? partido.equipoVisitante.id : ''}"
-                       class="form-control" min="1" required>
+                <label for="equipoVisitanteId">Equipo Visitante</label>
+                <select id="equipoVisitanteId" name="equipoVisitante.id" class="form-control" required>
+                    <option value="">-- Selecciona equipo visitante --</option>
+                    <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}"
+                            th:selected="${partido.equipoVisitante != null and partido.equipoVisitante.id == e.id}"></option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -61,8 +67,9 @@
 
             <div class="form-group">
                 <label for="fechaPartido">Fecha y hora del partido</label>
-                <input type="datetime-local" id="fechaPartido" th:field="*{fechaPartido}"
-                       class="form-control" required>
+                <input type="datetime-local" id="fechaPartido" name="fechaPartido"
+                       th:value="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                       class="form-control">
             </div>
 
             <div style="border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1.2rem;">
@@ -83,10 +90,12 @@
                 </div>
 
                 <div class="form-group" style="margin-top:1rem;">
-                    <label for="ganadorId">ID del Equipo Ganador</label>
-                    <input type="number" id="ganadorId" name="ganador.id"
-                           th:value="${partido.ganador != null ? partido.ganador.id : ''}"
-                           class="form-control" min="1" placeholder="Dejar vacío si no hay ganador">
+                    <label for="ganadorId">Equipo Ganador</label>
+                    <select id="ganadorId" name="ganadorId" class="form-control">
+                        <option value="">-- Sin ganador --</option>
+                        <option th:each="e : ${equipos}" th:value="${e.id}" th:text="${e.nombre}"
+                                th:selected="${partido.ganador != null and partido.ganador.id == e.id}"></option>
+                    </select>
                 </div>
             </div>
 
