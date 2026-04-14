@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Detalle Jugador - ' + ${jugador.nombre}">Detalle Jugador</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <nav>
+    <span class="nav-brand">E<span>Sports</span></span>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <div class="page-header">
+        <h1>Ficha <span th:text="${jugador.nickname}">Nickname</span></h1>
+        <a th:href="@{/jugadores}" class="btn btn-secondary">← Volver</a>
+    </div>
+    <div class="form-card" style="max-width:400px; margin-top:1rem;">
+        <img th:if="${jugador.foto != null and jugador.foto != ''}"
+            th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+            class="img-thumb-lg" alt="Foto jugador" style="width:350px; height:350px; object-fit:cover; border-radius:8px; margin-top:1rem;">
+        <div th:unless="${jugador.foto != null and jugador.foto != ''}"
+            style="width:350px; height:350px; display:flex; align-items:flex-start; justify-content:flex-start; font-size:5rem; background:var(--surface); border-radius:8px; margin-top:1rem;">🎮</div>
+        <div style="margin-top:1rem;">
+            <p><strong>Nombre:</strong> <span th:text="${jugador.nombre}">Nombre</span></p>
+            <p><strong>Apellido:</strong> <span th:text="${jugador.apellido}">Apellido</span></p>
+            <p><strong>Nickname:</strong> <span th:text="${jugador.nickname}">Nickname</span></p>
+            <p><strong>Rol:</strong> <span th:text="${jugador.rol}">Rol</span></p>
+            <p><strong>Equipo:</strong>
+                <a th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
+                   th:text="${jugador.equipo != null ? jugador.equipo.nombre : '—'}">Equipo</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

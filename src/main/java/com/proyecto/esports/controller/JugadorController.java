@@ -113,4 +113,10 @@ public class JugadorController {
         jugadorService.eliminar(id);
         return "redirect:/jugadores"; 
     }
+
+    @GetMapping("/jugadores/{id}")
+    public String verDetalleJugador(@PathVariable int id, Model model) {
+        model.addAttribute("jugador", jugadorService.obtenerPorId(id));
+        return "detalle_jugador"; 
+    }
 }
