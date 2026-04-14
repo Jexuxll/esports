@@ -102,6 +102,7 @@
                     <th>Visitante</th>
                     <th>Marcador</th>
                     <th>Ganador</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -116,6 +117,11 @@
                         <span th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">0</span>
                     </td>
                     <td th:text="${p.ganador != null ? p.ganador.nombre : '—'}">Ganador</td>
+                    <td class="actions">
+                        <a th:href="@{/partidos/{id}/editar(id=${p.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                        <a th:href="@{/partidos/{id}/eliminar(id=${p.id})}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Eliminar este partido?')">Eliminar</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -123,7 +129,6 @@
 
     <div class="empty-state" th:if="${partidosTorneo == null or #lists.isEmpty(partidosTorneo)}">
         <p>No hay partidos creados para este torneo.</p>
-        <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear primer partido</a>
     </div>
 
 </div>

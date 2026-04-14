@@ -44,6 +44,7 @@
                     <td><span class="team-tag" th:text="${equipo.tag}">TAG</span></td>
                     <td th:text="${equipo.pais}">País</td>
                     <td class="actions">
+                        <a th:href="@{/equipos/{id}(id=${equipo.id})}" class="btn btn-secondary btn-sm">Ver</a>
                         <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-secondary btn-sm">Editar</a>
                         <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger btn-sm"
                            onclick="return confirm('¿Eliminar este equipo?')">Eliminar</a>
