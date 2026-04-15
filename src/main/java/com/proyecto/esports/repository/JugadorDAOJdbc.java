@@ -28,7 +28,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
     
     @Override
     public void guardar(Jugador jugador) {
-        String sql = "INSERT INTO jugadores (nickname, nombre, apellido, rol, id_equipo, foto) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO jugadores (nickname, nombre, apellido, rol, id_equipo, foto, edad, nacionalidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -38,7 +38,8 @@ public class JugadorDAOJdbc implements JugadorDAO {
             stmt.setString(4, jugador.getRol());
             stmt.setInt(5, jugador.getEquipo().getId());
             stmt.setString(6, jugador.getFoto());
-
+            stmt.setInt(7, jugador.getEdad());
+            stmt.setString(8, jugador.getNacionalidad());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -48,7 +49,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
     @Override
     public void actualizar(Jugador jugador) {
-        String sql = "UPDATE jugadores SET nickname = ?, nombre = ?, apellido = ?, rol = ?, id_equipo = ?, foto = ? WHERE id_jugador = ?";
+        String sql = "UPDATE jugadores SET nickname = ?, nombre = ?, apellido = ?, rol = ?, id_equipo = ?, foto = ?, edad = ?, nacionalidad = ? WHERE id_jugador = ?";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -58,7 +59,9 @@ public class JugadorDAOJdbc implements JugadorDAO {
             stmt.setString(4, jugador.getRol());
             stmt.setInt(5, jugador.getEquipo().getId());
             stmt.setString(6, jugador.getFoto());
-            stmt.setInt(7, jugador.getId());
+            stmt.setInt(7, jugador.getEdad());
+            stmt.setString(8, jugador.getNacionalidad());
+            stmt.setInt(9, jugador.getId());
 
             stmt.executeUpdate();
 
@@ -101,7 +104,9 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
                 jugador.setFoto(rs.getString("foto"));
-
+                jugador.setEdad(rs.getInt("edad"));
+                jugador.setNacionalidad(rs.getString("nacionalidad"));
+                
                 Equipo equipo = new Equipo();
                 equipo.setId(rs.getInt("id_equipo"));
                 equipo.setNombre(rs.getString("equipo_nombre"));
@@ -133,6 +138,8 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
                 jugador.setFoto(rs.getString("foto"));
+                jugador.setEdad(rs.getInt("edad"));
+                jugador.setNacionalidad(rs.getString("nacionalidad"));
 
                 Equipo equipo = new Equipo();
                 equipo.setId(rs.getInt("id_equipo"));
@@ -167,6 +174,8 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
                 jugador.setFoto(rs.getString("foto"));
+                jugador.setEdad(rs.getInt("edad"));
+                jugador.setNacionalidad(rs.getString("nacionalidad"));
                 Equipo equipo = new Equipo();
                 equipo.setId(rs.getInt("id_equipo"));
                 equipo.setNombre(rs.getString("equipo_nombre"));

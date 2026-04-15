@@ -12,20 +12,40 @@ public class Jugador {
     private String apellido;
     private String rol;
     private String foto;
+    private int edad;
+    private String nacionalidad;
     
     private Equipo equipo;
 
     public Jugador() {
     }
 
-    public Jugador(int id, String nickname, String nombre, String apellido, String rol, String foto, Equipo equipo) {
+    public Jugador(int id, String nickname, String nombre, String apellido, String rol, String foto, int edad, String nacionalidad, Equipo equipo) {
         this.id = id;
         this.nickname = nickname;
         this.nombre = nombre;
         this.apellido = apellido;
         this.rol = rol;
         this.foto = foto;
+        this.edad = edad;
+        this.nacionalidad = nacionalidad;
         this.equipo = equipo;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
+
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
     }
 
     public String getFoto() {
