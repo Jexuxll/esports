@@ -43,8 +43,11 @@
 
             <div class="form-group">
                 <label for="pais">País</label>
-                <input type="text" id="pais" th:field="*{pais}" class="form-control"
-                       placeholder="Ej: España" required>
+                <select id="pais" th:field="*{pais}" class="form-control" required>
+                    <option value="">-- Selecciona un país --</option>
+                    <option th:each="p : ${paises}" th:value="${p}" th:text="${p}"
+                            th:selected="${equipo.pais == p}"></option>
+                </select>
             </div>
 
             <div class="form-group">
