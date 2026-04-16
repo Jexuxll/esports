@@ -90,6 +90,34 @@
         </a>
     </div>
 
+    <!-- Calendario de Partidos -->
+    <div class="section-title">Calendario de <span>Partidos</span></div>
+
+    <div class="cal-wrapper" id="cal-wrapper" th:attr="data-partidos=${partidosJson}">
+        <!-- Barra de navegación del mes -->
+        <div class="cal-bar">
+            <button class="cal-nav-btn" id="cal-prev">&#8249;</button>
+            <span class="cal-bar-title" id="cal-title">Cargando...</span>
+            <button class="cal-nav-btn" id="cal-next">&#8250;</button>
+        </div>
+        <!-- Cabecera días de la semana -->
+        <div class="cal-weekdays">
+            <div>Lun</div><div>Mar</div><div>Mié</div>
+            <div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <!-- Celdas generadas por JS -->
+        <div class="cal-days" id="cal-grid-days"></div>
+    </div>
+
+    <!-- Panel de partidos del día seleccionado -->
+    <div class="cal-panel" id="cal-panel" hidden>
+        <div class="cal-panel-head">
+            <span class="cal-panel-title" id="cal-panel-title"></span>
+            <a href="/partidos" class="cal-panel-link">Ver todos los partidos →</a>
+        </div>
+        <div class="cal-panel-body" id="cal-panel-body"></div>
+    </div>
+
     <!-- Últimos torneos -->
     <div th:if="${not #lists.isEmpty(ultimosTorneos)}">
         <div class="section-title">Últimos <span>Torneos</span></div>

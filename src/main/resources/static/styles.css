@@ -1036,6 +1036,381 @@ tr.row-link:hover {
 .section-title span { color: var(--accent-light); }
 .last-tournaments { margin-bottom: 2rem; }
 
+/* ---- Calendario Interactivo ---- */
+
+/* Contenedor */
+.cal-wrapper {
+    margin-bottom: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+/* Barra superior: prev · título · next */
+.cal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.cal-bar-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+}
+
+.cal-nav-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.cal-nav-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* Cabecera días de la semana */
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+}
+
+.cal-weekdays > div {
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    padding: 0.5rem 0;
+}
+
+/* Grid de días */
+.cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* Celda */
+.cal-cell {
+    min-height: 110px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    position: relative;
+    transition: background 0.15s;
+}
+
+.cal-cell:nth-child(7n) { border-right: none; }
+
+.cal-cell--empty {
+    background: var(--bg-card-hover);
+    cursor: default;
+}
+
+.cal-cell--has-matches {
+    cursor: pointer;
+}
+
+.cal-cell--has-matches:hover {
+    background: var(--bg-card-hover);
+}
+
+.cal-cell--today {
+    background: rgba(124, 58, 237, 0.08);
+}
+
+.cal-cell--today::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+}
+
+/* Número del día */
+.cal-cell-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.1rem;
+}
+
+.cal-cell--today .cal-cell-num {
+    color: var(--accent-light);
+}
+
+/* Mini evento en la celda */
+.cal-ev {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.cal-ev-logo {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 3px;
+    background: var(--bg-card);
+    flex-shrink: 0;
+}
+
+.cal-ev-logo-ph {
+    font-size: 0.85rem;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cal-ev-vs {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex: 1;
+    text-align: center;
+}
+
+.cal-ev-score {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--success);
+    flex: 1;
+    text-align: center;
+}
+
+.cal-ev-more {
+    font-size: 0.62rem;
+    color: var(--accent-cyan);
+    font-weight: 600;
+    padding: 1px 4px;
+}
+
+/* Celda seleccionada */
+.cal-cell--selected {
+    background: rgba(124, 58, 237, 0.18);
+    border-color: var(--accent);
+}
+
+/* ---- Panel de partidos del día ---- */
+.cal-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    animation: panelIn 0.2s ease;
+}
+
+@keyframes panelIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cal-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.cal-panel-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: capitalize;
+}
+
+.cal-panel-link {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.cal-panel-link:hover { color: var(--accent-cyan-light); }
+
+.cal-panel-body {
+    padding: 1rem 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.85rem;
+}
+
+/* Tarjeta de partido en el panel */
+.cal-panel-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.cal-panel-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-cyan));
+}
+
+.cal-panel-card--done::before {
+    background: linear-gradient(90deg, var(--success), var(--accent-cyan));
+}
+
+.cal-panel-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.cal-panel-torneo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.cal-panel-ronda {
+    font-size: 0.66rem;
+    background: var(--border);
+    color: var(--text-secondary);
+    padding: 0.1rem 0.45rem;
+    border-radius: 20px;
+}
+
+.cal-panel-match {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.cal-panel-team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.cal-panel-logo-wrap {
+    width: 64px;
+    height: 64px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cal-panel-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.cal-panel-logo-ph { font-size: 1.8rem; line-height: 1; }
+
+.cal-panel-nombre {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.cal-panel-tag {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+}
+
+.cal-panel-center {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 64px;
+}
+
+.cal-panel-vs {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+}
+
+.cal-panel-hora {
+    font-size: 0.78rem;
+    color: var(--accent-cyan);
+    font-weight: 700;
+}
+
+.cal-panel-score {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.cal-panel-score-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.cal-panel-score-sep {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.cal-panel-winner {
+    font-size: 0.68rem;
+    color: var(--success);
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
     nav { padding: 0 1rem; }
@@ -1046,12 +1421,21 @@ tr.row-link:hover {
     .form-card { padding: 1.5rem 1rem; }
     table { font-size: 0.85rem; }
     thead th, tbody td { padding: 0.7rem 0.8rem; }
+    .cal-cell { min-height: 80px; }
+    .cal-modal-logo-wrap { width: 56px; height: 56px; }
+    .cal-modal-score-num { font-size: 1.3rem; }
 }
 
 @media (max-width: 640px) {
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
     .hero { padding: 3rem 1rem 2rem; }
+    .cal-cell { min-height: 64px; padding: 0.25rem; }
+    .cal-ev-logo { width: 16px; height: 16px; }
+    .cal-modal-box { max-width: 100%; }
+    .cal-modal-logo-wrap { width: 48px; height: 48px; }
+    .cal-modal-nombre { font-size: 0.7rem; }
 }
+
 
 @media (max-width: 480px) {
     .nav-links { gap: 0.25rem; }
