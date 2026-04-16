@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipos - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Equipos <span>Registrados</span></h1>
+        <a th:href="@{/equipos/nuevo}" class="btn btn-primary">+ Nuevo Equipo</a>
+    </div>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(equipos)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Nombre</th>
+                    <th>Tag</th>
+                    <th>País</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="equipo : ${equipos}"
+                    th:attr="data-href=@{/equipos/{id}(id=${equipo.id})}"
+                    class="row-link">
+                    <td>
+                        <img th:src="@{/Imagenes/{img}(img=${equipo.foto})}" class="img-thumb" alt="Logo equipo">
+                    </td>
+                    <td th:text="${equipo.nombre}">Nombre</td>
+                    <td><span class="team-tag" th:text="${equipo.tag}">TAG</span></td>
+                    <td th:text="${equipo.pais}">País</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(equipos)}">
+        <p>No hay equipos registrados aún.</p>
+        <a th:href="@{/equipos/nuevo}" class="btn btn-primary">Registrar primer equipo</a>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/app.js}"></script>
+</html>

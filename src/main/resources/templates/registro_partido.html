@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -97,4 +98,5 @@
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

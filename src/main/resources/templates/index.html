@@ -3,62 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipos - ESports Manager</title>
+    <title>ESports Manager</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
-        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
 <div class="container">
-    <div class="page-header">
-        <h1>Equipos <span>Registrados</span></h1>
-        <a th:href="@{/equipos/nuevo}" class="btn btn-primary">+ Nuevo Equipo</a>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-eyebrow">⚡ ESports Manager</div>
+        <h1 class="hero-title">
+            Gestiona tu <span>universo</span><br>competitivo
+        </h1>
+        <p class="hero-subtitle">
+            Organiza equipos, jugadores, torneos y partidos en un solo lugar.
+            Tu plataforma de gestión esports, todo bajo control.
+        </p>
+        <div class="hero-actions">
+            <a th:href="@{/torneos}" class="btn btn-primary btn-hero">🏆 Ver Torneos</a>
+            <a th:href="@{/equipos}" class="btn btn-secondary btn-hero">🛡️ Ver Equipos</a>
+        </div>
     </div>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(equipos)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Logo</th>
-                    <th>Nombre</th>
-                    <th>Tag</th>
-                    <th>País</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="equipo : ${equipos}">
-                    <td>
-                        <img th:src="@{/Imagenes/{img}(img=${equipo.foto})}" class="img-thumb" alt="Logo equipo">
-                    </td>
-                    <td th:text="${equipo.nombre}">Nombre</td>
-                    <td><span class="team-tag" th:text="${equipo.tag}">TAG</span></td>
-                    <td th:text="${equipo.pais}">País</td>
-                    <td class="actions">
-                        <a th:href="@{/equipos/{id}(id=${equipo.id})}" class="btn btn-secondary btn-sm">Ver</a>
-                        <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                        <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Eliminar este equipo?')">Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Stats bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-item-icon">🛡️</div>
+            <div class="stat-item-number" th:text="${totalEquipos}">0</div>
+            <div class="stat-item-label">Equipos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-item-icon">🎮</div>
+            <div class="stat-item-number" th:text="${totalJugadores}">0</div>
+            <div class="stat-item-label">Jugadores</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-item-icon">🏆</div>
+            <div class="stat-item-number" th:text="${totalTorneos}">0</div>
+            <div class="stat-item-label">Torneos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-item-icon">⚔️</div>
+            <div class="stat-item-number" th:text="${totalPartidos}">0</div>
+            <div class="stat-item-label">Partidos</div>
+        </div>
     </div>
 
-    <div class="empty-state" th:if="${#lists.isEmpty(equipos)}">
-        <p>No hay equipos registrados aún.</p>
-        <a th:href="@{/equipos/nuevo}" class="btn btn-primary">Registrar primer equipo</a>
+    <!-- Navegación rápida -->
+    <div class="section-title">Acceso <span>Rápido</span></div>
+    <div class="nav-cards">
+        <a th:href="@{/equipos}" class="nav-card">
+            <div class="nav-card-icon">🛡️</div>
+            <div class="nav-card-title">Equipos</div>
+            <div class="nav-card-desc">Gestiona los equipos registrados, sus jugadores y su información.</div>
+            <div class="nav-card-arrow">Ver equipos →</div>
+        </a>
+        <a th:href="@{/jugadores}" class="nav-card">
+            <div class="nav-card-icon">🎮</div>
+            <div class="nav-card-title">Jugadores</div>
+            <div class="nav-card-desc">Fichas individuales de cada jugador, su rol, juego y equipo actual.</div>
+            <div class="nav-card-arrow">Ver jugadores →</div>
+        </a>
+        <a th:href="@{/torneos}" class="nav-card">
+            <div class="nav-card-icon">🏆</div>
+            <div class="nav-card-title">Torneos</div>
+            <div class="nav-card-desc">Consulta los torneos activos, inscribe equipos y gestiona fases.</div>
+            <div class="nav-card-arrow">Ver torneos →</div>
+        </a>
+        <a th:href="@{/partidos}" class="nav-card">
+            <div class="nav-card-icon">⚔️</div>
+            <div class="nav-card-title">Partidos</div>
+            <div class="nav-card-desc">Registra y edita resultados de partidos con marcadores y rondas.</div>
+            <div class="nav-card-arrow">Ver partidos →</div>
+        </a>
     </div>
+
+    <!-- Últimos torneos -->
+    <div th:if="${not #lists.isEmpty(ultimosTorneos)}">
+        <div class="section-title">Últimos <span>Torneos</span></div>
+        <div class="grid-cards last-tournaments">
+            <div th:each="torneo : ${ultimosTorneos}" class="card card-link"
+                 th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
+                <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                     class="card-img" alt="Logo torneo">
+                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+                     class="card-img-placeholder">🏆</div>
+                <div class="card-body">
+                    <div class="card-title" th:text="${torneo.nombre}">Torneo</div>
+                    <div class="card-subtitle" th:text="${torneo.juego}">Juego</div>
+                    <span th:switch="${torneo.estado}">
+                        <span th:case="'Activo'" class="badge badge-success">Activo</span>
+                        <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
+                        <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                        <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

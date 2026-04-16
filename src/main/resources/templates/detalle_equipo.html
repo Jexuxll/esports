@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -24,6 +25,9 @@
         <h1 th:text="${equipo.nombre}">Nombre equipo</h1>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
             <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">Añadir jugador</a>
+            <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-secondary">Editar equipo</a>
+            <a th:href="@{/equipos/eliminar/{id}(id=${equipo.id})}" class="btn btn-danger"
+               onclick="return confirm('¿Eliminar este equipo?')" data-confirm="¿Eliminar este equipo?">Eliminar equipo</a>
             <a th:href="@{/equipos}" class="btn btn-secondary">← Volver</a>
         </div>
     </div>
@@ -46,39 +50,53 @@
 
     <h2 style="margin-bottom:1rem;">Jugadores <span>del Equipo</span></h2>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(jugadores)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Nickname</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="jugador : ${jugadores}">
-                    <td>
-                        <img th:if="${jugador.foto != null and jugador.foto != ''}"
-                             th:src="@{/Imagenes/{img}(img=${jugador.foto})}"
-                             class="img-thumb" alt="Foto jugador">
-                        <span th:unless="${jugador.foto != null and jugador.foto != ''}">—</span>
-                    </td>
-                    <td><strong th:text="${jugador.nickname}">Nickname</strong></td>
-                    <td th:text="${jugador.nombre}">Nombre</td>
-                    <td th:text="${jugador.apellido}">Apellido</td>
-                    <td th:text="${jugador.rol}">Rol</td>
-                    <td class="actions">
-                        <a th:href="@{/jugadores/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Ver</a>
-                        <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                        <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Eliminar este jugador?')">Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Pestañas archivador por juego -->
+    <div th:if="${not #lists.isEmpty(jugadores)}" class="tabs-wrapper">
+
+        <div class="tabs-nav" id="tabsNav">
+            <button th:each="entry, iterStat : ${jugadoresPorJuego}"
+                    th:text="${entry.key}"
+                    th:attr="data-tab=${iterStat.index}"
+                    th:classappend="${iterStat.first} ? 'tab-btn active' : 'tab-btn'"
+                    class="tab-btn"
+                    type="button">Juego</button>
+        </div>
+
+        <div th:each="entry, iterStat : ${jugadoresPorJuego}"
+             th:attr="data-panel=${iterStat.index}"
+             th:classappend="${iterStat.first} ? 'tab-panel active' : 'tab-panel'"
+             class="tab-panel">
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nickname</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="jugador : ${entry.value}"
+                            th:attr="data-href=@{/jugadores/{id}(id=${jugador.id})}"
+                            class="row-link">
+                            <td>
+                                <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                                     th:src="@{/Imagenes/{img}(img=${jugador.foto})}"
+                                     class="img-thumb" alt="Foto jugador">
+                                <span th:unless="${jugador.foto != null and jugador.foto != ''}">—</span>
+                            </td>
+                            <td><strong th:text="${jugador.nickname}">Nickname</strong></td>
+                            <td th:text="${jugador.nombre}">Nombre</td>
+                            <td th:text="${jugador.apellido}">Apellido</td>
+                            <td th:text="${jugador.rol}">Rol</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(jugadores)}">
@@ -89,5 +107,6 @@
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>
 

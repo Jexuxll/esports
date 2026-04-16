@@ -11,6 +11,7 @@ public class Jugador {
     private String nombre;
     private String apellido;
     private String rol;
+    private String juego;
     private String foto;
     private int edad;
     private String nacionalidad;
@@ -20,16 +21,25 @@ public class Jugador {
     public Jugador() {
     }
 
-    public Jugador(int id, String nickname, String nombre, String apellido, String rol, String foto, int edad, String nacionalidad, Equipo equipo) {
+    public Jugador(int id, String nickname, String nombre, String apellido, String rol, String juego, String foto, int edad, String nacionalidad, Equipo equipo) {
         this.id = id;
         this.nickname = nickname;
         this.nombre = nombre;
         this.apellido = apellido;
         this.rol = rol;
+        this.juego = juego;
         this.foto = foto;
         this.edad = edad;
         this.nacionalidad = nacionalidad;
         this.equipo = equipo;
+    }
+
+    public String getJuego() {
+        return juego;
+    }
+
+    public void setJuego(String juego) {
+        this.juego = juego;
     }
 
     public int getEdad() {

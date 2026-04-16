@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}" class="active">Juegos</a></li> -->
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Juegos <span>Registrados</span></h1>
+        <a th:href="@{/juegos/nuevo}" class="btn btn-primary">+ Nuevo Juego</a>
+    </div>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(juegos)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Nombre del juego</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="juego : ${juegos}">
+                    <td>
+                        <img th:if="${juego.foto != null and juego.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${juego.foto})}"
+                             class="img-thumb" alt="Logo">
+                        <div th:unless="${juego.foto != null and juego.foto != ''}" class="no-img">—</div>
+                    </td>
+                    <td style="font-weight:700;" th:text="${juego.nombre}">Juego</td>
+                    <td class="actions">
+                        <a th:href="@{/juegos/editar/{id}(id=${juego.id})}" class="btn btn-secondary btn-sm">Editar</a>
+                        <a th:href="@{/juegos/eliminar/{id}(id=${juego.id})}" class="btn btn-danger btn-sm"
+                           data-confirm="¿Eliminar este juego? Se perderá la referencia en torneos y jugadores.">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(juegos)}">
+        <p>No hay juegos registrados aún.</p>
+        <a th:href="@{/juegos/nuevo}" class="btn btn-primary">Registrar primer juego</a>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/app.js}"></script>
+</html>

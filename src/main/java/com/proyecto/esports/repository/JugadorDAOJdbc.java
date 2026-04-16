@@ -28,7 +28,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
     
     @Override
     public void guardar(Jugador jugador) {
-        String sql = "INSERT INTO jugadores (nickname, nombre, apellido, rol, id_equipo, foto, edad, nacionalidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO jugadores (nickname, nombre, apellido, rol, juego, id_equipo, foto, edad, nacionalidad) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -36,10 +36,11 @@ public class JugadorDAOJdbc implements JugadorDAO {
             stmt.setString(2, jugador.getNombre());
             stmt.setString(3, jugador.getApellido());
             stmt.setString(4, jugador.getRol());
-            stmt.setInt(5, jugador.getEquipo().getId());
-            stmt.setString(6, jugador.getFoto());
-            stmt.setInt(7, jugador.getEdad());
-            stmt.setString(8, jugador.getNacionalidad());
+            stmt.setString(5, jugador.getJuego());
+            stmt.setInt(6, jugador.getEquipo().getId());
+            stmt.setString(7, jugador.getFoto());
+            stmt.setInt(8, jugador.getEdad());
+            stmt.setString(9, jugador.getNacionalidad());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -49,7 +50,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
     @Override
     public void actualizar(Jugador jugador) {
-        String sql = "UPDATE jugadores SET nickname = ?, nombre = ?, apellido = ?, rol = ?, id_equipo = ?, foto = ?, edad = ?, nacionalidad = ? WHERE id_jugador = ?";
+        String sql = "UPDATE jugadores SET nickname = ?, nombre = ?, apellido = ?, rol = ?, juego = ?, id_equipo = ?, foto = ?, edad = ?, nacionalidad = ? WHERE id_jugador = ?";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -57,11 +58,12 @@ public class JugadorDAOJdbc implements JugadorDAO {
             stmt.setString(2, jugador.getNombre());
             stmt.setString(3, jugador.getApellido());
             stmt.setString(4, jugador.getRol());
-            stmt.setInt(5, jugador.getEquipo().getId());
-            stmt.setString(6, jugador.getFoto());
-            stmt.setInt(7, jugador.getEdad());
-            stmt.setString(8, jugador.getNacionalidad());
-            stmt.setInt(9, jugador.getId());
+            stmt.setString(5, jugador.getJuego());
+            stmt.setInt(6, jugador.getEquipo().getId());
+            stmt.setString(7, jugador.getFoto());
+            stmt.setInt(8, jugador.getEdad());
+            stmt.setString(9, jugador.getNacionalidad());
+            stmt.setInt(10, jugador.getId());
 
             stmt.executeUpdate();
 
@@ -103,6 +105,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setNombre(rs.getString("nombre"));
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
+                jugador.setJuego(rs.getString("juego"));
                 jugador.setFoto(rs.getString("foto"));
                 jugador.setEdad(rs.getInt("edad"));
                 jugador.setNacionalidad(rs.getString("nacionalidad"));
@@ -137,6 +140,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setNombre(rs.getString("nombre"));
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
+                jugador.setJuego(rs.getString("juego"));
                 jugador.setFoto(rs.getString("foto"));
                 jugador.setEdad(rs.getInt("edad"));
                 jugador.setNacionalidad(rs.getString("nacionalidad"));
@@ -173,6 +177,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
                 jugador.setNombre(rs.getString("nombre"));
                 jugador.setApellido(rs.getString("apellido"));
                 jugador.setRol(rs.getString("rol"));
+                jugador.setJuego(rs.getString("juego"));
                 jugador.setFoto(rs.getString("foto"));
                 jugador.setEdad(rs.getInt("edad"));
                 jugador.setNacionalidad(rs.getString("nacionalidad"));

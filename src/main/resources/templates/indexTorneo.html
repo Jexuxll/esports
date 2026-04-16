@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -25,7 +26,8 @@
     </div>
 
     <div class="grid-cards" th:if="${not #lists.isEmpty(torneos)}">
-        <div class="card" th:each="torneo : ${torneos}">
+        <div class="card card-link" th:each="torneo : ${torneos}"
+             th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
             <img th:if="${torneo.foto != null and torneo.foto != ''}"
                  th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
                  class="card-img" alt="Foto torneo">
@@ -50,13 +52,6 @@
                     </span>
                 </div>
             </div>
-
-            <div class="card-actions">
-                <a th:href="@{/torneos/{id}(id=${torneo.id})}" class="btn btn-primary btn-sm">Ver</a>
-                <a th:href="@{/torneos/editar/{id}(id=${torneo.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                <a th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}" class="btn btn-danger btn-sm"
-                   onclick="return confirm('¿Eliminar este torneo?')">Eliminar</a>
-            </div>
         </div>
     </div>
 
@@ -67,4 +62,5 @@
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

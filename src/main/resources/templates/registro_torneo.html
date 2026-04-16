@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -37,8 +38,13 @@
 
             <div class="form-group">
                 <label for="juego">Juego</label>
-                <input type="text" id="juego" th:field="*{juego}" class="form-control"
-                       placeholder="Ej: League of Legends" required>
+                <select id="juego" th:field="*{juego}" class="form-control" required>
+                    <option value="">-- Selecciona un juego --</option>
+                    <option th:each="j : ${juegos}"
+                            th:value="${j.nombre}"
+                            th:text="${j.nombre}"
+                            th:selected="${torneo.juego == j.nombre}"></option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -83,4 +89,5 @@
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

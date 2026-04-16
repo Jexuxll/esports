@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${juego.id != 0} ? 'Editar Juego' : 'Nuevo Juego'">Juego - ESports Manager</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <ul class="nav-links">
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
+        <li><a th:href="@{/torneos}">Torneos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}" class="active">Juegos</a></li> -->
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="form-card">
+        <h2 th:text="${juego.id != 0} ? 'Editar Juego' : 'Nuevo Juego'">Juego</h2>
+
+        <form th:action="${juego.id != 0} ? @{/juegos/actualizar} : @{/juegos/guardar}"
+              th:object="${juego}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="form-group">
+                <label for="nombre">Nombre del juego</label>
+                <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                       placeholder="Ej: League of Legends" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fotoFile">Logo del juego</label>
+                <input type="file" id="fotoFile" name="fotoFile" class="form-control"
+                       accept="image/*">
+                <div th:if="${juego.foto != null and juego.foto != ''}" style="margin-top: 0.5rem;">
+                    <small style="color: var(--text-muted);">Logo actual:</small><br>
+                    <img th:src="@{/Imagenes/{f}(f=${juego.foto})}" class="img-thumb-lg" alt="Logo actual"
+                         style="margin-top:0.3rem;">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span th:text="${juego.id != 0} ? 'Guardar cambios' : 'Crear juego'">Guardar</span>
+                </button>
+                <a th:href="@{/juegos}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/app.js}"></script>
+</html>

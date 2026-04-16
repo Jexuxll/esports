@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.proyecto.esports.model.Jugador;
 import com.proyecto.esports.service.EquipoService;
+import com.proyecto.esports.service.JuegoService;
 import com.proyecto.esports.service.JugadorService;
 
 
@@ -35,11 +36,13 @@ import com.proyecto.esports.service.JugadorService;
 public class JugadorController {
     private final JugadorService jugadorService;
     private final EquipoService equipoService;
+    private final JuegoService juegoService;
 
     @Autowired
-    public JugadorController(JugadorService jugadorService, EquipoService equipoService) {
+    public JugadorController(JugadorService jugadorService, EquipoService equipoService, JuegoService juegoService) {
         this.jugadorService = jugadorService;
         this.equipoService = equipoService;
+        this.juegoService = juegoService;
     }
 
     @ModelAttribute("nacionalidades")
@@ -63,6 +66,7 @@ public class JugadorController {
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("jugador", new Jugador());
         model.addAttribute("equipos", equipoService.listarTodos());
+        model.addAttribute("juegos", juegoService.listarTodos());
         return "registro_jugador";
     }
 
@@ -83,7 +87,9 @@ public class JugadorController {
         }
     
         jugadorService.guardar(jugador);
-        return "redirect:/jugadores"; 
+        return jugador.getEquipo() != null
+            ? "redirect:/equipos/" + jugador.getEquipo().getId()
+            : "redirect:/jugadores";
     }
     
     @GetMapping("/jugadores/editar/{id}")
@@ -91,6 +97,7 @@ public class JugadorController {
         Jugador jugador = jugadorService.obtenerPorId(id);
         model.addAttribute("jugador", jugador);
         model.addAttribute("equipos", equipoService.listarTodos());
+        model.addAttribute("juegos", juegoService.listarTodos());
         return "registro_jugador";
     }
 
@@ -114,7 +121,7 @@ public class JugadorController {
         }
 
         jugadorService.actualizar(jugador);
-        return "redirect:/jugadores"; 
+        return "redirect:/jugadores/" + jugador.getId();
     }
 
     @GetMapping("/jugadores/eliminar/{id}")
