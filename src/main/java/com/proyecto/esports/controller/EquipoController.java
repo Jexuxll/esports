@@ -11,8 +11,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +59,7 @@ public class EquipoController {
     @GetMapping("/equipos")
     public String listarEquipos(Model model) {
         model.addAttribute("equipos", equipoService.listarTodos());
-        return "index"; 
+        return "indexEquipo"; 
     }
 
     @GetMapping("/equipos/nuevo")
@@ -118,7 +120,7 @@ public class EquipoController {
         }
 
         equipoService.actualizar(equipo);
-        return "redirect:/equipos"; 
+        return "redirect:/equipos/" + equipo.getId();
     }
 
     @GetMapping("/equipos/eliminar/{id}")
@@ -138,7 +140,15 @@ public class EquipoController {
     @GetMapping("/equipos/{id}")
     public String verDetalleEquipo(@PathVariable int id, Model model) {
         model.addAttribute("equipo", equipoService.obtenerPorId(id));
-        model.addAttribute("jugadores", jugadorService.listarPorEquipo(id));
+        List<com.proyecto.esports.model.Jugador> jugadores = jugadorService.listarPorEquipo(id);
+        Map<String, List<com.proyecto.esports.model.Jugador>> jugadoresPorJuego = jugadores.stream()
+            .collect(Collectors.groupingBy(
+                j -> j.getJuego() != null && !j.getJuego().isBlank() ? j.getJuego() : "Sin juego",
+                LinkedHashMap::new,
+                Collectors.toList()
+            ));
+        model.addAttribute("jugadores", jugadores);
+        model.addAttribute("jugadoresPorJuego", jugadoresPorJuego);
         return "detalle_equipo";
     }
 }

@@ -9,6 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +32,7 @@ import com.proyecto.esports.model.EquipoTorneo;
 import com.proyecto.esports.model.Torneo;
 import com.proyecto.esports.service.EquipoService;
 import com.proyecto.esports.service.EquipoTorneoService;
+import com.proyecto.esports.service.JuegoService;
 import com.proyecto.esports.service.PartidoService;
 import com.proyecto.esports.service.TorneoService;
 
@@ -35,13 +42,15 @@ public class TorneoController {
     private final EquipoTorneoService equipoTorneoService;
     private final EquipoService equipoService;
     private final PartidoService partidoService;
+    private final JuegoService juegoService;
 
     @Autowired
-    public TorneoController(TorneoService torneoService, EquipoTorneoService equipoTorneoService, EquipoService equipoService, PartidoService partidoService) {
+    public TorneoController(TorneoService torneoService, EquipoTorneoService equipoTorneoService, EquipoService equipoService, PartidoService partidoService, JuegoService juegoService) {
         this.torneoService = torneoService;
         this.equipoTorneoService = equipoTorneoService;
         this.equipoService = equipoService;
         this.partidoService = partidoService;
+        this.juegoService = juegoService;
     }
 
     @GetMapping("/torneos")
@@ -53,6 +62,7 @@ public class TorneoController {
     @GetMapping("/torneos/nuevo")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("torneo", new Torneo());
+        model.addAttribute("juegos", juegoService.listarTodos());
         return "registro_torneo";
     }
     
@@ -81,6 +91,7 @@ public class TorneoController {
     public String mostrarFormularioEdicion(@PathVariable int id, Model model) {
         Torneo torneo = torneoService.obtenerPorId(id);
         model.addAttribute("torneo", torneo);
+        model.addAttribute("juegos", juegoService.listarTodos());
         return "registro_torneo";
     }
 
@@ -111,7 +122,7 @@ public class TorneoController {
         }
 
         torneoService.actualizar(torneo);
-        return "redirect:/torneos";
+        return "redirect:/torneos/" + torneo.getId();
     }
 
     @GetMapping("/torneos/eliminar/{id}")
@@ -129,9 +140,40 @@ public class TorneoController {
 
     @GetMapping("/torneos/{id}")
     public String verDetalleTorneo(@PathVariable int id, Model model) {
+        List<com.proyecto.esports.model.Partido> partidos = partidoService.listarPorTorneo(id);
+
+        Map<String, List<com.proyecto.esports.model.Partido>> porRonda = partidos.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getRonda() != null ? p.getRonda() : "Sin ronda",
+                LinkedHashMap::new,
+                Collectors.toList()
+            ));
+
+        List<String> ordenRondas = Arrays.asList(
+            "fase de grupos", "grupos",
+            "ronda de 32", "ronda 32",
+            "ronda de 16", "octavos de final", "octavos",
+            "cuartos de final", "cuartos",
+            "semifinal", "semis", "semifinales",
+            "final", "gran final"
+        );
+        List<String> rondasOrdenadas = new ArrayList<>(porRonda.keySet());
+        rondasOrdenadas.sort((a, b) -> {
+            int ia = ordenRondas.indexOf(a.toLowerCase());
+            int ib = ordenRondas.indexOf(b.toLowerCase());
+            if (ia == -1) ia = Integer.MAX_VALUE;
+            if (ib == -1) ib = Integer.MAX_VALUE;
+            return Integer.compare(ia, ib);
+        });
+        Map<String, List<com.proyecto.esports.model.Partido>> partidosPorRonda = new LinkedHashMap<>();
+        for (String ronda : rondasOrdenadas) {
+            partidosPorRonda.put(ronda, porRonda.get(ronda));
+        }
+
         model.addAttribute("torneo", torneoService.obtenerPorId(id));
         model.addAttribute("equiposInscritos", equipoTorneoService.listarPorTorneo(id));
-        model.addAttribute("partidosTorneo", partidoService.listarPorTorneo(id));
+        model.addAttribute("partidosTorneo", partidos);
+        model.addAttribute("partidosPorRonda", partidosPorRonda);
         return "detalle_torneo";
     }
 

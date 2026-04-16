@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -23,8 +24,9 @@
     <div class="page-header">
         <h1 th:text="${torneo.nombre}">Nombre torneo</h1>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <a th:href="@{/torneos/{id}/inscribir(id=${torneo.id})}" class="btn btn-primary">Inscribir equipo</a>
-            <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear partido</a>
+            <a th:href="@{/torneos/editar/{id}(id=${torneo.id})}" class="btn btn-secondary">Editar torneo</a>
+            <a th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}" class="btn btn-danger"
+               data-confirm="¿Eliminar este torneo?">Eliminar torneo</a>
             <a th:href="@{/torneos}" class="btn btn-secondary">Volver</a>
         </div>
     </div>
@@ -51,7 +53,13 @@
             </span>
         </div>
     </div>
-
+    <div class="page-header">
+        <h2> </h2>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <a th:href="@{/torneos/{id}/inscribir(id=${torneo.id})}" class="btn btn-primary">Inscribir equipo</a>
+                <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear partido</a>
+        </div>
+    </div>
     <h2 style="margin-bottom:1rem;">Equipos <span>Inscritos</span></h2>
 
     <div class="table-wrapper" th:if="${not #lists.isEmpty(equiposInscritos)}">
@@ -63,11 +71,12 @@
                     <th>Tag</th>
                     <th>País</th>
                     <th>Fecha inscripción</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="et : ${equiposInscritos}">
+                <tr th:each="et : ${equiposInscritos}"
+                    th:attr="data-href=@{/equipos/{id}(id=${et.equipo.id})}"
+                    class="row-link">
                     <td>
                         <img th:if="${et.equipo.foto != null and et.equipo.foto != ''}"
                              th:src="@{/Imagenes/{img}(img=${et.equipo.foto})}"
@@ -78,9 +87,6 @@
                     <td><span class="team-tag" th:text="${et.equipo.tag}">TAG</span></td>
                     <td th:text="${et.equipo.pais}">País</td>
                     <td th:text="${et.fechaInscripcion}">Fecha</td>
-                    <td class="actions">
-                        <a th:href="@{/equipos/{id}(id=${et.equipo.id})}" class="btn btn-secondary btn-sm">Ver equipo</a>
-                    </td>
                 </tr>
             </tbody>
         </table>
@@ -90,49 +96,54 @@
         <p>No hay equipos inscritos en este torneo.</p>
     </div>
 
-    <h2 style="margin-top:2rem; margin-bottom:1rem;">Partidos <span>del Torneo</span></h2>
+    <h2 style="margin-top:2rem; margin-bottom:1.25rem;">Partidos <span>del Torneo</span></h2>
 
-    <div class="table-wrapper" th:if="${partidosTorneo != null and not #lists.isEmpty(partidosTorneo)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Ronda</th>
-                    <th>Local</th>
-                    <th>Visitante</th>
-                    <th>Marcador</th>
-                    <th>Ganador</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="p : ${partidosTorneo}">
-                    <td th:text="${p.fechaPartido != null ? #temporals.format(p.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
-                    <td th:text="${p.ronda}">Ronda</td>
-                    <td th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : '-'}">Local</td>
-                    <td th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : '-'}">Visitante</td>
-                    <td>
-                        <span th:text="${p.marcadorLocal != null ? p.marcadorLocal : '-'}">0</span>
-                        -
-                        <span th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">0</span>
-                    </td>
-                    <td th:text="${p.ganador != null ? p.ganador.nombre : '—'}">Ganador</td>
-                    <td class="actions">
-                        <a th:href="@{/partidos/{id}/editar(id=${p.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                        <a th:href="@{/partidos/{id}/eliminar(id=${p.id})}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Eliminar este partido?')">Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- Cuadro esquemático de partidos -->
+    <div th:if="${partidosPorRonda != null and not #maps.isEmpty(partidosPorRonda)}" class="bracket-wrapper">
+        <div th:each="rondaEntry : ${partidosPorRonda}" class="bracket-round">
+
+            <div class="bracket-round-label" th:text="${rondaEntry.key}">Ronda</div>
+
+            <div class="bracket-matches">
+                <div th:each="p : ${rondaEntry.value}" class="bracket-match">
+
+                    <div th:classappend="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id} ? 'bm-team bm-win' : 'bm-team'">
+                        <img th:if="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${p.equipoLocal.foto})}" class="bm-logo" alt="">
+                        <span th:unless="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}" class="bm-logo-ph">🛡</span>
+                        <span class="bm-name" th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : 'TBD'}">Local</span>
+                        <span class="bm-score" th:text="${p.marcadorLocal != null ? p.marcadorLocal : '-'}">-</span>
+                    </div>
+
+                    <div class="bm-sep"></div>
+
+                    <div th:classappend="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id} ? 'bm-team bm-win' : 'bm-team'">
+                        <img th:if="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${p.equipoVisitante.foto})}" class="bm-logo" alt="">
+                        <span th:unless="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}" class="bm-logo-ph">🛡</span>
+                        <span class="bm-name" th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+                        <span class="bm-score" th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">-</span>
+                    </div>
+
+                    <div class="bm-footer">
+                        <span class="bm-date" th:text="${p.fechaPartido != null ? #temporals.format(p.fechaPartido, 'dd/MM HH:mm') : ''}"></span>
+                        <div class="bm-actions">
+                            <a th:href="@{/partidos/editar/{id}(id=${p.id})}" class="btn btn-secondary btn-sm">✏</a>
+                            <a th:href="@{/partidos/eliminar/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
+                               data-confirm="¿Eliminar este partido?">✕</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="empty-state" th:if="${partidosTorneo == null or #lists.isEmpty(partidosTorneo)}">
+    <div class="empty-state" th:if="${partidosPorRonda == null or #maps.isEmpty(partidosPorRonda)}">
         <p>No hay partidos creados para este torneo.</p>
     </div>
 
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>
-

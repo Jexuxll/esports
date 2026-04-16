@@ -89,7 +89,9 @@ public class PartidoController {
             partido.setGanador(null);
         }
         partidoService.actualizar(partido);
-        return "redirect:/partidos";
+        return partido.getTorneo() != null
+            ? "redirect:/torneos/" + partido.getTorneo().getId()
+            : "redirect:/partidos";
     }
 
     @GetMapping("/partidos/eliminar/{id}")

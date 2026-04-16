@@ -9,12 +9,13 @@
 <body>
 
 <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li>
+        <!-- <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
 
@@ -56,7 +57,7 @@
                     <td class="actions">
                         <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>
                         <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}" class="btn btn-danger btn-sm"
-                           onclick="return confirm('¿Eliminar este jugador?')">Eliminar</a>
+                           data-confirm="¿Eliminar este jugador?">Eliminar</a>
                     </td>
                 </tr>
             </tbody>
@@ -70,4 +71,5 @@
 </div>
 
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

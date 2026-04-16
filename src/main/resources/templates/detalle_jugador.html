@@ -1,46 +1,123 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'Detalle Jugador - ' + ${jugador.nombre}">Detalle Jugador</title>
+    <title th:text="${jugador.nickname} + ' - ESports Manager'">Detalle Jugador</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
-    <nav>
-    <span class="nav-brand">E<span>Sports</span></span>
+
+<nav>
+    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
-        <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/equipos}">Equipos</a></li>
+        <!-- <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
+        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
     </ul>
 </nav>
+
 <div class="container">
+
     <div class="page-header">
-        <h1>Ficha <span th:text="${jugador.nickname}">Nickname</span></h1>
-        <a th:href="@{/equipos/{id}(id=${jugador.equipo.id})}" class="btn btn-secondary">← Volver</a>
-    </div>
-    <div class="form-card" style="display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
-        <div style ="display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap; max-width:100%; flex:1; justify-content:center; ">
-            <img th:if="${jugador.foto != null and jugador.foto != ''}"
-                th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
-                class="img-thumb-lg" alt="Foto jugador" style=" width:350px; height:350px; object-fit:cover; border-radius:8px;">
-            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                style=" width:150px; height:150px; display:flex; align-items:center; justify-content:center; font-size:5rem; background:var(--surface); border-radius:8px;">🎮</div>
+        <h1>Ficha <span th:text="${jugador.nickname}">de Jugador</span></h1>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-primary">✏️ Editar</a>
+            <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}"
+               class="btn btn-danger"
+               data-confirm="¿Eliminar este jugador?">🗑️ Eliminar</a>
+            <a th:href="@{/equipos/{id}(id=${jugador.equipo.id})}" class="btn btn-secondary">← Volver</a>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; gap:1rem; font-size:1.1rem; color:var(--text-primary); ">
-            <div><strong>Nickname:</strong> <span th:text="${jugador.nickname}">Nickname</span></div>
-            <div><strong>Nombre:</strong> <span th:text="${jugador.nombre}">Nombre</span></div>
-            <div><strong>Apellido:</strong> <span th:text="${jugador.apellido}">Apellido</span></div>
-            <div><strong>Rol:</strong> <span th:text="${jugador.rol}">Rol</span></div>
-            <div><strong>Edad:</strong> <span th:text="${jugador.edad}">Edad</span></div>
-            <div><strong>Nacionalidad:</strong> <span th:text="${jugador.nacionalidad}">Nacionalidad</span></div>
-            <div><strong>Equipo:</strong>
-                <a th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
-                   th:text="${jugador.equipo != null ? jugador.equipo.nombre : '—'}">Equipo</a>
+    </div>
+
+    <!-- Perfil del jugador -->
+    <div class="form-card" style="max-width:100%; display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan));"></div>
+
+        <!-- Foto -->
+        <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; flex-shrink:0;">
+            <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+                 alt="Foto jugador"
+                 style="width:360px; height:463px; object-fit:cover; border-radius:var(--radius); border:2px solid var(--accent); box-shadow:0 0 18px rgba(124,58,237,0.4);">
+            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
+                 style="width:360px; height:463px; border-radius:var(--radius); border:2px dashed var(--border); background:var(--bg-card-hover); display:flex; align-items:center; justify-content:center; font-size:4rem;">🖼️</div>
+        </div>
+
+        <!-- Info -->
+        <div style="flex:1; min-width:220px; display:flex; flex-direction:column; gap:0.6rem;">
+            <div>
+                <div style="font-size:2rem; font-weight:900; letter-spacing:-0.5px; line-height:1; color:var(--text-primary);" th:text="${jugador.nickname}">NICKNAME</div>
+                <div style="font-size:0.95rem; color:var(--text-secondary); margin-top:0.2rem;" th:text="${jugador.nombre} + ' ' + ${jugador.apellido}">Nombre Apellido</div>
+            </div>
+
+            <div style="height:2px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan), transparent); border-radius:2px; margin:0.2rem 0;"></div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.9rem 1.5rem;">
+                <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Rol</span>
+                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.rol}">—</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Edad</span>
+                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.edad} + ' años'">—</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Nacionalidad</span>
+                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.nacionalidad}">—</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.15rem;">
+                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Equipo</span>
+                    <span style="font-size:0.95rem; font-weight:600;">
+                        <a th:if="${jugador.equipo != null}"
+                           th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
+                           th:text="${jugador.equipo.nombre}">—</a>
+                        <span th:if="${jugador.equipo == null}" style="color:var(--text-primary);">—</span>
+                    </span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem;">
+                <span class="role-badge">🎯 <span th:text="${jugador.rol}">Rol</span></span>
+                <a th:if="${jugador.equipo != null}"
+                   th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
+                   class="player-team-link">
+                    🛡️ <span th:text="${jugador.equipo.nombre}">Equipo</span>
+                </a>
+                <span th:if="${jugador.equipo == null}" class="badge badge-default">Sin equipo</span>
+            </div>
+
+            <div style="height:1px; background:var(--border); margin:0.6rem 0;"></div>
+
+            <!-- Stats dentro de la tarjeta -->
+            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); font-weight:700; margin-bottom:0.6rem;">Estadísticas</div>
+            <div class="stats-grid" style="margin-bottom:0;">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-label">Rol</div>
+                    <div class="stat-value" th:text="${jugador.rol}">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎂</div>
+                    <div class="stat-label">Edad</div>
+                    <div class="stat-value" th:text="${jugador.edad} + ' años'">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-label">Nacionalidad</div>
+                    <div class="stat-value" th:text="${jugador.nacionalidad}">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛡️</div>
+                    <div class="stat-label">Equipo</div>
+                    <div class="stat-value" th:text="${jugador.equipo != null ? jugador.equipo.nombre : '—'}">—</div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 </body>
+<script th:src="@{/app.js}"></script>
 </html>

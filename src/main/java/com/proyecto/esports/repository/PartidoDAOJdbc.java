@@ -90,9 +90,9 @@ public class PartidoDAOJdbc implements PartidoDAO {
     private static final String SQL_SELECT =
         "SELECT p.*, " +
         "t.nombre AS torneo_nombre, " +
-        "el.nombre AS local_nombre, el.tag AS local_tag, " +
-        "ev.nombre AS visitante_nombre, ev.tag AS visitante_tag, " +
-        "eg.nombre AS ganador_nombre, eg.tag AS ganador_tag " +
+        "el.nombre AS local_nombre, el.tag AS local_tag, el.foto AS local_foto, " +
+        "ev.nombre AS visitante_nombre, ev.tag AS visitante_tag, ev.foto AS visitante_foto, " +
+        "eg.nombre AS ganador_nombre, eg.tag AS ganador_tag, eg.foto AS ganador_foto " +
         "FROM partidos p " +
         "LEFT JOIN torneos t ON p.id_torneo = t.id_torneo " +
         "LEFT JOIN equipos el ON p.id_equipo_local = el.id_equipo " +
@@ -155,6 +155,7 @@ public class PartidoDAOJdbc implements PartidoDAO {
         local.setId(rs.getInt("id_equipo_local"));
         local.setNombre(rs.getString("local_nombre"));
         local.setTag(rs.getString("local_tag"));
+        local.setFoto(rs.getString("local_foto"));
         partido.setEquipoLocal(local);
 
         // Equipo visitante
@@ -162,6 +163,7 @@ public class PartidoDAOJdbc implements PartidoDAO {
         visitante.setId(rs.getInt("id_equipo_visitante"));
         visitante.setNombre(rs.getString("visitante_nombre"));
         visitante.setTag(rs.getString("visitante_tag"));
+        visitante.setFoto(rs.getString("visitante_foto"));
         partido.setEquipoVisitante(visitante);
 
         // Fecha
@@ -179,6 +181,7 @@ public class PartidoDAOJdbc implements PartidoDAO {
             ganador.setId(ganadorId);
             ganador.setNombre(rs.getString("ganador_nombre"));
             ganador.setTag(rs.getString("ganador_tag"));
+            ganador.setFoto(rs.getString("ganador_foto"));
             partido.setGanador(ganador);
         }
 
