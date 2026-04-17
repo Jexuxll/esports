@@ -301,7 +301,7 @@ select.form-control option {
 .grid-cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.2rem;
+    gap: 1.5rem;
 }
 
 .card {
@@ -335,6 +335,42 @@ select.form-control option {
     justify-content: center;
     color: var(--text-muted);
     font-size: 2rem;
+}
+
+/* ---- Póster jugadores ---- */
+.card--poster-jugador {
+    display: flex;
+    flex-direction: column;
+}
+
+.card--poster-jugador .card-img,
+.card--poster-jugador .card-img-placeholder {
+    height: 420px;
+}
+
+/* ---- Póster equipos ---- */
+.card--poster-equipo {
+    display: flex;
+    flex-direction: column;
+}
+
+.card--poster-equipo .card-img,
+.card--poster-equipo .card-img-placeholder {
+    height: 290px;
+}
+
+.card-poster-title {
+    width: 100%;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-body {
@@ -833,25 +869,29 @@ tr.row-link:hover {
     margin-top: 0.5rem;
 }
 
+.tabs-wrapper--jugadores {
+    width: min(1450px, calc(100vw - 3rem));
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
 .tabs-nav {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
-    border-bottom: 2px solid var(--accent);
     margin-bottom: 0;
 }
 
 .tab-btn {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-bottom: none;
     color: var(--text-muted);
     cursor: pointer;
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     padding: 0.5rem 1.2rem;
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px;
     transition: background 0.15s, color 0.15s;
     position: relative;
     bottom: -2px;
@@ -871,15 +911,22 @@ tr.row-link:hover {
 
 .tab-panel {
     display: none;
-    border: 1px solid var(--accent);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 1.25rem;
-    background: var(--bg-card);
+    padding: 1.25rem 0;
+    background: transparent;
 }
 
 .tab-panel.active {
     display: block;
+}
+
+.tab-panel--jugadores.active {
+    width: 100%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.tab-panel--jugadores .grid-cards {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 /* ---- Home page ---- */
@@ -1165,44 +1212,79 @@ tr.row-link:hover {
 .cal-ev {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     background: var(--bg-secondary);
-    border-radius: 4px;
-    padding: 2px 4px;
+    border-radius: 6px;
+    padding: 3px 4px;
+}
+
+.cal-ev-team {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.cal-ev-team--right {
+    justify-content: flex-end;
 }
 
 .cal-ev-logo {
     width: 20px;
     height: 20px;
-    object-fit: contain;
-    border-radius: 3px;
+    object-fit: cover;
+    border-radius: 5px;
     background: var(--bg-card);
     flex-shrink: 0;
 }
 
-.cal-ev-logo-ph {
-    font-size: 0.85rem;
-    width: 20px;
-    height: 20px;
+.cal-logo-ph {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    line-height: 1;
+}
+
+.cal-ev-logo.cal-logo-ph {
+    font-size: 0.9rem;
+    width: 20px;
+    height: 20px;
+}
+
+.cal-panel-logo.cal-logo-ph {
+    width: 100%;
+    height: 100%;
+    font-size: 1.8rem;
+}
+
+.cal-ev-tag {
+    font-size: 0.53rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cal-ev-vs {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 700;
     color: var(--text-muted);
-    flex: 1;
+    flex: 0 0 auto;
+    min-width: 22px;
     text-align: center;
 }
 
 .cal-ev-score {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 800;
     color: var(--success);
-    flex: 1;
+    flex: 0 0 auto;
+    min-width: 28px;
     text-align: center;
 }
 
@@ -1329,9 +1411,6 @@ tr.row-link:hover {
 .cal-panel-logo-wrap {
     width: 64px;
     height: 64px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1345,7 +1424,6 @@ tr.row-link:hover {
     padding: 5px;
 }
 
-.cal-panel-logo-ph { font-size: 1.8rem; line-height: 1; }
 
 .cal-panel-nombre {
     font-size: 0.75rem;
@@ -1430,7 +1508,11 @@ tr.row-link:hover {
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
     .hero { padding: 3rem 1rem 2rem; }
     .cal-cell { min-height: 64px; padding: 0.25rem; }
+    .cal-ev { gap: 2px; padding: 2px 3px; }
     .cal-ev-logo { width: 16px; height: 16px; }
+    .cal-ev-tag { font-size: 0.48rem; }
+    .cal-ev-vs { min-width: 18px; }
+    .cal-ev-score { min-width: 24px; }
     .cal-modal-box { max-width: 100%; }
     .cal-modal-logo-wrap { width: 48px; height: 48px; }
     .cal-modal-nombre { font-size: 0.7rem; }

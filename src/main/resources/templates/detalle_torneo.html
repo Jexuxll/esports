@@ -11,6 +11,7 @@
 <nav>
     <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
     <ul class="nav-links">
+        <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
         <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
@@ -62,34 +63,19 @@
     </div>
     <h2 style="margin-bottom:1rem;">Equipos <span>Inscritos</span></h2>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(equiposInscritos)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Logo</th>
-                    <th>Nombre</th>
-                    <th>Tag</th>
-                    <th>País</th>
-                    <th>Fecha inscripción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="et : ${equiposInscritos}"
-                    th:attr="data-href=@{/equipos/{id}(id=${et.equipo.id})}"
-                    class="row-link">
-                    <td>
-                        <img th:if="${et.equipo.foto != null and et.equipo.foto != ''}"
-                             th:src="@{/Imagenes/{img}(img=${et.equipo.foto})}"
-                             class="img-thumb" alt="Logo equipo">
-                        <span th:unless="${et.equipo.foto != null and et.equipo.foto != ''}">—</span>
-                    </td>
-                    <td th:text="${et.equipo.nombre}">Nombre</td>
-                    <td><span class="team-tag" th:text="${et.equipo.tag}">TAG</span></td>
-                    <td th:text="${et.equipo.pais}">País</td>
-                    <td th:text="${et.fechaInscripcion}">Fecha</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="grid-cards" th:if="${not #lists.isEmpty(equiposInscritos)}">
+        <div th:each="et : ${equiposInscritos}"
+             class="card card-link card--poster-equipo"
+             th:attr="data-href=@{/equipos/{id}(id=${et.equipo.id})}">
+
+            <div class="card-poster-title" th:text="${et.equipo.nombre}">Nombre</div>
+
+            <img th:if="${et.equipo.foto != null and et.equipo.foto != ''}"
+                 th:src="@{/Imagenes/{img}(img=${et.equipo.foto})}"
+                 class="card-img" alt="Logo equipo">
+            <div th:unless="${et.equipo.foto != null and et.equipo.foto != ''}"
+                 class="card-img-placeholder">🛡️</div>
+        </div>
     </div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(equiposInscritos)}">
