@@ -108,6 +108,29 @@ window.addEventListener('resize', drawBracketLines);
     var viewMonth = today.getMonth();
     var selectedCell = null;
 
+    function escapeHtml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function teamTag(tag) {
+        var cleanTag = String(tag || '').trim();
+        return cleanTag || 'TEAM';
+    }
+
+    function teamLogo(foto, tag, className, altText) {
+        var alt = escapeHtml(altText || ('Logo de ' + teamTag(tag)));
+        if (!foto) {
+            return '<span class="' + className + ' cal-logo-ph" title="' + alt + '">🛡️</span>';
+        }
+
+        return '<img src="/Imagenes/' + foto + '" class="' + className + '" alt="' + alt + '" onerror="this.onerror=null;this.outerHTML=\'<span class=\\\'' + className + ' cal-logo-ph\\\'>\uD83D\uDEE1\uFE0F</span>\';">';
+    }
+
     function buildIndex(data) {
         var idx = {};
         data.forEach(function (p) {
@@ -118,14 +141,12 @@ window.addEventListener('resize', drawBracketLines);
         return idx;
     }
 
-    function logoSmall(foto, tag) {
-        if (foto) return '<img src="/Imagenes/' + foto + '" class="cal-ev-logo" alt="' + tag + '" onerror="this.style.display=\'none\'">';
-        return '<span class="cal-ev-logo-ph">🛡</span>';
+    function logoSmall(foto, tag, nombre) {
+        return teamLogo(foto, tag, 'cal-ev-logo', nombre || tag);
     }
 
-    function logoBig(foto, tag) {
-        if (foto) return '<img src="/Imagenes/' + foto + '" class="cal-panel-logo" alt="' + tag + '" onerror="this.style.display=\'none\'">';
-        return '<span class="cal-panel-logo-ph">🛡️</span>';
+    function logoBig(foto, tag, nombre) {
+        return teamLogo(foto, tag, 'cal-panel-logo', nombre || tag);
     }
 
     function renderCalendar() {
@@ -169,7 +190,17 @@ window.addEventListener('resize', drawBracketLines);
                 var mid = hasScore
                     ? '<span class="cal-ev-score">' + p.marcadorLocal + '-' + p.marcadorVisitante + '</span>'
                     : '<span class="cal-ev-vs">vs</span>';
-                html += '<div class="cal-ev">' + logoSmall(p.localFoto, p.localTag) + mid + logoSmall(p.visitanteFoto, p.visitanteTag) + '</div>';
+                html += '<div class="cal-ev">'
+                    + '<div class="cal-ev-team">'
+                    + logoSmall(p.localFoto, p.localTag, p.localNombre)
+                    + '<span class="cal-ev-tag">' + escapeHtml(teamTag(p.localTag)) + '</span>'
+                    + '</div>'
+                    + mid
+                    + '<div class="cal-ev-team cal-ev-team--right">'
+                    + '<span class="cal-ev-tag">' + escapeHtml(teamTag(p.visitanteTag)) + '</span>'
+                    + logoSmall(p.visitanteFoto, p.visitanteTag, p.visitanteNombre)
+                    + '</div>'
+                    + '</div>';
             });
 
             if (partidos.length > 2) {
@@ -208,25 +239,23 @@ window.addEventListener('resize', drawBracketLines);
             var hasScore = p.marcadorLocal !== null;
             var center = hasScore
                 ? '<div class="cal-panel-score"><span class="cal-panel-score-num">' + p.marcadorLocal + '</span><span class="cal-panel-score-sep">-</span><span class="cal-panel-score-num">' + p.marcadorVisitante + '</span></div>'
-                : '<div class="cal-panel-vs">VS</div><div class="cal-panel-hora">' + p.hora + '</div>';
-            var winner = p.ganador ? '<div class="cal-panel-winner">🏆 ' + p.ganador + '</div>' : '';
+                : '<div class="cal-panel-vs">VS</div><div class="cal-panel-hora">' + escapeHtml(p.hora) + '</div>';
+            var winner = p.ganador ? '<div class="cal-panel-winner">🏆 ' + escapeHtml(p.ganador) + '</div>' : '';
 
             return '<div class="cal-panel-card' + (hasScore ? ' cal-panel-card--done' : '') + '">'
                 + '<div class="cal-panel-meta">'
-                +   '<span class="cal-panel-torneo">' + p.torneo + '</span>'
-                +   (p.ronda ? '<span class="cal-panel-ronda">' + p.ronda + '</span>' : '')
+                +   '<span class="cal-panel-torneo">' + escapeHtml(p.torneo) + '</span>'
+                +   (p.ronda ? '<span class="cal-panel-ronda">' + escapeHtml(p.ronda) + '</span>' : '')
                 + '</div>'
                 + '<div class="cal-panel-match">'
                 +   '<div class="cal-panel-team">'
-                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.localFoto, p.localTag) + '</div>'
-                +     '<span class="cal-panel-nombre">' + p.localNombre + '</span>'
-                +     '<span class="cal-panel-tag">' + p.localTag + '</span>'
+                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.localFoto, p.localTag, p.localNombre) + '</div>'
+                +     '<span class="cal-panel-nombre">' + escapeHtml(teamTag(p.localTag)) + '</span>'
                 +   '</div>'
                 +   '<div class="cal-panel-center">' + center + winner + '</div>'
                 +   '<div class="cal-panel-team">'
-                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.visitanteFoto, p.visitanteTag) + '</div>'
-                +     '<span class="cal-panel-nombre">' + p.visitanteNombre + '</span>'
-                +     '<span class="cal-panel-tag">' + p.visitanteTag + '</span>'
+                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.visitanteFoto, p.visitanteTag, p.visitanteNombre) + '</div>'
+                +     '<span class="cal-panel-nombre">' + escapeHtml(teamTag(p.visitanteTag)) + '</span>'
                 +   '</div>'
                 + '</div>'
                 + '</div>';
