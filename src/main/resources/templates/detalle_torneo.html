@@ -22,46 +22,67 @@
 
 <div class="container">
 
-    <div class="page-header">
-        <h1 th:text="${torneo.nombre}">Nombre torneo</h1>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <a th:href="@{/torneos/editar/{id}(id=${torneo.id})}" class="btn btn-secondary">Editar torneo</a>
-            <a th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}" class="btn btn-danger"
-               data-confirm="¿Eliminar este torneo?">Eliminar torneo</a>
-            <a th:href="@{/torneos}" class="btn btn-secondary">Volver</a>
-        </div>
+    <!-- BOTONES -->
+    <div class="torneo-actions">
+        <a th:href="@{/torneos/editar/{id}(id=${torneo.id})}" class="btn btn-secondary">Editar</a>
+        <a th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}" class="btn btn-danger"
+           data-confirm="¿Eliminar este torneo?">Eliminar</a>
+        <a th:href="@{/torneos}" class="btn btn-secondary">← Volver</a>
     </div>
 
-    <div class="form-card" style="margin-bottom: 2rem; display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap; max-width:100%;">
-        <img th:if="${torneo.foto != null and torneo.foto != ''}"
-             th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-             class="img-thumb-lg" alt="Logo torneo" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
-        <div th:unless="${torneo.foto != null and torneo.foto != ''}"
-             style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--bg-secondary); border-radius:8px;">🏆</div>
-        <div style="flex:1;">
-            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
-                🎮 <strong th:text="${torneo.juego}">Juego</strong>
-            </p>
-            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
-                📅 <span th:text="${torneo.fechaInicio}">Inicio</span>
-                → <span th:text="${torneo.fechaFin}">Fin</span>
-            </p>
-            <span th:switch="${torneo.estado}">
-                <span th:case="'Activo'" class="badge badge-success">Activo</span>
-                <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
-                <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
-            </span>
+    <!-- BANNER TORNEO -->
+    <div class="torneo-banner">
+        <div class="torneo-banner__layout">
+
+            <!-- Izquierda: juego (arriba) + inicio (abajo) -->
+            <div class="torneo-banner__side torneo-banner__side--left">
+                <div>
+                    <div class="torneo-banner__side-label">Juego</div>
+                    <span>🎮 <strong th:text="${torneo.juego}">Juego</strong></span>
+                </div>
+                <div>
+                    <div class="torneo-banner__side-label">Inicio</div>
+                    <span class="torneo-banner__date">📅 <span th:text="${torneo.fechaInicio}">Inicio</span></span>
+                </div>
+            </div>
+
+            <!-- Centro: solo logo -->
+            <div class="torneo-banner__center">
+                <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                     alt="Logo torneo"
+                     class="torneo-banner__logo">
+                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+                     class="torneo-banner__placeholder">🏆</div>
+            </div>
+
+            <!-- Derecha: estado (arriba) + fin (abajo) -->
+            <div class="torneo-banner__side torneo-banner__side--right">
+                <div>
+                    <div class="torneo-banner__side-label">Estado</div>
+                    <span th:switch="${torneo.estado}">
+                        <span th:case="'Activo'" class="badge badge-success">Activo</span>
+                        <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
+                        <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                        <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+                    </span>
+                </div>
+                <div>
+                    <div class="torneo-banner__side-label">Fin</div>
+                    <span class="torneo-banner__date">🏁 <span th:text="${torneo.fechaFin}">Fin</span></span>
+                </div>
+            </div>
+
         </div>
+        <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
     </div>
     <div class="page-header">
-        <h2> </h2>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                <a th:href="@{/torneos/{id}/inscribir(id=${torneo.id})}" class="btn btn-primary">Inscribir equipo</a>
-                <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear partido</a>
+        <h2 style="margin-bottom:1rem; margin-top:1.5rem;">Equipos <span>Inscritos</span></h2>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+            <a th:href="@{/torneos/{id}/inscribir(id=${torneo.id})}" class="btn btn-primary">Inscribir equipo</a>
+            <a th:href="@{/torneos/{id}/partidos/nuevo(id=${torneo.id})}" class="btn btn-success">Crear partido</a>
         </div>
     </div>
-    <h2 style="margin-bottom:1rem;">Equipos <span>Inscritos</span></h2>
 
     <div class="grid-cards" th:if="${not #lists.isEmpty(equiposInscritos)}">
         <div th:each="et : ${equiposInscritos}"
