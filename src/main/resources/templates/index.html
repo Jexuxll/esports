@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,15 @@
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
         <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <form th:action="@{/admin/logout}" method="post" style="display:contents;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-secondary">Salir Admin</button>
+            </form>
+        </li>
     </ul>
 </nav>
 
@@ -24,7 +33,7 @@
 
     <!-- Hero -->
     <div class="hero">
-        <div class="hero-eyebrow">⚡ ESports Manager</div>
+        <div class="hero-eyebrow">ESPORTS_MANAGER · ONLINE</div>
         <h1 class="hero-title">
             Gestiona tu <span>universo</span><br>competitivo
         </h1>
@@ -41,24 +50,20 @@
     <!-- Stats bar -->
     <div class="stats-bar">
         <div class="stat-item">
-            <div class="stat-item-icon">🛡️</div>
-            <div class="stat-item-number" th:text="${totalEquipos}">0</div>
             <div class="stat-item-label">Equipos</div>
+            <div class="stat-item-number" th:text="${totalEquipos}">0</div>
         </div>
         <div class="stat-item">
-            <div class="stat-item-icon">🎮</div>
-            <div class="stat-item-number" th:text="${totalJugadores}">0</div>
             <div class="stat-item-label">Jugadores</div>
+            <div class="stat-item-number" th:text="${totalJugadores}">0</div>
         </div>
         <div class="stat-item">
-            <div class="stat-item-icon">🏆</div>
-            <div class="stat-item-number" th:text="${totalTorneos}">0</div>
             <div class="stat-item-label">Torneos</div>
+            <div class="stat-item-number" th:text="${totalTorneos}">0</div>
         </div>
         <div class="stat-item">
-            <div class="stat-item-icon">⚔️</div>
-            <div class="stat-item-number" th:text="${totalPartidos}">0</div>
             <div class="stat-item-label">Partidos</div>
+            <div class="stat-item-number" th:text="${totalPartidos}">0</div>
         </div>
     </div>
 

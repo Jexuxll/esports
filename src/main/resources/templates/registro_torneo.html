@@ -21,8 +21,17 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Tournament editor</div>
+            <h1 th:text="${torneo.id != 0} ? 'Editar Torneo' : 'Nuevo Torneo'">Torneo</h1>
+            <p class="page-lead">Configura la identidad del torneo, su juego, ventanas temporales y estado operativo dentro del circuito.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2 th:text="${torneo.id != 0} ? 'Editar Torneo' : 'Nuevo Torneo'">Torneo</h2>
+        <p class="form-intro">Esta ficha define el torneo antes de inscribir equipos y generar brackets o partidos.</p>
 
         <form th:action="${torneo.id != 0} ? @{/torneos/actualizar} : @{/torneos/guardar}"
               th:object="${torneo}"
@@ -72,8 +81,8 @@
                 <label for="fotoFile">Imagen del torneo</label>
                 <input type="file" id="fotoFile" name="fotoFile" class="form-control"
                        accept="image/*">
-                <div th:if="${torneo.foto != null and torneo.foto != ''}" style="margin-top: 0.5rem;">
-                    <small style="color: var(--text-muted);">Imagen actual:</small><br>
+                <div th:if="${torneo.foto != null and torneo.foto != ''}" class="current-preview">
+                    <small>Imagen actual</small><br>
                     <img th:src="@{/Imagenes/{f}(f=${torneo.foto})}" class="img-thumb-lg" alt="Imagen actual"
                          style="margin-top:0.3rem;">
                 </div>

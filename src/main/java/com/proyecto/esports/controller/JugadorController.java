@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.proyecto.esports.model.Equipo;
 import com.proyecto.esports.model.Jugador;
 import com.proyecto.esports.service.EquipoService;
 import com.proyecto.esports.service.JuegoService;
@@ -63,9 +64,23 @@ public class JugadorController {
     }
 
     @GetMapping("/jugadores/nuevo")
-    public String mostrarFormularioRegistro(Model model) {
-        model.addAttribute("jugador", new Jugador());
-        model.addAttribute("equipos", equipoService.listarTodos());
+    public String mostrarFormularioRegistro(@RequestParam(name = "equipoId", required = false) Integer equipoId,
+                                            Model model) {
+        Jugador jugador = new Jugador();
+        Equipo equipoSeleccionado = null;
+
+        if (equipoId != null) {
+            equipoSeleccionado = equipoService.obtenerPorId(equipoId);
+            if (equipoSeleccionado != null) {
+                jugador.setEquipo(equipoSeleccionado);
+            }
+        }
+
+        model.addAttribute("jugador", jugador);
+        model.addAttribute("equipoSeleccionado", equipoSeleccionado);
+        if (equipoSeleccionado == null) {
+            model.addAttribute("equipos", equipoService.listarTodos());
+        }
         model.addAttribute("juegos", juegoService.listarTodos());
         return "registro_jugador";
     }

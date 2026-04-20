@@ -165,7 +165,16 @@ public class EquipoController {
                       || (p.getEquipoVisitante() != null && p.getEquipoVisitante().getId() == id))
             .sorted(Comparator.comparing(Partido::getFechaPartido, Comparator.nullsLast(Comparator.reverseOrder())))
             .collect(Collectors.toList());
+        Map<String, List<Partido>> partidosPorTorneo = partidosEquipo.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getTorneo() != null && p.getTorneo().getNombre() != null && !p.getTorneo().getNombre().isBlank()
+                    ? p.getTorneo().getNombre()
+                    : "Sin torneo",
+                LinkedHashMap::new,
+                Collectors.toList()
+            ));
         model.addAttribute("partidosEquipo", partidosEquipo);
+        model.addAttribute("partidosPorTorneo", partidosPorTorneo);
 
         return "detalle_equipo";
     }
