@@ -21,10 +21,18 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Roster injection</div>
+            <h1>Inscribir Equipo</h1>
+            <p class="page-lead">Añade un roster al cuadro competitivo del torneo desde una interfaz más consistente con el resto del sistema.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2>Inscribir Equipo</h2>
 
-        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        <p class="form-note">
             Torneo: <strong th:text="${torneo.nombre}">Nombre torneo</strong>
         </p>
 

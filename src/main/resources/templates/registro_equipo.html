@@ -21,8 +21,17 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Equipo editor</div>
+            <h1 th:text="${equipo.id != 0} ? 'Editar Equipo' : 'Nuevo Equipo'">Equipo</h1>
+            <p class="page-lead">Define la identidad competitiva del equipo, su tag y su país con una ficha más limpia y consistente con el resto del sistema.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2 th:text="${equipo.id != 0} ? 'Editar Equipo' : 'Nuevo Equipo'">Equipo</h2>
+        <p class="form-intro">Completa la base visual y administrativa del roster antes de empezar a añadir jugadores o inscribirlo en torneos.</p>
 
         <form th:action="${equipo.id != 0} ? @{/equipos/actualizar} : @{/equipos/guardar}"
               th:object="${equipo}"
@@ -56,8 +65,8 @@
                 <label for="logoFile">Logo del equipo</label>
                 <input type="file" id="logoFile" name="logoFile" class="form-control"
                        accept="image/*">
-                <div th:if="${equipo.foto != null and equipo.foto != ''}" style="margin-top: 0.5rem;">
-                    <small style="color: var(--text-muted);">Logo actual:</small><br>
+                <div th:if="${equipo.foto != null and equipo.foto != ''}" class="current-preview">
+                    <small>Logo actual</small><br>
                     <img th:src="@{/Imagenes/{f}(f=${equipo.foto})}" class="img-thumb-lg" alt="Logo actual"
                          style="margin-top:0.3rem;">
                 </div>

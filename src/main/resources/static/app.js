@@ -1,5 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // ---- Botones volver a página previa (con fallback al href) ----
+    document.querySelectorAll('.btn-back').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            var ref = document.referrer || '';
+            var sameOrigin = ref && ref.indexOf(window.location.origin) === 0;
+            var differentPage = ref && ref !== window.location.href;
+
+            if (sameOrigin && differentPage && window.history.length > 1) {
+                e.preventDefault();
+                window.history.back();
+            }
+        });
+    });
+
     // ---- Filas y cards clicables (data-href) ----
     document.querySelectorAll('[data-href]').forEach(function (el) {
         el.addEventListener('click', function () {
@@ -36,6 +50,41 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('active');
             document.querySelector('.tab-panel[data-panel="' + idx + '"]').classList.add('active');
         });
+    });
+
+    // ---- Carrusel manual por torneo (detalle equipo) ----
+    document.querySelectorAll('[data-carousel]').forEach(function (carousel) {
+        var slides = Array.from(carousel.querySelectorAll('.match-carousel-slide'));
+        var btnPrev = carousel.querySelector('[data-carousel-prev]');
+        var btnNext = carousel.querySelector('[data-carousel-next]');
+        var title = carousel.querySelector('[data-carousel-title]');
+        if (!slides.length || !btnPrev || !btnNext || !title) return;
+
+        var index = slides.findIndex(function (s) { return s.classList.contains('active'); });
+        if (index < 0) index = 0;
+
+        function renderCarousel() {
+            slides.forEach(function (slide, i) {
+                slide.classList.toggle('active', i === index);
+            });
+
+            var torneo = slides[index].dataset.carouselTorneo || 'Torneo';
+            title.textContent = torneo + ' (' + (index + 1) + '/' + slides.length + ')';
+            btnPrev.disabled = slides.length <= 1;
+            btnNext.disabled = slides.length <= 1;
+        }
+
+        btnPrev.addEventListener('click', function () {
+            index = (index - 1 + slides.length) % slides.length;
+            renderCarousel();
+        });
+
+        btnNext.addEventListener('click', function () {
+            index = (index + 1) % slides.length;
+            renderCarousel();
+        });
+
+        renderCarousel();
     });
 
     // ---- Cuadro bracket: líneas conectoras SVG ----

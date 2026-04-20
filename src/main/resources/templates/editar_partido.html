@@ -21,8 +21,17 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Match control</div>
+            <h1>Editar Partido</h1>
+            <p class="page-lead">Ajusta enfrentamiento, calendario y resultado desde una vista más técnica y legible.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2>Editar Partido</h2>
+        <p class="form-intro">Aquí cierras el partido: puedes corregir datos base, cargar el marcador y fijar el ganador con el mismo patrón visual del resto del sistema.</p>
 
         <form th:action="@{/partidos/actualizar}" th:object="${partido}" method="post">
 
@@ -74,11 +83,10 @@
                        class="form-control">
             </div>
 
-            <div style="border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1.2rem;">
-                <p style="font-size:0.8rem; color:var(--accent-light); font-weight:700; text-transform:uppercase;
-                           letter-spacing:0.08em; margin-bottom: 0.8rem;">Resultado</p>
+            <div class="form-segment">
+                <p class="form-segment-title">Resultado</p>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap: 1rem;">
+                <div class="form-grid-2">
                     <div class="form-group" style="margin:0">
                         <label for="marcadorLocal">Marcador local</label>
                         <input type="number" id="marcadorLocal" th:field="*{marcadorLocal}"

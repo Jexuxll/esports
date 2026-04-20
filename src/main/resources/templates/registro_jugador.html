@@ -21,8 +21,17 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Player editor</div>
+            <h1 th:text="${jugador.id != 0} ? 'Editar Jugador' : 'Nuevo Jugador'">Jugador</h1>
+            <p class="page-lead">Construye el perfil competitivo del jugador con identidad visual, rol y relación clara con el equipo y el juego.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2 th:text="${jugador.id != 0} ? 'Editar Jugador' : 'Nuevo Jugador'">Jugador</h2>
+        <p class="form-intro">Mantén la ficha completa y coherente: nickname, datos personales, rol principal, juego y vinculación de roster.</p>
 
         <form th:action="${jugador.id != 0} ? @{/jugadores/actualizar} : @{/jugadores/guardar}"
               th:object="${jugador}"
@@ -83,7 +92,15 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" th:if="${equipoSeleccionado != null}">
+                <label>Equipo</label>
+                <input type="hidden" name="equipo.id" th:value="${equipoSeleccionado.id}">
+                <input type="text" class="form-control"
+                       th:value="${equipoSeleccionado.nombre + ' [' + equipoSeleccionado.tag + ']'}"
+                       readonly>
+            </div>
+
+            <div class="form-group" th:if="${equipoSeleccionado == null}">
                 <label for="equipoId">Equipo</label>
                 <select id="equipoId" name="equipo.id" class="form-control" required>
                     <option value="">-- Selecciona un equipo --</option>
@@ -99,8 +116,8 @@
                 <label for="fotoFile">Foto del jugador</label>
                 <input type="file" id="fotoFile" name="fotoFile" class="form-control"
                        accept="image/*">
-                <div th:if="${jugador.foto != null and jugador.foto != ''}" style="margin-top: 0.5rem;">
-                    <small style="color: var(--text-muted);">Foto actual:</small><br>
+                <div th:if="${jugador.foto != null and jugador.foto != ''}" class="current-preview">
+                    <small>Foto actual</small><br>
                     <img th:src="@{/Imagenes/{f}(f=${jugador.foto})}" class="img-thumb-lg" alt="Foto actual"
                          style="margin-top:0.3rem;">
                 </div>

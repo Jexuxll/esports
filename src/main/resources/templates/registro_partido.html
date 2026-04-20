@@ -21,8 +21,17 @@
 </nav>
 
 <div class="container">
+    <div class="page-header page-header--stack">
+        <div>
+            <div class="page-kicker">Match builder</div>
+            <h1>Nuevo Partido</h1>
+            <p class="page-lead">Programa un enfrentamiento dentro de la estructura del torneo y deja preparada la ruta para registrar su resultado después.</p>
+        </div>
+    </div>
+
     <div class="form-card">
         <h2>Nuevo Partido</h2>
+        <p class="form-intro">Selecciona torneo, cruce, ronda y fecha. El panel mantiene el mismo lenguaje visual del resto de la plataforma.</p>
 
         <form th:action="${torneo != null} ? @{/torneos/{idTorneo}/partidos/guardar(idTorneo=${torneo.id})} : @{/partidos/guardar}" th:object="${partido}" method="post">
 
