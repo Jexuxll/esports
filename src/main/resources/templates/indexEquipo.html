@@ -26,29 +26,19 @@
         <a th:href="@{/equipos/nuevo}" class="btn btn-primary">+ Nuevo Equipo</a>
     </div>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(equipos)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Logo</th>
-                    <th>Nombre</th>
-                    <th>Tag</th>
-                    <th>País</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="equipo : ${equipos}"
-                    th:attr="data-href=@{/equipos/{id}(id=${equipo.id})}"
-                    class="row-link">
-                    <td>
-                        <img th:src="@{/Imagenes/{img}(img=${equipo.foto})}" class="img-thumb" alt="Logo equipo">
-                    </td>
-                    <td th:text="${equipo.nombre}">Nombre</td>
-                    <td><span class="team-tag" th:text="${equipo.tag}">TAG</span></td>
-                    <td th:text="${equipo.pais}">País</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="grid-cards" th:if="${not #lists.isEmpty(equipos)}">
+        <div th:each="equipo : ${equipos}"
+             class="card card-link card--poster-equipo"
+             th:attr="data-href=@{/equipos/{id}(id=${equipo.id})}">
+
+            <div class="card-poster-title" th:text="${equipo.nombre}">Nombre equipo</div>
+
+            <img th:if="${equipo.foto != null and equipo.foto != ''}"
+                 th:src="@{/Imagenes/{img}(img=${equipo.foto})}"
+                 class="card-img" alt="Logo equipo">
+            <div th:unless="${equipo.foto != null and equipo.foto != ''}"
+                 class="card-img-placeholder">🛡️</div>
+        </div>
     </div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(equipos)}">

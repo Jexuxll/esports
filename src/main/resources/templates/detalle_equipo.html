@@ -23,7 +23,7 @@
 <div class="container">
 
     <div class="page-header">
-        <h1 th:text="${equipo.nombre}">Nombre equipo</h1>
+        <h1 th:text="${equipo.nombre}">Ficha equipo</h1>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
             <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">Añadir jugador</a>
             <a th:href="@{/equipos/editar/{id}(id=${equipo.id})}" class="btn btn-secondary">Editar equipo</a>
@@ -33,19 +33,31 @@
         </div>
     </div>
 
-    <div class="form-card" style="margin-bottom: 2rem; display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap; max-width:100%;">
-        <img th:if="${equipo.foto != null and equipo.foto != ''}"
-             th:src="@{/Imagenes/{f}(f=${equipo.foto})}"
-             class="img-thumb-lg" alt="Logo equipo" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
-        <div th:unless="${equipo.foto != null and equipo.foto != ''}"
-             style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--surface); border-radius:8px;">🛡️</div>
-        <div style="flex:1;">
-            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
-                Tag: <span class="team-tag" th:text="${equipo.tag}">TAG</span>
-            </p>
-            <p style="font-size:0.9rem; color:var(--text-secondary); margin:0.3rem 0;">
-                🌍 <span th:text="${equipo.pais}">País</span>
-            </p>
+    <div class="form-card" style="margin-bottom: 2rem; display:flex; gap:1.8rem; align-items:center; flex-wrap:wrap; max-width:100%; position:relative; overflow:hidden; padding:1.25rem;">
+        <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan));"></div>
+
+        <div style="width:260px; display:flex; justify-content:center; align-items:center;">
+            <img th:if="${equipo.foto != null and equipo.foto != ''}"
+                 th:src="@{/Imagenes/{f}(f=${equipo.foto})}"
+                 class="img-thumb-lg" alt="Logo equipo" style="width:220px; height:220px; object-fit:cover; border-radius:14px; border:2px solid var(--accent); box-shadow:0 0 24px rgba(124,58,237,0.35);">
+            <div th:unless="${equipo.foto != null and equipo.foto != ''}"
+                 style="width:220px; height:220px; display:flex; align-items:center; justify-content:center; font-size:5rem; background:var(--bg-card-hover); border:2px dashed var(--border); border-radius:14px;">🛡️</div>
+        </div>
+
+        <div style="flex:1; min-width:280px; display:flex; flex-direction:column; justify-content:center; gap:0.9rem;">
+            <div>
+                <h2 th:text="${equipo.nombre}" style="margin:0; font-size:1.35rem; line-height:1.1; color:var(--text-secondary);">Nombre equipo</h2>
+                <div style="margin-top:0.7rem; display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+                    <span class="team-tag" style="font-size:1.05rem; padding:0.35rem 0.65rem;" th:text="${equipo.tag}">TAG</span>
+                    <span style="display:inline-flex; align-items:center; gap:0.45rem; font-size:1rem; color:var(--text-secondary);">
+                        <img th:if="${codigoPais != null}"
+                             th:src="'https://flagcdn.com/w40/' + ${codigoPais} + '.png'"
+                             th:attr="alt=${paisMostrar}"
+                             style="width:24px; height:auto; border-radius:2px; vertical-align:middle;">
+                        <span th:text="${paisMostrar}">País</span>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -73,7 +85,10 @@
                      class="card card-link card--poster-jugador"
                      th:attr="data-href=@{/jugadores/{id}(id=${jugador.id})}">
 
-                    <div class="card-poster-title" th:text="${jugador.nickname}">Nickname</div>
+                    <div class="card-poster-title">
+                        <span th:text="${jugador.nickname}">Nickname</span>
+                        <span th:if="${jugador.rol != null and jugador.rol != ''}" class="card-poster-role" th:text="${jugador.rol}">Rol</span>
+                    </div>
 
                     <img th:if="${jugador.foto != null and jugador.foto != ''}"
                          th:src="@{/Imagenes/{img}(img=${jugador.foto})}"
@@ -90,9 +105,57 @@
         <a th:href="@{/jugadores/nuevo}" class="btn btn-primary">Añadir jugador</a>
     </div>
 
+    <h2 style="margin-top:2rem; margin-bottom:1rem;">Partidos <span>del Equipo</span></h2>
+
+    <div class="table-wrapper" th:if="${not #lists.isEmpty(partidosEquipo)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ronda</th>
+                    <th>Rival</th>
+                    <th>Marcador</th>
+                    <th>Fecha</th>
+                    <th>Torneo</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="partido : ${partidosEquipo}">
+                    <td>
+                        <span class="badge badge-info" th:text="${partido.ronda != null ? partido.ronda : '—'}">Ronda</span>
+                    </td>
+                    <td>
+                        <span th:text="${partido.equipoLocal != null and partido.equipoLocal.id == equipo.id ?
+                            (partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD') :
+                            (partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD')}">Rival</span>
+                    </td>
+                    <td>
+                        <div th:if="${partido.marcadorLocal != null and partido.marcadorVisitante != null}" class="score">
+                            <span class="score-num" th:text="${partido.equipoLocal != null and partido.equipoLocal.id == equipo.id ? partido.marcadorLocal : partido.marcadorVisitante}">0</span>
+                            <span class="score-vs">—</span>
+                            <span class="score-num" th:text="${partido.equipoLocal != null and partido.equipoLocal.id == equipo.id ? partido.marcadorVisitante : partido.marcadorLocal}">0</span>
+                        </div>
+                        <span th:unless="${partido.marcadorLocal != null and partido.marcadorVisitante != null}" style="color:var(--text-muted);">Pendiente</span>
+                    </td>
+                    <td style="font-size:0.85rem;" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
+                    <td th:text="${partido.torneo != null ? partido.torneo.nombre : '—'}">Torneo</td>
+                    <td>
+                        <span th:if="${partido.ganador != null and partido.ganador.id == equipo.id}" class="badge badge-success">Victoria</span>
+                        <span th:if="${partido.ganador != null and partido.ganador.id != equipo.id}" class="badge badge-default">Derrota</span>
+                        <span th:if="${partido.ganador == null}" class="badge badge-warning">Pendiente</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(partidosEquipo)}">
+        <p>Este equipo aún no tiene partidos registrados.</p>
+    </div>
+
 </div>
 
-</body>
 <script th:src="@{/app.js}"></script>
+</body>
 </html>
 

@@ -34,88 +34,60 @@
     </div>
 
     <!-- Perfil del jugador -->
-    <div class="form-card" style="max-width:100%; display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap; position:relative; overflow:hidden;">
+    <div class="form-card" style="max-width:100%; display:flex; gap:2.5rem; align-items:stretch; flex-wrap:wrap; position:relative; overflow:hidden;">
         <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan));"></div>
 
         <!-- Foto -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; flex-shrink:0;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; flex-shrink:0; justify-content:center;">
             <img th:if="${jugador.foto != null and jugador.foto != ''}"
                  th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
                  alt="Foto jugador"
-                 style="width:360px; height:463px; object-fit:cover; border-radius:var(--radius); border:2px solid var(--accent); box-shadow:0 0 18px rgba(124,58,237,0.4);">
+                  style="width:360px; height:463px; object-fit:cover; border-radius:var(--radius); border:2px solid var(--accent); box-shadow:0 0 18px rgba(124,58,237,0.4);">
             <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                 style="width:360px; height:463px; border-radius:var(--radius); border:2px dashed var(--border); background:var(--bg-card-hover); display:flex; align-items:center; justify-content:center; font-size:4rem;">🖼️</div>
+                  style="width:360px; height:463px; border-radius:var(--radius); border:2px dashed var(--border); background:var(--bg-card-hover); display:flex; align-items:center; justify-content:center; font-size:6rem;">🖼️</div>
         </div>
 
         <!-- Info -->
-        <div style="flex:1; min-width:220px; display:flex; flex-direction:column; gap:0.6rem;">
+           <div style="flex:1; min-width:260px; min-height:463px; display:flex; flex-direction:column; justify-content:space-between; gap:0; padding:0.6rem 0;">
             <div>
-                <div style="font-size:2rem; font-weight:900; letter-spacing:-0.5px; line-height:1; color:var(--text-primary);" th:text="${jugador.nickname}">NICKNAME</div>
-                <div style="font-size:0.95rem; color:var(--text-secondary); margin-top:0.2rem;" th:text="${jugador.nombre} + ' ' + ${jugador.apellido}">Nombre Apellido</div>
+                <div style="font-size:3rem; font-weight:900; letter-spacing:-0.5px; line-height:1; color:var(--text-primary);" th:text="${jugador.nickname}">NICKNAME</div>
+                <div style="font-size:1.43rem; color:var(--text-secondary); margin-top:0.2rem;" th:text="${jugador.nombre} + ' ' + ${jugador.apellido}">Nombre Apellido</div>
             </div>
 
-            <div style="height:2px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan), transparent); border-radius:2px; margin:0.2rem 0;"></div>
+            <div style="height:2px; background:linear-gradient(90deg, var(--accent), var(--accent-cyan), transparent); border-radius:2px; margin:1.1rem 0;"></div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.9rem 1.5rem;">
+            <div style="display:flex; align-items:center; gap:1rem; padding:1rem 1.15rem; border-radius:0.95rem; border:1px solid rgba(34,211,238,0.45); background:linear-gradient(130deg, rgba(34,211,238,0.12), rgba(124,58,237,0.18)); box-shadow:0 8px 20px rgba(0,0,0,0.22), 0 0 0 1px rgba(124,58,237,0.18) inset; margin-bottom:1rem;">
+                <div style="display:flex; align-items:center; justify-content:center; width:3.4rem; height:3.4rem; border-radius:0.9rem; background:linear-gradient(145deg, rgba(124,58,237,0.95), rgba(34,211,238,0.75)); font-size:1.6rem; box-shadow:0 6px 14px rgba(34,211,238,0.35); flex-shrink:0;">🎯</div>
+                <div style="display:flex; flex-direction:column; gap:0.15rem; min-width:0;">
+                    <span style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.18em; color:var(--accent-cyan); font-weight:800;">Rol Principal</span>
+                    <span style="font-size:2.3rem; font-weight:900; line-height:1.05; color:var(--text-primary);" th:text="${jugador.rol}">—</span>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.4rem 2rem; flex:1;">
                 <div style="display:flex; flex-direction:column; gap:0.15rem;">
-                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Rol</span>
-                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.rol}">—</span>
+                    <span style="font-size:0.98rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Edad</span>
+                    <span style="font-size:1.5rem; font-weight:700; color:var(--text-primary);" th:text="${jugador.edad} + ' años'">—</span>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.15rem;">
-                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Edad</span>
-                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.edad} + ' años'">—</span>
+                    <span style="font-size:0.98rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Nacionalidad</span>
+                    <span style="font-size:1.5rem; font-weight:700; color:var(--text-primary);" th:text="${jugador.nacionalidad}">—</span>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.15rem;">
-                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Nacionalidad</span>
-                    <span style="font-size:0.95rem; font-weight:600; color:var(--text-primary);" th:text="${jugador.nacionalidad}">—</span>
+                    <span style="font-size:0.98rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Juego</span>
+                    <span style="font-size:1.5rem; font-weight:700; color:var(--text-primary);" th:text="${jugador.juego != null and jugador.juego != '' ? jugador.juego : '—'}">—</span>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.15rem;">
-                    <span style="font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Equipo</span>
-                    <span style="font-size:0.95rem; font-weight:600;">
+                    <span style="font-size:0.98rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); font-weight:700;">Equipo</span>
+                    <span style="font-size:1.43rem; font-weight:600;">
                         <a th:if="${jugador.equipo != null}"
                            th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
-                           th:text="${jugador.equipo.nombre}">—</a>
+                           th:text="${jugador.equipo.nombre}" style="font-size:1.5rem; font-weight:700;">—</a>
                         <span th:if="${jugador.equipo == null}" style="color:var(--text-primary);">—</span>
                     </span>
                 </div>
             </div>
 
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem;">
-                <span class="role-badge">🎯 <span th:text="${jugador.rol}">Rol</span></span>
-                <a th:if="${jugador.equipo != null}"
-                   th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
-                   class="player-team-link">
-                    🛡️ <span th:text="${jugador.equipo.nombre}">Equipo</span>
-                </a>
-                <span th:if="${jugador.equipo == null}" class="badge badge-default">Sin equipo</span>
-            </div>
-
-            <div style="height:1px; background:var(--border); margin:0.6rem 0;"></div>
-
-            <!-- Stats dentro de la tarjeta -->
-            <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent-light); font-weight:700; margin-bottom:0.6rem;">Estadísticas</div>
-            <div class="stats-grid" style="margin-bottom:0;">
-                <div class="stat-card">
-                    <div class="stat-icon">🎯</div>
-                    <div class="stat-label">Rol</div>
-                    <div class="stat-value" th:text="${jugador.rol}">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🎂</div>
-                    <div class="stat-label">Edad</div>
-                    <div class="stat-value" th:text="${jugador.edad} + ' años'">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🌍</div>
-                    <div class="stat-label">Nacionalidad</div>
-                    <div class="stat-value" th:text="${jugador.nacionalidad}">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🛡️</div>
-                    <div class="stat-label">Equipo</div>
-                    <div class="stat-value" th:text="${jugador.equipo != null ? jugador.equipo.nombre : '—'}">—</div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
