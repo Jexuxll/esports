@@ -35,31 +35,46 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/torneos/nuevo}" class="btn btn-primary">+ Nuevo Torneo</a>
     </div>
 
-    <div class="grid-cards" th:if="${not #lists.isEmpty(torneos)}">
-        <div class="card card-link" th:each="torneo : ${torneos}"
+    <div class="torneo-banner-list" th:if="${not #lists.isEmpty(torneos)}">
+        <div class="torneo-mini-banner card-link" th:each="torneo : ${torneos}"
              th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
-            <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                 th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                 class="card-img" alt="Foto torneo">
-            <div th:unless="${torneo.foto != null and torneo.foto != ''}" class="card-img-placeholder">🏆</div>
+            <div class="torneo-mini-banner__media">
+                <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                     alt="Logo torneo"
+                     class="torneo-mini-banner__cover">
+                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+                     class="torneo-mini-banner__cover torneo-mini-banner__cover-placeholder">🏆</div>
+            </div>
 
-            <div class="card-body">
-                <div class="card-title" th:text="${torneo.nombre}">Nombre torneo</div>
-                <div class="card-subtitle" th:text="${torneo.juego}">Juego</div>
-
-                <div style="display:flex; flex-direction:column; gap:0.3rem; font-size:0.85rem; color:var(--text-secondary);">
-                    <span>
-                        📅 <span th:text="${torneo.fechaInicio}">Inicio</span>
-                        → <span th:text="${torneo.fechaFin}">Fin</span>
-                    </span>
-                    <span>
+            <div class="torneo-mini-banner__content">
+                <div class="torneo-mini-banner__top">
+                    <div class="torneo-mini-banner__estado">
+                        <div class="torneo-mini-banner__label">Estado</div>
                         <span th:switch="${torneo.estado}">
                             <span th:case="'Activo'" class="badge badge-success">Activo</span>
                             <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
                             <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
                             <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                         </span>
-                    </span>
+                    </div>
+
+                    <h2 class="torneo-mini-banner__title" th:text="${torneo.nombre}">Nombre torneo</h2>
+                </div>
+
+                <div class="torneo-mini-banner__bottom">
+                    <div>
+                        <div class="torneo-mini-banner__label">Juego</div>
+                        <div class="torneo-mini-banner__value" th:text="${torneo.juego}">Juego</div>
+                    </div>
+                    <div>
+                        <div class="torneo-mini-banner__label">Fechas</div>
+                        <div class="torneo-mini-banner__value torneo-mini-banner__date-range">
+                            <span th:text="${torneo.fechaInicio}">Inicio</span>
+                            <span>→</span>
+                            <span th:text="${torneo.fechaFin}">Fin</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

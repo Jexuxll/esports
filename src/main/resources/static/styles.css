@@ -462,6 +462,221 @@ select.form-control option {
     margin-top: 1.8rem;
 }
 
+/* ---- Torneos: lista tipo banner ---- */
+.torneo-banner-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.torneo-mini-banner {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(17, 22, 33, 0.98) 0%, rgba(12, 16, 26, 0.98) 100%);
+    border: 1px solid var(--border);
+    min-height: 290px;
+    padding: 1.4rem 1.5rem;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: stretch;
+}
+
+.torneo-mini-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-cyan), transparent 85%);
+}
+
+.torneo-mini-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(12, 16, 26, 0) 18%, rgba(12, 16, 26, 0.88) 60%, rgba(12, 16, 26, 1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.torneo-mini-banner > * {
+    position: relative;
+    z-index: 1;
+}
+
+.torneo-mini-banner__media {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: min(44%, 420px);
+}
+
+.torneo-mini-banner__media::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -1px;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(12, 16, 26, 0) 0%, rgba(12, 16, 26, 0.82) 72%, rgba(12, 16, 26, 1) 100%);
+    pointer-events: none;
+}
+
+.torneo-mini-banner__cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.torneo-mini-banner__cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    background: linear-gradient(135deg, var(--bg-card-hover), var(--bg-secondary));
+    color: var(--text-muted);
+}
+
+.torneo-mini-banner:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-accent);
+}
+
+.torneo-mini-banner__content {
+    margin-left: clamp(210px, 42%, 430px);
+    width: calc(100% - clamp(210px, 42%, 430px));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    gap: 1.25rem;
+}
+
+.torneo-mini-banner__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    text-align: left;
+    flex-wrap: nowrap;
+    margin-top: auto;
+    padding: 0;
+}
+
+.torneo-mini-banner__estado {
+    order: 2;
+    text-align: right;
+}
+
+.torneo-mini-banner__estado .badge {
+    font-size: 0.95rem;
+    padding: 0.45rem 0.95rem;
+}
+
+.torneo-mini-banner__label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-mono);
+}
+
+.torneo-mini-banner__title {
+    order: 1;
+    margin: 0;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+    font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+    font-weight: 900;
+    max-width: 72%;
+    text-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+.torneo-mini-banner__bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.torneo-mini-banner__value {
+    color: var(--text-primary);
+    font-size: 1.02rem;
+    font-weight: 700;
+}
+
+.torneo-mini-banner__date-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+@media (max-width: 860px) {
+    .torneo-mini-banner {
+        min-height: 420px;
+        padding: 1rem;
+    }
+
+    .torneo-mini-banner__media {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 45%;
+    }
+
+    .torneo-mini-banner__media::after {
+        top: auto;
+        bottom: -1px;
+        right: 0;
+        width: 100%;
+        height: 60%;
+        background: linear-gradient(180deg, rgba(12, 16, 26, 0) 0%, rgba(12, 16, 26, 0.82) 72%, rgba(12, 16, 26, 1) 100%);
+    }
+
+    .torneo-mini-banner__content {
+        margin-left: 0;
+        width: 100%;
+        margin-top: calc(45% + 0.5rem);
+        gap: 1rem;
+    }
+
+    .torneo-mini-banner__top {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.85rem;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .torneo-mini-banner__estado {
+        text-align: center;
+    }
+
+    .torneo-mini-banner__title {
+        order: 1;
+        max-width: 100%;
+        text-align: center;
+        font-size: 1.55rem;
+    }
+
+    .torneo-mini-banner__bottom {
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+}
+
 /* ---- Cards (para torneos/equipos) ---- */
 .grid-cards {
     display: grid;
