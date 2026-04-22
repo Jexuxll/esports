@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+
 function drawBracketLines() {
     var wrapper = document.querySelector('.bracket-wrapper');
     if (!wrapper) return;
@@ -144,7 +145,33 @@ function drawBracketLines() {
 
 window.addEventListener('resize', drawBracketLines);
 
-// ---- Calendario de partidos ----
+// ---- Carrusel de torneos (index) ----
+(function () {
+    var track   = document.getElementById('torneosCarousel');
+    var btnPrev = document.getElementById('torneosCarouselPrev');
+    var btnNext = document.getElementById('torneosCarouselNext');
+    if (!track || !btnPrev || !btnNext) return;
+
+    var CARD_GAP  = 12; // matches CSS gap
+    var visibleCards = function () {
+        var w = track.parentElement.offsetWidth - 80; // subtract buttons width
+        var cardW = track.querySelector('.torneos-carousel-card');
+        if (!cardW) return 3;
+        return Math.max(1, Math.round(w / (cardW.offsetWidth + CARD_GAP)));
+    };
+
+    function scrollByCards(dir) {
+        var cardW = track.querySelector('.torneos-carousel-card');
+        if (!cardW) return;
+        var step = (cardW.offsetWidth + CARD_GAP) * visibleCards();
+        track.scrollBy({ left: dir * step, behavior: 'smooth' });
+    }
+
+    btnPrev.addEventListener('click', function (e) { e.stopPropagation(); scrollByCards(-1); });
+    btnNext.addEventListener('click', function (e) { e.stopPropagation(); scrollByCards(1); });
+})();
+
+// ---- Schedule de partidos (solo días con partido) ----
 (function () {
     var wrapper = document.getElementById('cal-wrapper');
     if (!wrapper) return;
@@ -152,134 +179,87 @@ window.addEventListener('resize', drawBracketLines);
     var PARTIDOS = JSON.parse(wrapper.dataset.partidos || '[]');
     var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    var SHORT_DAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     var today = new Date();
-    var viewYear  = today.getFullYear();
-    var viewMonth = today.getMonth();
-    var selectedCell = null;
+    var selectedKey = null;
 
-    function escapeHtml(value) {
-        return String(value || '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+    function escapeHtml(v) {
+        return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function teamTag(tag) { return String(tag || '').trim() || 'TEAM'; }
+    function teamLogo(foto, tag, cls, alt) {
+        alt = escapeHtml(alt || teamTag(tag));
+        if (!foto) return '<span class="' + cls + ' cal-logo-ph" title="' + alt + '">🛡️</span>';
+        return '<img src="/Imagenes/' + foto + '" class="' + cls + '" alt="' + alt + '" onerror="this.onerror=null;this.outerHTML=\'<span class=\\\'' + cls + ' cal-logo-ph\\\'>\uD83D\uDEE1\uFE0F</span>\';">';
     }
 
-    function teamTag(tag) {
-        var cleanTag = String(tag || '').trim();
-        return cleanTag || 'TEAM';
-    }
+    // Build date index
+    var dateIndex = {};
+    var sortedDates = [];
+    PARTIDOS.forEach(function (p) {
+        var key = p.year + '-' + p.month + '-' + p.day;
+        if (!dateIndex[key]) {
+            dateIndex[key] = [];
+            sortedDates.push({ year: p.year, month: p.month, day: p.day, key: key });
+        }
+        dateIndex[key].push(p);
+    });
+    sortedDates.sort(function (a, b) {
+        if (a.year !== b.year) return a.year - b.year;
+        if (a.month !== b.month) return a.month - b.month;
+        return a.day - b.day;
+    });
 
-    function teamLogo(foto, tag, className, altText) {
-        var alt = escapeHtml(altText || ('Logo de ' + teamTag(tag)));
-        if (!foto) {
-            return '<span class="' + className + ' cal-logo-ph" title="' + alt + '">🛡️</span>';
+    function render() {
+        var grid = document.getElementById('cal-grid-days');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        if (sortedDates.length === 0) {
+            grid.innerHTML = '<div class="cal-empty">No hay partidos programados.</div>';
+            return;
         }
 
-        return '<img src="/Imagenes/' + foto + '" class="' + className + '" alt="' + alt + '" onerror="this.onerror=null;this.outerHTML=\'<span class=\\\'' + className + ' cal-logo-ph\\\'>\uD83D\uDEE1\uFE0F</span>\';">';
-    }
+        sortedDates.forEach(function (d) {
+            var date = new Date(d.year, d.month, d.day);
+            var isToday = date.getFullYear() === today.getFullYear()
+                       && date.getMonth()    === today.getMonth()
+                       && date.getDate()     === today.getDate();
+            var isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var partidos = dateIndex[d.key];
 
-    function buildIndex(data) {
-        var idx = {};
-        data.forEach(function (p) {
-            var key = p.year + '-' + p.month + '-' + p.day;
-            if (!idx[key]) idx[key] = [];
-            idx[key].push(p);
-        });
-        return idx;
-    }
+            var chip = document.createElement('div');
+            chip.className = 'cal-date-chip'
+                + (isToday         ? ' cal-date-chip--today'    : '')
+                + (isPast          ? ' cal-date-chip--past'     : '')
+                + (d.key === selectedKey ? ' cal-date-chip--selected' : '');
 
-    function logoSmall(foto, tag, nombre) {
-        return teamLogo(foto, tag, 'cal-ev-logo', nombre || tag);
-    }
+            chip.innerHTML =
+                '<div class="cal-chip-day">'   + SHORT_DAYS[date.getDay()] + '</div>'
+              + '<div class="cal-chip-num">'   + d.day + '</div>'
+              + '<div class="cal-chip-month">' + MONTHS[d.month].slice(0, 3) + '</div>'
+              + '<div class="cal-chip-count">' + partidos.length + ' '
+              + (partidos.length === 1 ? 'partido' : 'partidos') + '</div>';
 
-    function logoBig(foto, tag, nombre) {
-        return teamLogo(foto, tag, 'cal-panel-logo', nombre || tag);
-    }
-
-    function renderCalendar() {
-        var idx = buildIndex(PARTIDOS);
-        document.getElementById('cal-title').textContent = MONTHS[viewMonth] + ' ' + viewYear;
-
-        var firstDay    = new Date(viewYear, viewMonth, 1);
-        var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-        var startOffset = (firstDay.getDay() + 6) % 7;
-        var totalCells  = Math.ceil((startOffset + daysInMonth) / 7) * 7;
-
-        var grid = document.getElementById('cal-grid-days');
-        grid.innerHTML = '';
-        selectedCell = null;
-        hidePanel();
-
-        for (var i = 0; i < totalCells; i++) {
-            var dayNum = i - startOffset + 1;
-            var cell = document.createElement('div');
-
-            if (dayNum < 1 || dayNum > daysInMonth) {
-                cell.className = 'cal-cell cal-cell--empty';
-                grid.appendChild(cell);
-                continue;
-            }
-
-            var key = viewYear + '-' + viewMonth + '-' + dayNum;
-            var partidos = idx[key] || [];
-            var isToday = viewYear === today.getFullYear()
-                       && viewMonth === today.getMonth()
-                       && dayNum   === today.getDate();
-
-            cell.className = 'cal-cell'
-                + (isToday          ? ' cal-cell--today'       : '')
-                + (partidos.length  ? ' cal-cell--has-matches' : '');
-
-            var html = '<div class="cal-cell-num">' + dayNum + '</div>';
-
-            partidos.slice(0, 2).forEach(function (p) {
-                var hasScore = p.marcadorLocal !== null;
-                var mid = hasScore
-                    ? '<span class="cal-ev-score">' + p.marcadorLocal + '-' + p.marcadorVisitante + '</span>'
-                    : '<span class="cal-ev-vs">vs</span>';
-                html += '<div class="cal-ev">'
-                    + '<div class="cal-ev-team">'
-                    + logoSmall(p.localFoto, p.localTag, p.localNombre)
-                    + '<span class="cal-ev-tag">' + escapeHtml(teamTag(p.localTag)) + '</span>'
-                    + '</div>'
-                    + mid
-                    + '<div class="cal-ev-team cal-ev-team--right">'
-                    + '<span class="cal-ev-tag">' + escapeHtml(teamTag(p.visitanteTag)) + '</span>'
-                    + logoSmall(p.visitanteFoto, p.visitanteTag, p.visitanteNombre)
-                    + '</div>'
-                    + '</div>';
+            chip.addEventListener('click', function () {
+                if (selectedKey === d.key) {
+                    selectedKey = null;
+                    hidePanel();
+                } else {
+                    selectedKey = d.key;
+                    showPanel(d.day, d.month, d.year, partidos);
+                }
+                render();
             });
 
-            if (partidos.length > 2) {
-                html += '<div class="cal-ev-more">+' + (partidos.length - 2) + ' más</div>';
-            }
-
-            cell.innerHTML = html;
-
-            if (partidos.length) {
-                (function (c, day, ps) {
-                    c.addEventListener('click', function () {
-                        if (selectedCell) selectedCell.classList.remove('cal-cell--selected');
-                        if (selectedCell === c) {
-                            selectedCell = null;
-                            hidePanel();
-                            return;
-                        }
-                        selectedCell = c;
-                        c.classList.add('cal-cell--selected');
-                        showPanel(day, viewMonth, viewYear, ps);
-                    });
-                })(cell, dayNum, partidos);
-            }
-
-            grid.appendChild(cell);
-        }
+            grid.appendChild(chip);
+        });
     }
 
     function showPanel(day, month, year, partidos) {
         var panel = document.getElementById('cal-panel');
+        if (!panel) return;
         document.getElementById('cal-panel-title').textContent =
             day + ' de ' + MONTHS[month] + ' de ' + year;
 
@@ -298,12 +278,12 @@ window.addEventListener('resize', drawBracketLines);
                 + '</div>'
                 + '<div class="cal-panel-match">'
                 +   '<div class="cal-panel-team">'
-                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.localFoto, p.localTag, p.localNombre) + '</div>'
+                +     '<div class="cal-panel-logo-wrap">' + teamLogo(p.localFoto, p.localTag, 'cal-panel-logo', p.localNombre) + '</div>'
                 +     '<span class="cal-panel-nombre">' + escapeHtml(teamTag(p.localTag)) + '</span>'
                 +   '</div>'
                 +   '<div class="cal-panel-center">' + center + winner + '</div>'
                 +   '<div class="cal-panel-team">'
-                +     '<div class="cal-panel-logo-wrap">' + logoBig(p.visitanteFoto, p.visitanteTag, p.visitanteNombre) + '</div>'
+                +     '<div class="cal-panel-logo-wrap">' + teamLogo(p.visitanteFoto, p.visitanteTag, 'cal-panel-logo', p.visitanteNombre) + '</div>'
                 +     '<span class="cal-panel-nombre">' + escapeHtml(teamTag(p.visitanteTag)) + '</span>'
                 +   '</div>'
                 + '</div>'
@@ -319,16 +299,5 @@ window.addEventListener('resize', drawBracketLines);
         if (panel) panel.hidden = true;
     }
 
-    document.getElementById('cal-prev').addEventListener('click', function () {
-        viewMonth--;
-        if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-        renderCalendar();
-    });
-    document.getElementById('cal-next').addEventListener('click', function () {
-        viewMonth++;
-        if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-        renderCalendar();
-    });
-
-    renderCalendar();
+    render();
 })();

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESports Manager</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" href="/styles.css?v=4">
 </head>
 <body>
 
@@ -14,6 +14,7 @@
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
         <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
         <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
@@ -38,32 +39,29 @@
             Gestiona tu <span>universo</span><br>competitivo
         </h1>
         <p class="hero-subtitle">
-            Organiza equipos, jugadores, torneos y partidos en un solo lugar.
-            Tu plataforma de gestión esports, todo bajo control.
+            Rosters, brackets y resultados en tiempo real —<br>
+            cada detalle de tu competición, desde un solo panel.
         </p>
-        <div class="hero-actions">
-            <a th:href="@{/torneos}" class="btn btn-primary btn-hero">🏆 Ver Torneos</a>
-            <a th:href="@{/equipos}" class="btn btn-secondary btn-hero">🛡️ Ver Equipos</a>
-        </div>
-    </div>
-
-    <!-- Stats bar -->
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-item-label">Equipos</div>
-            <div class="stat-item-number" th:text="${totalEquipos}">0</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-item-label">Jugadores</div>
-            <div class="stat-item-number" th:text="${totalJugadores}">0</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-item-label">Torneos</div>
-            <div class="stat-item-number" th:text="${totalTorneos}">0</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-item-label">Partidos</div>
-            <div class="stat-item-number" th:text="${totalPartidos}">0</div>
+        <div class="hero-stats-inline">
+            <div class="hero-stat-item">
+                <span class="hero-stat-num" th:text="${totalEquipos}">0</span>
+                <span class="hero-stat-lbl">equipos</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <span class="hero-stat-num" th:text="${totalJugadores}">0</span>
+                <span class="hero-stat-lbl">jugadores</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <span class="hero-stat-num" th:text="${totalTorneos}">0</span>
+                <span class="hero-stat-lbl">torneos</span>
+            </div>
+            <div class="hero-stat-sep"></div>
+            <div class="hero-stat-item">
+                <span class="hero-stat-num" th:text="${totalPartidos}">0</span>
+                <span class="hero-stat-lbl">partidos</span>
+            </div>
         </div>
     </div>
 
@@ -73,45 +71,34 @@
         <a th:href="@{/equipos}" class="nav-card">
             <div class="nav-card-icon">🛡️</div>
             <div class="nav-card-title">Equipos</div>
-            <div class="nav-card-desc">Gestiona los equipos registrados, sus jugadores y su información.</div>
+            <div class="nav-card-desc">Rosters, tags y organización de cada equipo</div>
             <div class="nav-card-arrow">Ver equipos →</div>
         </a>
         <a th:href="@{/jugadores}" class="nav-card">
             <div class="nav-card-icon">🎮</div>
             <div class="nav-card-title">Jugadores</div>
-            <div class="nav-card-desc">Fichas individuales de cada jugador, su rol, juego y equipo actual.</div>
+            <div class="nav-card-desc">Perfiles, roles y estadísticas de cada jugador</div>
             <div class="nav-card-arrow">Ver jugadores →</div>
         </a>
         <a th:href="@{/torneos}" class="nav-card">
             <div class="nav-card-icon">🏆</div>
             <div class="nav-card-title">Torneos</div>
-            <div class="nav-card-desc">Consulta los torneos activos, inscribe equipos y gestiona fases.</div>
+            <div class="nav-card-desc">Fases activas, clasificaciones e inscripciones</div>
             <div class="nav-card-arrow">Ver torneos →</div>
         </a>
         <a th:href="@{/partidos}" class="nav-card">
             <div class="nav-card-icon">⚔️</div>
             <div class="nav-card-title">Partidos</div>
-            <div class="nav-card-desc">Registra y edita resultados de partidos con marcadores y rondas.</div>
+            <div class="nav-card-desc">Resultados, rondas y enfrentamientos recientes</div>
             <div class="nav-card-arrow">Ver partidos →</div>
         </a>
     </div>
 
     <!-- Calendario de Partidos -->
-    <div class="section-title">Calendario de <span>Partidos</span></div>
+    <div class="section-title">Fechas de <span>Partidos</span></div>
 
     <div class="cal-wrapper" id="cal-wrapper" th:attr="data-partidos=${partidosJson}">
-        <!-- Barra de navegación del mes -->
-        <div class="cal-bar">
-            <button class="cal-nav-btn" id="cal-prev">&#8249;</button>
-            <span class="cal-bar-title" id="cal-title">Cargando...</span>
-            <button class="cal-nav-btn" id="cal-next">&#8250;</button>
-        </div>
-        <!-- Cabecera días de la semana -->
-        <div class="cal-weekdays">
-            <div>Lun</div><div>Mar</div><div>Mié</div>
-            <div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
-        </div>
-        <!-- Celdas generadas por JS -->
+        <!-- Chips generados por JS -->
         <div class="cal-days" id="cal-grid-days"></div>
     </div>
 
@@ -124,28 +111,38 @@
         <div class="cal-panel-body" id="cal-panel-body"></div>
     </div>
 
-    <!-- Últimos torneos -->
-    <div th:if="${not #lists.isEmpty(ultimosTorneos)}">
-        <div class="section-title">Últimos <span>Torneos</span></div>
-        <div class="grid-cards last-tournaments">
-            <div th:each="torneo : ${ultimosTorneos}" class="card card-link"
-                 th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
-                <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                     class="card-img" alt="Logo torneo">
-                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
-                     class="card-img-placeholder">🏆</div>
-                <div class="card-body">
-                    <div class="card-title" th:text="${torneo.nombre}">Torneo</div>
-                    <div class="card-subtitle" th:text="${torneo.juego}">Juego</div>
-                    <span th:switch="${torneo.estado}">
-                        <span th:case="'Activo'" class="badge badge-success">Activo</span>
-                        <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                        <span th:case="'Finalizado'" class="badge badge-info">Finalizado</span>
-                        <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
-                    </span>
+    <!-- Carrusel de torneos -->
+    <div th:if="${not #lists.isEmpty(todosTorneos)}">
+        <div class="section-header" style="margin-bottom:1.5rem;">
+            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">Todos los <span>Torneos</span></div>
+            <a th:href="@{/torneos}" class="btn btn-secondary btn-sm">Ver todos →</a>
+        </div>
+        <div class="torneos-carousel-wrapper">
+            <button class="torneos-carousel-btn torneos-carousel-btn--prev" id="torneosCarouselPrev" aria-label="Anterior">&#8249;</button>
+            <div class="torneos-carousel" id="torneosCarousel">
+                <div th:each="torneo : ${todosTorneos}"
+                     class="torneos-carousel-card card-link"
+                     th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
+                    <div class="torneos-carousel-img">
+                        <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                             class="torneos-carousel-photo" alt="">
+                        <span th:unless="${torneo.foto != null and torneo.foto != ''}"
+                              class="torneos-carousel-placeholder">🏆</span>
+                    </div>
+                    <div class="torneos-carousel-body">
+                        <div class="torneos-carousel-name" th:text="${torneo.nombre}">Torneo</div>
+                        <div class="torneos-carousel-game" th:text="${torneo.juego}">Juego</div>
+                        <span th:switch="${torneo.estado}">
+                            <span th:case="'Activo'"     class="badge badge-success">Activo</span>
+                            <span th:case="'Pendiente'"  class="badge badge-warning">Pendiente</span>
+                            <span th:case="'Finalizado'" class="badge badge-finished">Finalizado</span>
+                            <span th:case="*"            class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+                        </span>
+                    </div>
                 </div>
             </div>
+            <button class="torneos-carousel-btn torneos-carousel-btn--next" id="torneosCarouselNext" aria-label="Siguiente">&#8250;</button>
         </div>
     </div>
 
