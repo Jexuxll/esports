@@ -174,7 +174,7 @@
                                 <td style="font-size:0.85rem;" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
                                 <td>
                                     <span th:if="${partido.ganador != null and partido.ganador.id == equipo.id}" class="badge badge-success">Victoria</span>
-                                    <span th:if="${partido.ganador != null and partido.ganador.id != equipo.id}" class="badge badge-default">Derrota</span>
+                                    <span th:if="${partido.ganador != null and partido.ganador.id != equipo.id}" class="badge badge-danger">Derrota</span>
                                     <span th:if="${partido.ganador == null}" class="badge badge-warning">Pendiente</span>
                                 </td>
                             </tr>

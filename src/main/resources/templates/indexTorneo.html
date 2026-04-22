@@ -54,7 +54,7 @@
                         <span th:switch="${torneo.estado}">
                             <span th:case="'Activo'" class="badge badge-success">Activo</span>
                             <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                            <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                            <span th:case="'Finalizado'" class="badge badge-info">Finalizado</span>
                             <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                         </span>
                     </div>

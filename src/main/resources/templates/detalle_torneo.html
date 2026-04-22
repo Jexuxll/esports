@@ -55,14 +55,17 @@
                 </div>
             </div>
 
-            <!-- Centro: solo logo -->
+            <!-- Centro: logo + nombre superpuesto -->
             <div class="torneo-banner__center">
-                <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                     alt="Logo torneo"
-                     class="torneo-banner__logo">
-                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
-                     class="torneo-banner__placeholder">🏆</div>
+                <div class="torneo-banner__logo-wrap">
+                    <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                         th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                         alt="Logo torneo"
+                         class="torneo-banner__logo">
+                    <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+                         class="torneo-banner__placeholder">🏆</div>
+                    <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
+                </div>
             </div>
 
             <!-- Derecha: estado (arriba) + fin (abajo) -->
@@ -72,7 +75,7 @@
                     <span class="torneo-banner__side-value" th:switch="${torneo.estado}">
                         <span th:case="'Activo'" class="badge badge-success">Activo</span>
                         <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                        <span th:case="'Finalizado'" class="badge badge-default">Finalizado</span>
+                        <span th:case="'Finalizado'" class="badge badge-info">Finalizado</span>
                         <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                     </span>
                 </div>
@@ -83,7 +86,6 @@
             </div>
 
         </div>
-        <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
     </div>
     <div class="page-header torneo-banner__section">
         <h2 class="section-heading" style="margin:0;">Equipos <span>Inscritos</span></h2>
