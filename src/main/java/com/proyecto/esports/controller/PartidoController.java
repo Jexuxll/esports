@@ -4,6 +4,11 @@
  */
 package com.proyecto.esports.controller;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +43,15 @@ public class PartidoController {
 
     @GetMapping("/partidos")
     public String listarPartidos(Model model) {
-        model.addAttribute("partidos", partidoService.listarTodos());
+        List<Partido> partidos = partidoService.listarTodos();
+        Map<String, List<Partido>> partidosPorTorneo = partidos.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getTorneo() != null ? p.getTorneo().getNombre() : "Sin torneo",
+                LinkedHashMap::new,
+                Collectors.toList()
+            ));
+        model.addAttribute("partidos", partidos);
+        model.addAttribute("partidosPorTorneo", partidosPorTorneo);
         return "indexPartido";
     }
 

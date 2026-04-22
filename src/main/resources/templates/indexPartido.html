@@ -36,54 +36,87 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/partidos/nuevo}" class="btn btn-primary">+ Nuevo Partido</a>
     </div>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(partidos)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Torneo</th>
-                    <th>Ronda</th>
-                    <th>Enfrentamiento</th>
-                    <th>Marcador</th>
-                    <th>Fecha</th>
-                    <th>Ganador</th>
-                    <th sec:authorize="hasRole('ADMIN')">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="partido : ${partidos}">
-                    <td th:text="${partido.torneo != null ? partido.torneo.nombre : '—'}">Torneo</td>
-                    <td>
-                        <span class="badge badge-info" th:text="${partido.ronda != null ? partido.ronda : '—'}">Ronda</span>
-                    </td>
-                    <td>
-                        <div class="score">
-                            <span th:text="${partido.equipoLocal != null ? partido.equipoLocal.tag : '?'}">Local</span>
-                            <span class="score-vs">vs</span>
-                            <span th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.tag : '?'}">Visitante</span>
+    <!-- Pestañas por torneo -->
+    <div th:if="${not #lists.isEmpty(partidos)}" class="tabs-wrapper">
+
+        <div class="tabs-nav" id="tabsNavPartidos">
+            <button th:each="entry, iterStat : ${partidosPorTorneo}"
+                    th:text="${entry.key}"
+                    th:attr="data-tab=${iterStat.index}"
+                    th:classappend="${iterStat.first} ? 'active' : ''"
+                    class="tab-btn"
+                    type="button">Torneo</button>
+        </div>
+
+        <div th:each="entry, iterStat : ${partidosPorTorneo}"
+             th:attr="data-panel=${iterStat.index}"
+             th:classappend="${iterStat.first} ? 'tab-panel active' : 'tab-panel'"
+             class="tab-panel">
+
+            <div class="match-list">
+                <div th:each="partido : ${entry.value}"
+                     class="match-item match-item--stacked card-link"
+                     th:attr="data-href=@{/partidos/{id}(id=${partido.id})}">
+
+                    <!-- Arriba: ronda encima de fecha, centrado -->
+                    <div class="match-item-header">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.2rem;">
+                            <span class="match-item-ronda" th:text="${partido.ronda != null ? partido.ronda : '—'}">Ronda</span>
+                            <span class="match-item-date" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy · HH:mm') : '—'}">Fecha</span>
                         </div>
-                    </td>
-                    <td>
-                        <div th:if="${partido.marcadorLocal != null and partido.marcadorVisitante != null}" class="score">
-                            <span class="score-num" th:text="${partido.marcadorLocal}">0</span>
-                            <span class="score-vs">—</span>
-                            <span class="score-num" th:text="${partido.marcadorVisitante}">0</span>
+                    </div>
+
+                    <!-- Centro: logo local + enfrentamiento + logo visitante -->
+                    <div class="match-item-matchup">
+                        <!-- Logo equipo local -->
+                        <div class="match-item-logo">
+                            <img th:if="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
+                                 th:src="@{/Imagenes/{f}(f=${partido.equipoLocal.foto})}"
+                                 class="match-item-logo__img" alt="">
+                            <div th:unless="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
+                                 class="match-item-logo__placeholder">🛡️</div>
                         </div>
-                        <span th:unless="${partido.marcadorLocal != null and partido.marcadorVisitante != null}"
-                              style="color:var(--text-muted);">Pendiente</span>
-                    </td>
-                    <td style="font-size:0.85rem;" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy HH:mm') : '—'}">Fecha</td>
-                    <td>
-                        <span th:if="${partido.ganador != null}" class="team-tag" th:text="${partido.ganador.nombre}">TAG</span>
-                        <span th:unless="${partido.ganador != null}" style="color:var(--text-muted);">—</span>
-                    </td>
-                    <td class="actions" sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/partidos/editar/{id}(id=${partido.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                        <a th:href="@{/partidos/eliminar/{id}(id=${partido.id})}" class="btn btn-danger btn-sm"
-                           data-confirm="¿Eliminar este partido?">Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+                        <span class="match-item-team"
+                              th:classappend="${partido.ganador != null and partido.equipoLocal != null and partido.ganador.id == partido.equipoLocal.id} ? ' match-item-team--winner'"
+                              th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD'}">Local</span>
+
+                        <div class="match-item-score"
+                             th:if="${partido.marcadorLocal != null and partido.marcadorVisitante != null}">
+                            <span th:text="${partido.marcadorLocal}">0</span>
+                            <span class="match-item-dash">–</span>
+                            <span th:text="${partido.marcadorVisitante}">0</span>
+                        </div>
+                        <div class="match-item-score match-item-score--pending"
+                             th:unless="${partido.marcadorLocal != null and partido.marcadorVisitante != null}">VS</div>
+
+                        <span class="match-item-team match-item-team--rival"
+                              th:classappend="${partido.ganador != null and partido.equipoVisitante != null and partido.ganador.id == partido.equipoVisitante.id} ? ' match-item-team--winner'"
+                              th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+
+                        <!-- Logo equipo visitante -->
+                        <div class="match-item-logo">
+                            <img th:if="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
+                                 th:src="@{/Imagenes/{f}(f=${partido.equipoVisitante.foto})}"
+                                 class="match-item-logo__img" alt="">
+                            <div th:unless="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
+                                 class="match-item-logo__placeholder">🛡️</div>
+                        </div>
+                    </div>
+
+                    <!-- Abajo: ganador/pendiente centrado + botones admin -->
+                    <div class="match-item-footer">
+                        <span th:if="${partido.ganador != null}" class="badge badge-success" th:text="${partido.ganador.nombre}">Ganador</span>
+                        <span th:if="${partido.ganador == null}" class="badge badge-warning">Pendiente</span>
+                        <span sec:authorize="hasRole('ADMIN')" class="stop-propagate" style="display:flex;gap:0.4rem;">
+                            <a th:href="@{/partidos/editar/{id}(id=${partido.id})}" class="btn btn-secondary btn-sm stop-propagate">Editar</a>
+                            <a th:href="@{/partidos/eliminar/{id}(id=${partido.id})}" class="btn btn-danger btn-sm stop-propagate"
+                               data-confirm="¿Eliminar este partido?">Eliminar</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(partidos)}">
