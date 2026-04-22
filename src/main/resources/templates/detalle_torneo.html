@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${torneo.nombre} + ' - ESports Manager'">Detalle Torneo</title>
-    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link rel="stylesheet" href="/styles.css?v=4">
 </head>
 <body>
 
@@ -14,6 +14,7 @@
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
         <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
         <li><a th:href="@{/partidos}">Partidos</a></li>
         <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
@@ -55,17 +56,14 @@
                 </div>
             </div>
 
-            <!-- Centro: logo + nombre superpuesto -->
+            <!-- Centro: solo logo -->
             <div class="torneo-banner__center">
-                <div class="torneo-banner__logo-wrap">
-                    <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                         th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                         alt="Logo torneo"
-                         class="torneo-banner__logo">
-                    <div th:unless="${torneo.foto != null and torneo.foto != ''}"
-                         class="torneo-banner__placeholder">🏆</div>
-                    <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
-                </div>
+                <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                     alt="Logo torneo"
+                     class="torneo-banner__logo">
+                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
+                     class="torneo-banner__placeholder">🏆</div>
             </div>
 
             <!-- Derecha: estado (arriba) + fin (abajo) -->
@@ -75,7 +73,7 @@
                     <span class="torneo-banner__side-value" th:switch="${torneo.estado}">
                         <span th:case="'Activo'" class="badge badge-success">Activo</span>
                         <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                        <span th:case="'Finalizado'" class="badge badge-info">Finalizado</span>
+                        <span th:case="'Finalizado'" class="badge badge-finished">Finalizado</span>
                         <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                     </span>
                 </div>
@@ -86,6 +84,7 @@
             </div>
 
         </div>
+        <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
     </div>
     <div class="page-header torneo-banner__section">
         <h2 class="section-heading" style="margin:0;">Equipos <span>Inscritos</span></h2>
@@ -98,7 +97,13 @@
     <div class="grid-cards" th:if="${not #lists.isEmpty(equiposInscritos)}">
         <div th:each="et : ${equiposInscritos}"
              class="card card-link card--poster-equipo"
+             style="position:relative"
              th:attr="data-href=@{/equipos/{id}(id=${et.equipo.id})}">
+
+            <a sec:authorize="hasRole('ADMIN')"
+               th:href="@{/equipos-torneos/eliminar/{id}(id=${et.id})}"
+               class="btn btn-danger card-delete-btn stop-propagate"
+               data-confirm="¿Desinscribir este equipo del torneo?">🗑️</a>
 
             <div class="card-poster-title" th:text="${et.equipo.nombre}">Nombre</div>
 

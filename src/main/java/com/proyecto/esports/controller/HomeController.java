@@ -38,8 +38,7 @@ public class HomeController {
         model.addAttribute("totalJugadores", jugadorService.listarTodos().size());
         model.addAttribute("totalTorneos", torneoService.listarTodos().size());
         model.addAttribute("totalPartidos", partidoService.listarTodos().size());
-        model.addAttribute("ultimosTorneos", torneoService.listarTodos()
-                .stream().limit(3).toList());
+        model.addAttribute("todosTorneos", torneoService.listarTodos());
 
         String partidosJson = partidoService.listarTodos().stream()
                 .filter(p -> p.getFechaPartido() != null)
