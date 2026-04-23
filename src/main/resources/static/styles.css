@@ -1580,13 +1580,13 @@ select.form-control option {
 .bracket-round {
     display: flex;
     flex-direction: column;
-    min-width: 190px;
-    max-width: 210px;
+    min-width: 260px;
+    max-width: 295px;
     flex-shrink: 0;
 }
 
 .bracket-round-label {
-    font-size: 0.68rem;
+    font-size: 0.88rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1594,7 +1594,7 @@ select.form-control option {
     text-align: center;
     background: rgba(29, 110, 245, 0.12);
     border: 1px solid rgba(77, 148, 255, 0.45);
-    border-radius: 999px;
+    border-radius: 3px;
     padding: 0.22rem 0.75rem;
     margin-bottom: 0.75rem;
     white-space: nowrap;
@@ -1611,7 +1611,7 @@ select.form-control option {
 .bracket-match {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 4px;
     overflow: hidden;
     flex-shrink: 0;
     transition: border-color 0.15s;
@@ -1624,9 +1624,9 @@ select.form-control option {
 .bm-team {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.38rem 0.5rem;
-    font-size: 0.82rem;
+    gap: 0.55rem;
+    padding: 0.58rem 0.75rem;
+    font-size: 0.95rem;
 }
 
 .bm-team.bm-win {
@@ -1638,15 +1638,15 @@ select.form-control option {
 }
 
 .bm-logo {
-    width: 26px;
-    height: 26px;
+    width: 38px;
+    height: 38px;
     object-fit: cover;
     border-radius: 4px;
     flex-shrink: 0;
 }
 
 .bm-logo-ph {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     flex-shrink: 0;
 }
 
@@ -1670,8 +1670,8 @@ select.form-control option {
 
 .bm-score {
     font-weight: 700;
-    font-size: 0.9rem;
-    min-width: 1.2rem;
+    font-size: 1.05rem;
+    min-width: 1.6rem;
     text-align: right;
     color: var(--text-secondary);
 }
@@ -1683,6 +1683,10 @@ select.form-control option {
 .bm-lose .bm-score {
     color: rgba(239, 68, 68, 0.75);
     opacity: 0.75;
+}
+
+.bm-team.bm-from-win {
+    border-left: 3px solid rgba(124, 58, 237, 0.7);
 }
 
 .bm-sep {

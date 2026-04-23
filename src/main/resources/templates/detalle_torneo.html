@@ -70,9 +70,9 @@
                 <div>
                     <div class="torneo-banner__side-label">Estado</div>
                     <span class="torneo-banner__side-value" th:switch="${torneo.estado}">
-                        <span th:case="'Activo'" class="badge badge-success">Activo</span>
-                        <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                        <span th:case="'Finalizado'" class="badge badge-finished">Finalizado</span>
+                        <span th:case="'ACTIVO'" class="badge badge-success">Activo</span>
+                        <span th:case="'PENDIENTE'" class="badge badge-warning">Pendiente</span>
+                        <span th:case="'FINALIZADO'" class="badge badge-finished">Finalizado</span>
                         <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                     </span>
                 </div>
@@ -100,7 +100,7 @@
              th:attr="data-href=@{/equipos/{id}(id=${et.equipo.id})}">
 
             <a sec:authorize="hasRole('ADMIN')"
-               th:href="@{/equipos-torneos/eliminar/{id}(id=${et.id})}"
+               th:href="@{/equipos-torneos/eliminar/{id}(id=${et.id}, torneoId=${torneo.id})}"
                class="btn btn-danger card-delete-btn stop-propagate"
                data-confirm="¿Desinscribir este equipo del torneo?">✕</a>
 
@@ -127,9 +127,11 @@
             <div class="bracket-round-label" th:text="${rondaEntry.key}">Ronda</div>
 
             <div class="bracket-matches">
-                <div th:each="p : ${rondaEntry.value}" class="bracket-match">
+                <div th:each="p : ${rondaEntry.value}" class="bracket-match"
+                     th:attr="data-winner-id=${p.ganador != null ? p.ganador.id : ''},data-local-id=${p.equipoLocal != null ? p.equipoLocal.id : ''},data-visitante-id=${p.equipoVisitante != null ? p.equipoVisitante.id : ''}">
 
-                    <div th:class="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')">
+                    <div th:class="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')"
+                         th:attr="data-team-id=${p.equipoLocal != null ? p.equipoLocal.id : ''}">
                         <img th:if="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoLocal.foto})}" class="bm-logo" alt="">
                         <span th:unless="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}" class="bm-logo-ph">🛡️</span>
@@ -139,7 +141,8 @@
 
                     <div class="bm-sep"></div>
 
-                    <div th:class="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')">
+                    <div th:class="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')"
+                         th:attr="data-team-id=${p.equipoVisitante != null ? p.equipoVisitante.id : ''}">
                         <img th:if="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoVisitante.foto})}" class="bm-logo" alt="">
                         <span th:unless="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}" class="bm-logo-ph">🛡️</span>

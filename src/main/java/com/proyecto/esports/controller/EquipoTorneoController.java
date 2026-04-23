@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.proyecto.esports.model.EquipoTorneo;
 import com.proyecto.esports.service.EquipoTorneoService;
@@ -55,9 +56,13 @@ public class EquipoTorneoController {
     }
 
     @GetMapping("/equipos-torneos/eliminar/{id}")
-    public String eliminarEquipoTorneo(@PathVariable int id) throws IOException {
+    public String eliminarEquipoTorneo(@PathVariable int id,
+                                       @RequestParam(required = false) Integer torneoId) throws IOException {
         equipoTorneoService.eliminar(id);
-        return "redirect:/equipos-torneos"; 
+        if (torneoId != null) {
+            return "redirect:/torneos/" + torneoId;
+        }
+        return "redirect:/equipos-torneos";
     }
 
 }

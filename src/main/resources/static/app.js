@@ -105,6 +105,7 @@
 
     // ---- Cuadro bracket: líneas conectoras SVG ----
     drawBracketLines();
+    propagateBracketWinners();
 
 });
 
@@ -160,6 +161,67 @@ function drawBracketLines() {
 }
 
 window.addEventListener('resize', drawBracketLines);
+
+function propagateBracketWinners() {
+    var wrapper = document.querySelector('.bracket-wrapper');
+    if (!wrapper) return;
+
+    var rounds = Array.from(wrapper.querySelectorAll(':scope > .bracket-round'));
+    if (rounds.length < 2) return;
+
+    for (var r = 1; r < rounds.length; r++) {
+
+        var prevMatches = Array.from(rounds[r - 1].querySelectorAll('.bracket-match'));
+        var curMatches  = Array.from(rounds[r].querySelectorAll('.bracket-match'));
+
+        curMatches.forEach(function (cur, i) {
+
+            var m1 = prevMatches[i * 2];
+            var m2 = prevMatches[i * 2 + 1];
+
+            var teams = cur.querySelectorAll('.bm-team');
+            var teamLocal     = teams[0];
+            var teamVisitante = teams[1];
+
+            // Si el partido previo del local no tiene ganador → TBD
+            if (m1 && !m1.dataset.winnerId) {
+                blankTeam(teamLocal);
+            } else if (m1 && m1.dataset.winnerId) {
+                if (teamLocal && teamLocal.dataset.teamId === m1.dataset.winnerId) {
+                    teamLocal.classList.add('bm-from-win');
+                }
+            }
+
+            // Si el partido previo del visitante no tiene ganador → TBD
+            if (m2 && !m2.dataset.winnerId) {
+                blankTeam(teamVisitante);
+            } else if (m2 && m2.dataset.winnerId) {
+                if (teamVisitante && teamVisitante.dataset.teamId === m2.dataset.winnerId) {
+                    teamVisitante.classList.add('bm-from-win');
+                }
+            }
+
+        });
+
+    }
+}
+
+function blankTeam(teamEl) {
+    if (!teamEl) return;
+    teamEl.classList.add('bm-tbd');
+
+    var img = teamEl.querySelector('.bm-logo');
+    if (img) img.style.display = 'none';
+
+    var ph = teamEl.querySelector('.bm-logo-ph');
+    if (ph) ph.style.display = 'none';
+
+    var name = teamEl.querySelector('.bm-name');
+    if (name) { name.textContent = 'TBD'; name.style.opacity = '0.4'; }
+
+    var score = teamEl.querySelector('.bm-score');
+    if (score) score.textContent = '';
+}
 
 // ---- Carrusel de torneos (index) ----
 (function () {

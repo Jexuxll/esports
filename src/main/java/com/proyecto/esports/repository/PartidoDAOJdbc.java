@@ -193,7 +193,7 @@ public class PartidoDAOJdbc implements PartidoDAO {
     @Override
     public List<Partido> listarPorTorneo(int idTorneo) {
         List<Partido> lista = new ArrayList<>();
-        String sql = SQL_SELECT + " WHERE p.id_torneo=? ORDER BY p.fecha_partido DESC";
+        String sql = SQL_SELECT + " WHERE p.id_torneo=? ORDER BY p.fecha_partido ASC";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setInt(1, idTorneo);
             ResultSet rs = stmt.executeQuery();

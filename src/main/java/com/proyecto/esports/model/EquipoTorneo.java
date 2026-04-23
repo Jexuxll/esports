@@ -18,8 +18,8 @@ public class EquipoTorneo {
 
     public EquipoTorneo(int id, Equipo equipo, Torneo torneo, LocalDate fechaInscripcion) {
         this.id = id;
-        this.equipo = new Equipo();
-        this.torneo = new Torneo();
+        this.equipo = equipo;
+        this.torneo = torneo;
         this.fechaInscripcion = fechaInscripcion;
     }
 

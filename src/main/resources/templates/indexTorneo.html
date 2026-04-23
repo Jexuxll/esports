@@ -39,9 +39,9 @@
         <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar torneo, juego…">
         <select id="filterEstado" class="filter-select">
             <option value="">Todos los estados</option>
-            <option value="Activo">Activo</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Finalizado">Finalizado</option>
+            <option value="ACTIVO">Activo</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="FINALIZADO">Finalizado</option>
         </select>
         <select id="filterJuego" class="filter-select">
             <option value="">Todos los juegos</option>
@@ -71,9 +71,9 @@
                     <div class="torneo-mini-banner__estado">
                         <div class="torneo-mini-banner__label">Estado</div>
                         <span th:switch="${torneo.estado}">
-                            <span th:case="'Activo'" class="badge badge-success">Activo</span>
-                            <span th:case="'Pendiente'" class="badge badge-warning">Pendiente</span>
-                            <span th:case="'Finalizado'" class="badge badge-finished">Finalizado</span>
+                            <span th:case="'ACTIVO'" class="badge badge-success">Activo</span>
+                            <span th:case="'PENDIENTE'" class="badge badge-warning">Pendiente</span>
+                            <span th:case="'FINALIZADO'" class="badge badge-finished">Finalizado</span>
                             <span th:case="*" class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                         </span>
                     </div>
