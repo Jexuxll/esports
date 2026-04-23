@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
     // ---- Botones volver a página previa (con fallback al href) ----
     document.querySelectorAll('.btn-back').forEach(function (el) {
@@ -87,6 +87,22 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCarousel();
     });
 
+    // ---- Expandir/colapsar jugadores en tarjeta de partido ----
+    document.querySelectorAll('[data-match-toggle]').forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            if (e.target.closest('a, button')) return;
+            var wrap = this.closest('.match-item-wrap');
+            if (!wrap) return;
+            var panel = wrap.querySelector('.match-item-players');
+            if (!panel) return;
+            var opening = panel.hidden;
+            panel.hidden = !opening;
+            this.classList.toggle('match-item--open', opening);
+            var hint = this.querySelector('.match-item-expand-hint');
+            if (hint) hint.textContent = opening ? '▴ Jugadores' : '▾ Jugadores';
+        });
+    });
+
     // ---- Cuadro bracket: líneas conectoras SVG ----
     drawBracketLines();
 
@@ -171,7 +187,7 @@ window.addEventListener('resize', drawBracketLines);
     btnNext.addEventListener('click', function (e) { e.stopPropagation(); scrollByCards(1); });
 })();
 
-// ---- Schedule de partidos (solo días con partido) ----
+// ---- Calendario de partidos (carrusel mensual) ----
 (function () {
     var wrapper = document.getElementById('cal-wrapper');
     if (!wrapper) return;
@@ -179,8 +195,10 @@ window.addEventListener('resize', drawBracketLines);
     var PARTIDOS = JSON.parse(wrapper.dataset.partidos || '[]');
     var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    var SHORT_DAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    var DAYS_SHORT = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     var today = new Date();
+    var curMonth = today.getMonth();
+    var curYear  = today.getFullYear();
     var selectedKey = null;
 
     function escapeHtml(v) {
@@ -190,87 +208,109 @@ window.addEventListener('resize', drawBracketLines);
     function teamTag(tag) { return String(tag || '').trim() || 'TEAM'; }
     function teamLogo(foto, tag, cls, alt) {
         alt = escapeHtml(alt || teamTag(tag));
-        if (!foto) return '<span class="' + cls + ' cal-logo-ph" title="' + alt + '">🛡️</span>';
-        return '<img src="/Imagenes/' + foto + '" class="' + cls + '" alt="' + alt + '" onerror="this.onerror=null;this.outerHTML=\'<span class=\\\'' + cls + ' cal-logo-ph\\\'>\uD83D\uDEE1\uFE0F</span>\';">';
+        if (!foto) return '<span class="' + cls + ' cal-logo-ph" title="' + alt + '">\uD83D\uDEE1\uFE0F</span>';
+        return '<img src="/Imagenes/' + escapeHtml(foto) + '" class="' + cls + '" alt="' + alt + '">';
     }
 
-    // Build date index
+    // Group by day key
     var dateIndex = {};
-    var sortedDates = [];
     PARTIDOS.forEach(function (p) {
         var key = p.year + '-' + p.month + '-' + p.day;
-        if (!dateIndex[key]) {
-            dateIndex[key] = [];
-            sortedDates.push({ year: p.year, month: p.month, day: p.day, key: key });
-        }
+        if (!dateIndex[key]) dateIndex[key] = [];
         dateIndex[key].push(p);
-    });
-    sortedDates.sort(function (a, b) {
-        if (a.year !== b.year) return a.year - b.year;
-        if (a.month !== b.month) return a.month - b.month;
-        return a.day - b.day;
     });
 
     function render() {
-        var grid = document.getElementById('cal-grid-days');
-        if (!grid) return;
-        grid.innerHTML = '';
+        wrapper.innerHTML = '';
 
-        if (sortedDates.length === 0) {
-            grid.innerHTML = '<div class="cal-empty">No hay partidos programados.</div>';
-            return;
-        }
+        // Nav bar
+        var bar = document.createElement('div');
+        bar.className = 'cal-bar';
+        var btnPrev = document.createElement('button');
+        btnPrev.className = 'cal-nav-btn'; btnPrev.type = 'button';
+        btnPrev.innerHTML = '&#8249;'; btnPrev.setAttribute('aria-label', 'Mes anterior');
+        var titleEl = document.createElement('span');
+        titleEl.className = 'cal-bar-title';
+        titleEl.textContent = MONTHS[curMonth] + ' ' + curYear;
+        var btnNext = document.createElement('button');
+        btnNext.className = 'cal-nav-btn'; btnNext.type = 'button';
+        btnNext.innerHTML = '&#8250;'; btnNext.setAttribute('aria-label', 'Mes siguiente');
+        bar.appendChild(btnPrev); bar.appendChild(titleEl); bar.appendChild(btnNext);
+        wrapper.appendChild(bar);
 
-        sortedDates.forEach(function (d) {
-            var date = new Date(d.year, d.month, d.day);
-            var isToday = date.getFullYear() === today.getFullYear()
-                       && date.getMonth()    === today.getMonth()
-                       && date.getDate()     === today.getDate();
-            var isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            var partidos = dateIndex[d.key];
+        btnPrev.addEventListener('click', function () {
+            curMonth--; if (curMonth < 0) { curMonth = 11; curYear--; }
+            selectedKey = null; hidePanel(); render();
+        });
+        btnNext.addEventListener('click', function () {
+            curMonth++; if (curMonth > 11) { curMonth = 0; curYear++; }
+            selectedKey = null; hidePanel(); render();
+        });
+
+        // Date chips for days that have matches this month
+        var days = document.createElement('div');
+        days.className = 'cal-days';
+
+        var daysInMonth = new Date(curYear, curMonth + 1, 0).getDate();
+        var hasAny = false;
+
+        for (var d = 1; d <= daysInMonth; d++) {
+            var key = curYear + '-' + curMonth + '-' + d;
+            var pts = dateIndex[key];
+            if (!pts || pts.length === 0) continue;
+            hasAny = true;
+
+            var dt = new Date(curYear, curMonth, d);
+            var isToday = dt.getFullYear() === today.getFullYear()
+                       && dt.getMonth()    === today.getMonth()
+                       && dt.getDate()     === today.getDate();
+            var isPast  = dt < today && !isToday;
 
             var chip = document.createElement('div');
-            chip.className = 'cal-date-chip'
-                + (isToday         ? ' cal-date-chip--today'    : '')
-                + (isPast          ? ' cal-date-chip--past'     : '')
-                + (d.key === selectedKey ? ' cal-date-chip--selected' : '');
-
+            var cls = 'cal-date-chip';
+            if (isToday)             cls += ' cal-date-chip--today';
+            if (isPast)              cls += ' cal-date-chip--past';
+            if (key === selectedKey) cls += ' cal-date-chip--selected';
+            chip.className = cls;
             chip.innerHTML =
-                '<div class="cal-chip-day">'   + SHORT_DAYS[date.getDay()] + '</div>'
-              + '<div class="cal-chip-num">'   + d.day + '</div>'
-              + '<div class="cal-chip-month">' + MONTHS[d.month].slice(0, 3) + '</div>'
-              + '<div class="cal-chip-count">' + partidos.length + ' '
-              + (partidos.length === 1 ? 'partido' : 'partidos') + '</div>';
+                '<span class="cal-chip-day">' + DAYS_SHORT[dt.getDay()] + '</span>' +
+                '<span class="cal-chip-num">' + d + '</span>' +
+                '<span class="cal-chip-month">' + MONTHS[curMonth].substring(0,3) + '</span>' +
+                '<span class="cal-chip-count">' + pts.length + (pts.length === 1 ? ' partido' : ' partidos') + '</span>';
 
-            chip.addEventListener('click', function () {
-                if (selectedKey === d.key) {
-                    selectedKey = null;
-                    hidePanel();
-                } else {
-                    selectedKey = d.key;
-                    showPanel(d.day, d.month, d.year, partidos);
-                }
-                render();
-            });
+            (function (ck, cd, cpts) {
+                chip.addEventListener('click', function () {
+                    if (selectedKey === ck) { selectedKey = null; hidePanel(); }
+                    else { selectedKey = ck; showPanel(cd, cpts); }
+                    render();
+                });
+            })(key, d, pts);
 
-            grid.appendChild(chip);
-        });
+            days.appendChild(chip);
+        }
+
+        if (!hasAny) {
+            var empty = document.createElement('p');
+            empty.className = 'cal-empty';
+            empty.textContent = 'Sin partidos este mes.';
+            days.appendChild(empty);
+        }
+
+        wrapper.appendChild(days);
     }
 
-    function showPanel(day, month, year, partidos) {
+    function showPanel(day, partidos) {
         var panel = document.getElementById('cal-panel');
         if (!panel) return;
         document.getElementById('cal-panel-title').textContent =
-            day + ' de ' + MONTHS[month] + ' de ' + year;
-
+            day + ' de ' + MONTHS[curMonth] + ' de ' + curYear;
         var body = document.getElementById('cal-panel-body');
         body.innerHTML = partidos.map(function (p) {
             var hasScore = p.marcadorLocal !== null;
             var center = hasScore
                 ? '<div class="cal-panel-score"><span class="cal-panel-score-num">' + p.marcadorLocal + '</span><span class="cal-panel-score-sep">-</span><span class="cal-panel-score-num">' + p.marcadorVisitante + '</span></div>'
                 : '<div class="cal-panel-vs">VS</div><div class="cal-panel-hora">' + escapeHtml(p.hora) + '</div>';
-            var winner = p.ganador ? '<div class="cal-panel-winner">🏆 ' + escapeHtml(p.ganador) + '</div>' : '';
-
+            var winner = p.ganador ? '<div class="cal-panel-winner">\uD83C\uDFC6 ' + escapeHtml(p.ganador) + '</div>' : '';
             return '<div class="cal-panel-card' + (hasScore ? ' cal-panel-card--done' : '') + '">'
                 + '<div class="cal-panel-meta">'
                 +   '<span class="cal-panel-torneo">' + escapeHtml(p.torneo) + '</span>'
@@ -289,7 +329,6 @@ window.addEventListener('resize', drawBracketLines);
                 + '</div>'
                 + '</div>';
         }).join('');
-
         panel.hidden = false;
         panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -300,4 +339,112 @@ window.addEventListener('resize', drawBracketLines);
     }
 
     render();
+})();
+
+// ---- Filtro indexJugador ----
+(function () {
+    var searchEl = document.getElementById('filterSearch');
+    var rolEl    = document.getElementById('filterRol');
+    var juegoEl  = document.getElementById('filterJuego');
+    var equipoEl = document.getElementById('filterEquipo');
+    var countEl  = document.getElementById('filterCount');
+    if (!searchEl || !rolEl || !equipoEl) return;
+    var items = Array.from(document.querySelectorAll('.filter-item'));
+
+    var roles = {}, juegos = {}, equipos = {};
+    items.forEach(function (r) {
+        if (r.dataset.rol)    roles[r.dataset.rol]     = true;
+        if (r.dataset.juego)  juegos[r.dataset.juego]  = true;
+        if (r.dataset.equipo) equipos[r.dataset.equipo] = true;
+    });
+    Object.keys(roles).sort().forEach(function (v) {
+        var o = document.createElement('option'); o.value = v; o.textContent = v; rolEl.appendChild(o);
+    });
+    if (juegoEl) {
+        Object.keys(juegos).sort().forEach(function (v) {
+            var o = document.createElement('option'); o.value = v; o.textContent = v; juegoEl.appendChild(o);
+        });
+    }
+    Object.keys(equipos).sort().forEach(function (v) {
+        var o = document.createElement('option'); o.value = v; o.textContent = v; equipoEl.appendChild(o);
+    });
+
+    function applyFilter() {
+        var term   = searchEl.value.toLowerCase().trim();
+        var rol    = rolEl.value;
+        var juego  = juegoEl ? juegoEl.value : '';
+        var equipo = equipoEl.value;
+        var visible = 0;
+        items.forEach(function (r) {
+            var show = (!term   || (r.dataset.search || '').indexOf(term)  !== -1)
+                    && (!rol    || r.dataset.rol    === rol)
+                    && (!juego  || r.dataset.juego  === juego)
+                    && (!equipo || r.dataset.equipo === equipo);
+            r.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        if (countEl) countEl.textContent = visible + ' / ' + items.length;
+    }
+    searchEl.addEventListener('input',  applyFilter);
+    rolEl.addEventListener('change',    applyFilter);
+    if (juegoEl) juegoEl.addEventListener('change', applyFilter);
+    equipoEl.addEventListener('change', applyFilter);
+    applyFilter();
+})();
+
+// ---- Filtro indexTorneo ----
+(function () {
+    var searchEl = document.getElementById('filterSearch');
+    var estadoEl = document.getElementById('filterEstado');
+    var juegoEl  = document.getElementById('filterJuego');
+    var countEl  = document.getElementById('filterCount');
+    if (!searchEl || !estadoEl) return;
+    var items = Array.from(document.querySelectorAll('.filter-item'));
+
+    var juegos = {};
+    items.forEach(function (c) { if (c.dataset.juego) juegos[c.dataset.juego] = true; });
+    if (juegoEl) {
+        Object.keys(juegos).sort().forEach(function (v) {
+            var o = document.createElement('option'); o.value = v; o.textContent = v; juegoEl.appendChild(o);
+        });
+    }
+
+    function applyFilter() {
+        var term   = searchEl.value.toLowerCase().trim();
+        var estado = estadoEl.value;
+        var juego  = juegoEl ? juegoEl.value : '';
+        var visible = 0;
+        items.forEach(function (c) {
+            var show = (!term   || (c.dataset.search || '').indexOf(term)   !== -1)
+                    && (!estado || c.dataset.estado === estado)
+                    && (!juego  || c.dataset.juego  === juego);
+            c.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        if (countEl) countEl.textContent = visible + ' / ' + items.length;
+    }
+    searchEl.addEventListener('input',  applyFilter);
+    estadoEl.addEventListener('change', applyFilter);
+    if (juegoEl) juegoEl.addEventListener('change', applyFilter);
+    applyFilter();
+})();
+
+// ---- Filtro indexJuego ----
+(function () {
+    var searchEl = document.getElementById('filterSearch');
+    var countEl  = document.getElementById('filterCount');
+    if (!searchEl || document.getElementById('filterEstado') || document.getElementById('filterRol')) return;
+    var items = Array.from(document.querySelectorAll('.filter-item'));
+    function applyFilter() {
+        var term = searchEl.value.toLowerCase().trim();
+        var visible = 0;
+        items.forEach(function (r) {
+            var show = !term || (r.dataset.search || '').indexOf(term) !== -1;
+            r.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        if (countEl) countEl.textContent = visible + ' / ' + items.length;
+    }
+    searchEl.addEventListener('input', applyFilter);
+    applyFilter();
 })();

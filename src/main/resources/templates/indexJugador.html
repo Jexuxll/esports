@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}" class="active">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -36,6 +35,19 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/jugadores/nuevo}" class="btn btn-primary">+ Nuevo Jugador</a>
     </div>
 
+    <div class="filter-bar" th:if="${not #lists.isEmpty(jugadores)}">
+        <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar por nick, nombre, equipo…">
+        <select id="filterRol" class="filter-select">
+            <option value="">Todos los roles</option>
+        </select>
+        <select id="filterJuego" class="filter-select">
+            <option value="">Todos los juegos</option>
+        </select>
+        <select id="filterEquipo" class="filter-select">
+            <option value="">Todos los equipos</option>
+        </select>
+    </div>
+
     <div class="table-wrapper" th:if="${not #lists.isEmpty(jugadores)}">
         <table>
             <thead>
@@ -49,12 +61,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="jugador : ${jugadores}">
+                <tr th:each="jugador : ${jugadores}"
+                    class="filter-item"
+                    th:attr="data-search=${#strings.toLowerCase(jugador.nickname + ' ' + jugador.nombre + ' ' + jugador.apellido + ' ' + (jugador.equipo != null ? jugador.equipo.tag : '') + ' ' + (jugador.equipo != null ? jugador.equipo.nombre : '') + ' ' + (jugador.rol != null ? jugador.rol : '') + ' ' + (jugador.juego != null ? jugador.juego : ''))},data-rol=${jugador.rol != null ? jugador.rol : ''},data-juego=${jugador.juego != null ? jugador.juego : ''},data-equipo=${jugador.equipo != null ? jugador.equipo.tag : ''}">
                     <td>
                         <img th:if="${jugador.foto != null and jugador.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
                              class="img-thumb" alt="Foto">
-                        <div th:unless="${jugador.foto != null and jugador.foto != ''}" class="no-img">—</div>
+                        <div th:unless="${jugador.foto != null and jugador.foto != ''}" class="no-img">–</div>
                     </td>
                     <td style="font-weight:700;" th:text="${jugador.nickname}">Nickname</td>
                     <td th:text="${jugador.nombre + ' ' + jugador.apellido}">Nombre</td>

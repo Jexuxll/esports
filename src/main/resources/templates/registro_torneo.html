@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
     </ul>
 </nav>
 
@@ -45,6 +44,12 @@
                 <label for="nombre">Nombre del torneo</label>
                 <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
                        placeholder="Ej: Champions Spring 2026" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tag">Tag del torneo <small style="color:var(--text-muted)">(abreviatura, max. 10 chars)</small></label>
+                <input type="text" id="tag" th:field="*{tag}" class="form-control"
+                       placeholder="Ej: CSP26" maxlength="10">
             </div>
 
             <div class="form-group">

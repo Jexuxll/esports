@@ -88,7 +88,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
 
     @Override
     public Jugador obtenerPorId(int id) {
-        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag_equipos AS equipo_tag " +
                      "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
                      "WHERE j.id_jugador=?";
         Jugador jugador = null;
@@ -127,7 +127,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
     @Override
     public List<Jugador> listarTodos() {
         List<Jugador> lista = new ArrayList<>();
-        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag_equipos AS equipo_tag " +
                      "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo";
 
         try (PreparedStatement pstmt = getConnection().prepareStatement(sql);
@@ -164,7 +164,7 @@ public class JugadorDAOJdbc implements JugadorDAO {
     @Override
     public List<Jugador> listarPorEquipo(int idEquipo) {
         List<Jugador> lista = new ArrayList<>();
-        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag AS equipo_tag " +
+        String sql = "SELECT j.*, e.nombre AS equipo_nombre, e.tag_equipos AS equipo_tag " +
                      "FROM jugadores j LEFT JOIN equipos e ON j.id_equipo = e.id_equipo " +
                      "WHERE j.id_equipo = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {

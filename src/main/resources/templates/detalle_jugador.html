@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}" class="active">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -53,7 +52,7 @@
                  alt="Foto jugador"
                  class="player-profile__image">
             <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                 class="player-profile__placeholder">🖼️</div>
+                 class="player-profile__placeholder">🎮</div>
         </div>
 
         <!-- Info -->
@@ -70,22 +69,22 @@
                 <div class="player-profile__role-icon">🎯</div>
                 <div class="player-profile__role-copy">
                     <span class="player-profile__role-label">Rol Principal</span>
-                    <span class="player-profile__role-value" th:text="${jugador.rol}">—</span>
+                    <span class="player-profile__role-value" th:text="${jugador.rol}">–</span>
                 </div>
             </div>
 
             <div class="player-profile__grid">
                 <div class="player-profile__field">
                     <span class="player-profile__field-label">Edad</span>
-                    <span class="player-profile__field-value" th:text="${jugador.edad} + ' años'">—</span>
+                    <span class="player-profile__field-value" th:text="${jugador.edad} + ' años'">–</span>
                 </div>
                 <div class="player-profile__field">
                     <span class="player-profile__field-label">Nacionalidad</span>
-                    <span class="player-profile__field-value" th:text="${jugador.nacionalidad}">—</span>
+                    <span class="player-profile__field-value" th:text="${jugador.nacionalidad}">–</span>
                 </div>
                 <div class="player-profile__field">
                     <span class="player-profile__field-label">Juego</span>
-                    <span class="player-profile__field-value" th:text="${jugador.juego != null and jugador.juego != '' ? jugador.juego : '—'}">—</span>
+                    <span class="player-profile__field-value" th:text="${jugador.juego != null and jugador.juego != '' ? jugador.juego : '–'}">–</span>
                 </div>
                 <div class="player-profile__field">
                     <span class="player-profile__field-label">Equipo</span>
@@ -93,8 +92,8 @@
                         <a th:if="${jugador.equipo != null}"
                            th:href="@{/equipos/{id}(id=${jugador.equipo.id})}"
                            th:text="${jugador.equipo.nombre}"
-                           class="player-profile__team-link">—</a>
-                        <span th:if="${jugador.equipo == null}" style="color:var(--text-primary);">—</span>
+                           class="player-profile__team-link">–</a>
+                        <span th:if="${jugador.equipo == null}" style="color:var(--text-primary);">–</span>
                     </span>
                 </div>
             </div>

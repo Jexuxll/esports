@@ -124,7 +124,7 @@ public class EquipoTorneoDAOJdbc implements EquipoTorneoDAO {
     public List<EquipoTorneo> listarPorTorneo(int idTorneo) {
         List<EquipoTorneo> lista = new ArrayList<>();
         String sql = "SELECT et.id_equipo_torneo, et.id_torneo, et.fecha_inscripcion, " +
-                     "e.id_equipo, e.nombre AS equipo_nombre, e.tag AS equipo_tag, " +
+                     "e.id_equipo, e.nombre AS equipo_nombre, e.tag_equipos AS equipo_tag, " +
                      "e.foto AS equipo_foto, e.pais AS equipo_pais " +
                      "FROM equipos_torneos et " +
                      "JOIN equipos e ON et.id_equipo = e.id_equipo " +

@@ -27,7 +27,7 @@ public class TorneoDAOJdbc implements TorneoDAO{
 
     @Override
     public void guardar(Torneo torneo) {
-        String sql = "INSERT INTO torneos (nombre, juego, fecha_inicio, fecha_fin, estado, foto) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO torneos (nombre, juego, fecha_inicio, fecha_fin, estado, foto, tag) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -37,6 +37,7 @@ public class TorneoDAOJdbc implements TorneoDAO{
             stmt.setDate(4, torneo.getFechaFin() != null ? Date.valueOf(torneo.getFechaFin()) : null);
             stmt.setString(5, torneo.getEstado());
             stmt.setString(6, torneo.getFoto());
+            stmt.setString(7, torneo.getTag());
 
             stmt.executeUpdate();
 
@@ -47,7 +48,7 @@ public class TorneoDAOJdbc implements TorneoDAO{
 
     @Override
     public void actualizar(Torneo torneo) {
-        String sql = "UPDATE torneos SET nombre=?, juego=?, fecha_inicio=?, fecha_fin=?, estado=?, foto=? WHERE id_torneo=?";
+        String sql = "UPDATE torneos SET nombre=?, juego=?, fecha_inicio=?, fecha_fin=?, estado=?, foto=?, tag=? WHERE id_torneo=?";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
@@ -57,7 +58,8 @@ public class TorneoDAOJdbc implements TorneoDAO{
             stmt.setDate(4, torneo.getFechaFin() != null ? Date.valueOf(torneo.getFechaFin()) : null);
             stmt.setString(5, torneo.getEstado());
             stmt.setString(6, torneo.getFoto());
-            stmt.setInt(7, torneo.getId());
+            stmt.setString(7, torneo.getTag());
+            stmt.setInt(8, torneo.getId());
 
             stmt.executeUpdate();
 
@@ -135,6 +137,7 @@ public class TorneoDAOJdbc implements TorneoDAO{
 
         torneo.setEstado(rs.getString("estado"));
         torneo.setFoto(rs.getString("foto"));
+        torneo.setTag(rs.getString("tag"));
 
         return torneo;
     }

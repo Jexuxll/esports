@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -36,15 +35,28 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/torneos/nuevo}" class="btn btn-primary">+ Nuevo Torneo</a>
     </div>
 
+    <div class="filter-bar" th:if="${not #lists.isEmpty(torneos)}">
+        <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar torneo, juego…">
+        <select id="filterEstado" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="Activo">Activo</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Finalizado">Finalizado</option>
+        </select>
+        <select id="filterJuego" class="filter-select">
+            <option value="">Todos los juegos</option>
+        </select>
+    </div>
+
     <div class="torneo-banner-list" th:if="${not #lists.isEmpty(torneos)}">
-        <div class="torneo-mini-banner card-link" th:each="torneo : ${torneos}"
+        <div class="torneo-mini-banner card-link filter-item" th:each="torneo : ${torneos}"
              style="position:relative"
-             th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
+             th:attr="data-href=@{/torneos/{id}(id=${torneo.id})},data-search=${#strings.toLowerCase(torneo.nombre + ' ' + (torneo.juego != null ? torneo.juego : ''))},data-estado=${torneo.estado != null ? torneo.estado : ''},data-juego=${torneo.juego != null ? torneo.juego : ''}">
 
             <a sec:authorize="hasRole('ADMIN')"
                th:href="@{/torneos/eliminar/{id}(id=${torneo.id})}"
                class="btn btn-danger card-delete-btn stop-propagate"
-               data-confirm="¿Eliminar este torneo?">🗑️</a>
+               data-confirm="¿Eliminar este torneo?">✕</a>
             <div class="torneo-mini-banner__media">
                 <img th:if="${torneo.foto != null and torneo.foto != ''}"
                      th:src="@{/Imagenes/{f}(f=${torneo.foto})}"

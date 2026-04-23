@@ -4,6 +4,8 @@
  */
 package com.proyecto.esports.controller;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.proyecto.esports.model.Equipo;
+import com.proyecto.esports.model.Jugador;
 import com.proyecto.esports.model.Partido;
 import com.proyecto.esports.service.EquipoService;
 import com.proyecto.esports.service.EquipoTorneoService;
+import com.proyecto.esports.service.JugadorService;
 import com.proyecto.esports.service.PartidoService;
 import com.proyecto.esports.service.TorneoService;
 
@@ -31,22 +35,52 @@ public class PartidoController {
     private final TorneoService torneoService;
     private final EquipoService equipoService;
     private final EquipoTorneoService equipoTorneoService;
+    private final JugadorService jugadorService;
 
 
     @Autowired
-    public PartidoController(PartidoService partidoService, TorneoService torneoService, EquipoService equipoService, EquipoTorneoService equipoTorneoService) {
+    public PartidoController(PartidoService partidoService, TorneoService torneoService, EquipoService equipoService, EquipoTorneoService equipoTorneoService, JugadorService jugadorService) {
         this.partidoService = partidoService;
         this.torneoService = torneoService;
         this.equipoService = equipoService;
         this.equipoTorneoService = equipoTorneoService;
+        this.jugadorService = jugadorService;
     }
 
     @GetMapping("/partidos")
     public String listarPartidos(Model model) {
         List<Partido> partidos = partidoService.listarTodos();
+        partidos.forEach(p -> {
+            String juegoTorneo = (p.getTorneo() != null) ? p.getTorneo().getJuego() : null;
+            if (p.getEquipoLocal() != null) {
+                List<Jugador> todos = jugadorService.listarPorEquipo(p.getEquipoLocal().getId());
+                if (juegoTorneo != null) {
+                    todos = todos.stream()
+                        .filter(j -> juegoTorneo.equals(j.getJuego()))
+                        .collect(Collectors.toList());
+                }
+                p.getEquipoLocal().setJugadores(todos);
+            }
+            if (p.getEquipoVisitante() != null) {
+                List<Jugador> todos = jugadorService.listarPorEquipo(p.getEquipoVisitante().getId());
+                if (juegoTorneo != null) {
+                    todos = todos.stream()
+                        .filter(j -> juegoTorneo.equals(j.getJuego()))
+                        .collect(Collectors.toList());
+                }
+                p.getEquipoVisitante().setJugadores(todos);
+            }
+        });
+        partidos.sort(Comparator.comparing(
+            p -> p.getFechaPartido() != null ? p.getFechaPartido() : LocalDateTime.MIN
+        ));
         Map<String, List<Partido>> partidosPorTorneo = partidos.stream()
             .collect(Collectors.groupingBy(
-                p -> p.getTorneo() != null ? p.getTorneo().getNombre() : "Sin torneo",
+                p -> {
+                    if (p.getTorneo() == null) return "Sin torneo";
+                    String tag = p.getTorneo().getTag();
+                    return (tag != null && !tag.isEmpty()) ? tag : p.getTorneo().getNombre();
+                },
                 LinkedHashMap::new,
                 Collectors.toList()
             ));

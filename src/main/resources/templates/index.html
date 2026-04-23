@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -34,12 +33,12 @@
 
     <!-- Hero -->
     <div class="hero">
-        <div class="hero-eyebrow">ESPORTS_MANAGER · ONLINE</div>
+        <div class="hero-eyebrow">ESPORTS_MANAGER ● ONLINE</div>
         <h1 class="hero-title">
             Gestiona tu <span>universo</span><br>competitivo
         </h1>
         <p class="hero-subtitle">
-            Rosters, brackets y resultados en tiempo real —<br>
+            Rosters, brackets y resultados en tiempo real ⚡<br>
             cada detalle de tu competición, desde un solo panel.
         </p>
         <div class="hero-stats-inline">
@@ -97,10 +96,7 @@
     <!-- Calendario de Partidos -->
     <div class="section-title">Fechas de <span>Partidos</span></div>
 
-    <div class="cal-wrapper" id="cal-wrapper" th:attr="data-partidos=${partidosJson}">
-        <!-- Chips generados por JS -->
-        <div class="cal-days" id="cal-grid-days"></div>
-    </div>
+    <div class="cal-wrapper" id="cal-wrapper" th:attr="data-partidos=${partidosJson}"></div>
 
     <!-- Panel de partidos del día seleccionado -->
     <div class="cal-panel" id="cal-panel" hidden>
