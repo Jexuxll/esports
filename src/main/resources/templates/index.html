@@ -130,9 +130,9 @@
                         <div class="torneos-carousel-name" th:text="${torneo.nombre}">Torneo</div>
                         <div class="torneos-carousel-game" th:text="${torneo.juego}">Juego</div>
                         <span th:switch="${torneo.estado}">
-                            <span th:case="'Activo'"     class="badge badge-success">Activo</span>
-                            <span th:case="'Pendiente'"  class="badge badge-warning">Pendiente</span>
-                            <span th:case="'Finalizado'" class="badge badge-finished">Finalizado</span>
+                            <span th:case="'ACTIVO'"     class="badge badge-success">Activo</span>
+                            <span th:case="'PENDIENTE'"  class="badge badge-warning">Pendiente</span>
+                            <span th:case="'FINALIZADO'" class="badge badge-finished">Finalizado</span>
                             <span th:case="*"            class="badge badge-info" th:text="${torneo.estado}">Estado</span>
                         </span>
                     </div>
