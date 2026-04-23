@@ -1,10 +1,7 @@
 Mejorar diseño en general
 Mejorar el nav y el boton de Admin
-Mejorar los backs y que te devuelva a donde antes
 
 1. INICIO
-    Mejorar Acceso rapido: mas estilizado, menos info y mejor posicionado
-    Info de web (Equipos, Jugadores, etc) quitarle tanto protagonismo.
 
 2. EQUIPOS 
     Hacer mas grandes las cards y hacerlo a lo mejor un carrousel
@@ -15,7 +12,6 @@ Mejorar los backs y que te devuelva a donde antes
         Mejorar header
 
 3. TORNEOS 
-    Quitar cards y hacer una lista separadas por divs que ocupe el ancho total
     - DETALLE TORNEO 
         Hacer mas grande el bracket y mejorarlo(hacer uno base donde ir añadiendo los partidos)
         Añadir acceso a los partidos desde el bracket (desplegable como el del calendario)
@@ -24,5 +20,5 @@ Mejorar los backs y que te devuelva a donde antes
 4. PARTIDOS 
     Quitar del nav esa seccion
     Ordenar por fecha y dividir por acabados y por pendientes
-    añadir los logos a los tag
+    Añadir los logos a los tag
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,11 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -103,7 +102,7 @@
             <a sec:authorize="hasRole('ADMIN')"
                th:href="@{/equipos-torneos/eliminar/{id}(id=${et.id})}"
                class="btn btn-danger card-delete-btn stop-propagate"
-               data-confirm="¿Desinscribir este equipo del torneo?">🗑️</a>
+               data-confirm="¿Desinscribir este equipo del torneo?">✕</a>
 
             <div class="card-poster-title" th:text="${et.equipo.nombre}">Nombre</div>
 
@@ -133,7 +132,7 @@
                     <div th:class="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')">
                         <img th:if="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoLocal.foto})}" class="bm-logo" alt="">
-                        <span th:unless="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}" class="bm-logo-ph">🛡</span>
+                        <span th:unless="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}" class="bm-logo-ph">🛡️</span>
                         <span class="bm-name" th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : 'TBD'}">Local</span>
                         <span class="bm-score" th:text="${p.marcadorLocal != null ? p.marcadorLocal : '-'}">-</span>
                     </div>
@@ -143,7 +142,7 @@
                     <div th:class="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')">
                         <img th:if="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoVisitante.foto})}" class="bm-logo" alt="">
-                        <span th:unless="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}" class="bm-logo-ph">🛡</span>
+                        <span th:unless="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}" class="bm-logo-ph">🛡️</span>
                         <span class="bm-name" th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : 'TBD'}">Visitante</span>
                         <span class="bm-score" th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">-</span>
                     </div>
@@ -151,9 +150,9 @@
                     <div class="bm-footer">
                         <span class="bm-date" th:text="${p.fechaPartido != null ? #temporals.format(p.fechaPartido, 'dd/MM HH:mm') : ''}"></span>
                         <div class="bm-actions" sec:authorize="hasRole('ADMIN')">
-                            <a th:href="@{/partidos/editar/{id}(id=${p.id})}" class="btn btn-secondary btn-sm">✏</a>
+                            <a th:href="@{/partidos/editar/{id}(id=${p.id})}" class="btn btn-secondary btn-sm">✏️</a>
                             <a th:href="@{/partidos/eliminar/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
-                               data-confirm="¿Eliminar este partido?">✕</a>
+                               data-confirm="¿Eliminar este partido?">✖</a>
                         </div>
                     </div>
                 </div>

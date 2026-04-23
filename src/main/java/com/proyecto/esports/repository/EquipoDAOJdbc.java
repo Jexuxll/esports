@@ -26,7 +26,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
     
     @Override
     public void guardar(Equipo equipo) {
-        String sql = "INSERT INTO equipos (nombre, tag, pais, foto) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO equipos (nombre, tag_equipos, pais, foto) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, equipo.getNombre());
@@ -43,7 +43,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
 
     @Override
     public void actualizar(Equipo equipo) {
-        String sql = "UPDATE equipos SET nombre = ?, tag = ?, pais = ?, foto = ? WHERE id_equipo = ?";
+        String sql = "UPDATE equipos SET nombre = ?, tag_equipos = ?, pais = ?, foto = ? WHERE id_equipo = ?";
         try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
             pstmt.setString(1, equipo.getNombre());
             pstmt.setString(2, equipo.getTag());
@@ -110,7 +110,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
         Equipo equipo = new Equipo();
         equipo.setId(rs.getInt("id_equipo"));
         equipo.setNombre(rs.getString("nombre"));
-        equipo.setTag(rs.getString("tag"));
+        equipo.setTag(rs.getString("tag_equipos"));
         equipo.setPais(rs.getString("pais"));
         equipo.setFoto(rs.getString("foto"));
         return equipo;

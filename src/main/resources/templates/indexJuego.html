@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -13,10 +13,10 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <!-- <li><a th:href="@{/jugadores}">Jugadores</a></li> -->
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li><a th:href="@{/partidos}">Partidos</a></li>
-        <!-- <li><a th:href="@{/juegos}" class="active">Juegos</a></li> -->
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}" class="active">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
             <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
         </li>
@@ -35,6 +35,10 @@
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/juegos/nuevo}" class="btn btn-primary">+ Nuevo Juego</a>
     </div>
 
+    <div class="filter-bar" th:if="${not #lists.isEmpty(juegos)}">
+        <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar juego…">
+    </div>
+
     <div class="table-wrapper" th:if="${not #lists.isEmpty(juegos)}">
         <table>
             <thead>
@@ -45,12 +49,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="juego : ${juegos}">
+                <tr th:each="juego : ${juegos}"
+                    class="filter-item"
+                    th:attr="data-search=${#strings.toLowerCase(juego.nombre)}">
                     <td>
                         <img th:if="${juego.foto != null and juego.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${juego.foto})}"
                              class="img-thumb" alt="Logo">
-                        <div th:unless="${juego.foto != null and juego.foto != ''}" class="no-img">—</div>
+                        <div th:unless="${juego.foto != null and juego.foto != ''}" class="no-img">–</div>
                     </td>
                     <td style="font-weight:700;" th:text="${juego.nombre}">Juego</td>
                     <td class="actions" sec:authorize="hasRole('ADMIN')">

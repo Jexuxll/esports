@@ -16,6 +16,7 @@ public class Torneo {
     private LocalDate fechaFin;
     private String estado;
     private String foto;
+    private String tag;
     
     private List<EquipoTorneo> equiposInscritos;
     private List<Partido> partidos;
@@ -36,6 +37,14 @@ public class Torneo {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Torneo() {

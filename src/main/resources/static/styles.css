@@ -133,9 +133,9 @@ nav {
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border: 1px solid transparent;
-    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    background: transparent;
+    transition: all 0.3s ease;
 }
-
 .nav-links a:hover,
 .nav-links a.active {
     background: linear-gradient(180deg, rgba(29,110,245,0.85) 0%, rgba(14,80,200,0.92) 100%);
@@ -1894,6 +1894,26 @@ tr.row-link:hover {
     display: block;
 }
 
+/* ---- Divisor de sección (Jugados / Pendientes) ---- */
+.match-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0.9rem 0 0.1rem;
+}
+.match-section-divider::before,
+.match-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
 /* ---- Lista de partidos (detalle equipo) ---- */
 .match-list {
     display: flex;
@@ -2074,6 +2094,42 @@ tr.row-link:hover {
     line-height: 1;
 }
 
+/* ---- Match item compact variant (detalle_equipo carousel) ---- */
+.match-item--compact .match-item-header .match-item-ronda {
+    font-size: 0.68rem;
+}
+.match-item--compact .match-item-header .match-item-date {
+    font-size: 0.6rem;
+}
+.match-item--compact .match-item-team {
+    font-size: 0.88rem;
+}
+.match-item--compact .match-item-score {
+    font-size: 1.55rem;
+    gap: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    min-width: 48px;
+}
+.match-item--compact .match-item-score--pending {
+    font-size: 1.55rem;
+    min-width: 36px;
+    padding: 0.15rem 0.45rem;
+}
+.match-item--compact .match-item-dash {
+    font-size: 1.7rem;
+}
+.match-item--compact .match-item-logo,
+.match-item--compact .match-item-logo__img {
+    width: 38px;
+    height: 38px;
+}
+.match-item--compact .match-item-logo__placeholder {
+    font-size: 1.1rem;
+}
+.match-item--compact {
+    padding: 0.55rem 0.85rem;
+}
+
 .match-badge-derrota {
     display: inline-block;
     padding: 0.24rem 0.68rem;
@@ -2086,6 +2142,125 @@ tr.row-link:hover {
     background-color: rgba(239,68,68,.12);
     color: #f87171;
     border: 1px solid #f87171;
+}
+
+/* ---- Match item variants: expandable, static, open ---- */
+.match-item-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Admin overlay top-right (visible on card hover) */
+.match-item-admin-overlay {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.45rem;
+    display: flex;
+    gap: 0.3rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 5;
+}
+.match-item:hover .match-item-admin-overlay {
+    opacity: 1;
+}
+
+/* Expandable: pointer cursor, suppress transform on open */
+.match-item--expandable {
+    cursor: pointer;
+}
+.match-item--open {
+    border-color: var(--accent) !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Static (detalle_equipo): hover visual but no pointer/action */
+.match-item--static {
+    cursor: default;
+}
+
+/* Expand hint label in footer */
+.match-item-expand-hint {
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    transition: color 0.15s;
+}
+.match-item--open .match-item-expand-hint {
+    color: var(--accent);
+}
+
+/* ---- Players dropdown panel ---- */
+.match-item-players {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 0.9rem 1.2rem;
+}
+.match-item-players-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+.match-item-players-team-title {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    margin-bottom: 0.45rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+}
+.match-player-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.28rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+}
+.match-player-row:last-child {
+    border-bottom: none;
+}
+.match-player-avatar {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.match-player-avatar--ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+.match-player-nick {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+.match-player-role {
+    margin-left: auto;
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+}
+.match-player-empty {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 0.3rem 0;
 }
 
 /* ---- Home page ---- */
@@ -2585,6 +2760,14 @@ tr.row-link:hover {
     padding: 0.5rem;
 }
 
+/* Schedule list for monthly carousel */
+.cal-schedule {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 /* Date chip */
 .cal-date-chip {
     display: flex;
@@ -2842,6 +3025,77 @@ tr.row-link:hover {
     font-weight: 600;
     text-decoration: none;
     transition: color 0.15s;
+}
+
+/* ---- Calendario mensual: grid container ---- */
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+/* ---- Tabs: desplegable para torneos extra ---- */
+.tab-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    outline: none;
+    position: relative;
+    bottom: -2px;
+    transition: border-color 0.15s, color 0.15s;
+}
+.tab-select:focus,
+.tab-select:hover {
+    border-color: var(--accent);
+    color: var(--accent-light);
+}
+
+/* ---- Barra de búsqueda / filtros ---- */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    align-items: center;
+}
+
+.filter-input {
+    flex: 1 1 220px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    padding: 0.5rem 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.filter-input::placeholder { color: var(--text-muted); }
+.filter-input:focus { border-color: var(--accent); }
+
+.filter-select {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+.filter-count {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-left: auto;
+    white-space: nowrap;
 }
 
 .cal-panel-link:hover { color: var(--accent-cyan-light); }
