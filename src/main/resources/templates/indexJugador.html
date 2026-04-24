@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jugadores - ESports Manager</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=5">
 </head>
 <body>
 
@@ -46,48 +46,52 @@
         <select id="filterEquipo" class="filter-select">
             <option value="">Todos los equipos</option>
         </select>
+        <select id="filterPerPage" class="filter-select">
+            <option value="10">10 por página</option>
+            <option value="24" selected>24 por página</option>
+            <option value="50">50 por página</option>
+            <option value="100">100 por página</option>
+        </select>
     </div>
 
-    <div class="table-wrapper" th:if="${not #lists.isEmpty(jugadores)}">
-        <table>
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Nickname</th>
-                    <th>Nombre completo</th>
-                    <th>Rol</th>
-                    <th>Equipo</th>
-                    <th sec:authorize="hasRole('ADMIN')">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="jugador : ${jugadores}"
-                    class="filter-item"
-                    th:attr="data-search=${#strings.toLowerCase(jugador.nickname + ' ' + jugador.nombre + ' ' + jugador.apellido + ' ' + (jugador.equipo != null ? jugador.equipo.tag : '') + ' ' + (jugador.equipo != null ? jugador.equipo.nombre : '') + ' ' + (jugador.rol != null ? jugador.rol : '') + ' ' + (jugador.juego != null ? jugador.juego : ''))},data-rol=${jugador.rol != null ? jugador.rol : ''},data-juego=${jugador.juego != null ? jugador.juego : ''},data-equipo=${jugador.equipo != null ? jugador.equipo.tag : ''}">
-                    <td>
-                        <img th:if="${jugador.foto != null and jugador.foto != ''}"
-                             th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
-                             class="img-thumb" alt="Foto">
-                        <div th:unless="${jugador.foto != null and jugador.foto != ''}" class="no-img">–</div>
-                    </td>
-                    <td style="font-weight:700;" th:text="${jugador.nickname}">Nickname</td>
-                    <td th:text="${jugador.nombre + ' ' + jugador.apellido}">Nombre</td>
-                    <td>
-                        <span class="badge badge-info" th:text="${jugador.rol}">Rol</span>
-                    </td>
-                    <td>
-                        <span th:if="${jugador.equipo != null}" class="team-tag" th:text="${jugador.equipo.tag}">TAG</span>
-                        <span th:unless="${jugador.equipo != null}" style="color:var(--text-muted);">Equipo</span>
-                    </td>
-                    <td class="actions" sec:authorize="hasRole('ADMIN')">
-                        <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}" class="btn btn-secondary btn-sm">Editar</a>
-                        <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}" class="btn btn-danger btn-sm"
-                           data-confirm="¿Eliminar este jugador?">Eliminar</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="idcard-grid" th:if="${not #lists.isEmpty(jugadores)}">
+        <div th:each="jugador : ${jugadores}"
+             class="idcard filter-item"
+             th:attr="data-href=@{/jugadores/{id}(id=${jugador.id})},data-search=${#strings.toLowerCase(jugador.nickname + ' ' + jugador.nombre + ' ' + jugador.apellido + ' ' + (jugador.equipo != null ? jugador.equipo.tag : '') + ' ' + (jugador.equipo != null ? jugador.equipo.nombre : '') + ' ' + (jugador.rol != null ? jugador.rol : '') + ' ' + (jugador.juego != null ? jugador.juego : ''))},data-rol=${jugador.rol != null ? jugador.rol : ''},data-juego=${jugador.juego != null ? jugador.juego : ''},data-equipo=${jugador.equipo != null ? jugador.equipo.tag : ''}">
+
+            <!-- Foto -->
+            <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+                 class="idcard-photo" alt="Foto jugador">
+            <div th:unless="${jugador.foto != null and jugador.foto != ''}" class="idcard-photo-ph">👤</div>
+
+            <!-- Overlay gradiente -->
+            <div class="idcard-overlay"></div>
+
+            <!-- Rol (arriba izquierda) -->
+            <div class="idcard-rol"  th:if="${jugador.rol   != null}" th:text="${jugador.rol}">ROL</div>
+
+            <!-- Tag equipo (arriba derecha) -->
+            <div class="idcard-team" th:if="${jugador.equipo != null}" th:text="${jugador.equipo.tag}">TAG</div>
+
+            <!-- Info inferior -->
+            <div class="idcard-body">
+                <div class="idcard-nick"     th:text="${jugador.nickname}">NICKNAME</div>
+                <div class="idcard-fullname" th:text="${jugador.nombre + ' ' + jugador.apellido}">Nombre Apellido</div>
+                <div class="idcard-juego"    th:if="${jugador.juego != null}" th:text="${jugador.juego}">Juego</div>
+            </div>
+
+            <!-- Acciones admin (visibles solo al hover) -->
+            <div class="idcard-actions" sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/jugadores/editar/{id}(id=${jugador.id})}"
+                   class="btn btn-secondary btn-sm stop-propagate">Editar</a>
+                <a th:href="@{/jugadores/eliminar/{id}(id=${jugador.id})}"
+                   class="btn btn-danger btn-sm stop-propagate"
+                   data-confirm="¿Eliminar este jugador?">Eliminar</a>
+            </div>
+        </div>
     </div>
+    <div id="idcard-pager" class="idcard-pager"></div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(jugadores)}">
         <p>No hay jugadores registrados aún.</p>

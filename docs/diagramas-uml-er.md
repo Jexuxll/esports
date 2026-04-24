@@ -190,103 +190,7 @@ flowchart LR
     UC4 -. incluye .-> UC6
 ```
 
-## 3. Diagramas de secuencia (por partes)
-
-### 3.1 Parte usuario: ver detalle de torneo
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Usuario
-    participant Browser
-    participant Sec as Security
-    participant TC as TorneoController
-    participant TS as TorneoService
-    participant ETS as EquipoTorneoService
-    participant PS as PartidoService
-    participant UI as detalle_torneo
-
-    Usuario->>Browser: Entra a /torneos/{id}
-    Browser->>Sec: GET /torneos/{id}
-    Sec-->>Browser: Permitido (ruta publica)
-    Browser->>TC: GET /torneos/{id}
-    TC->>TS: obtenerPorId(id)
-    TS-->>TC: Torneo
-    TC->>ETS: listarPorTorneo(id)
-    ETS-->>TC: EquiposInscritos
-    TC->>PS: listarPorTorneo(id)
-    PS-->>TC: Partidos
-    TC-->>UI: Render vista detalle_torneo
-    UI-->>Usuario: Muestra torneo + equipos + partidos
-```
-
-### 3.2 Parte usuario admin: iniciar sesion
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Usuario as UsuarioAdmin
-    participant Browser
-    participant Auth as AuthController
-    participant Sec as Security
-
-    Usuario->>Browser: Entra a /admin/login
-    Browser->>Auth: GET /admin/login
-    Auth-->>Browser: Vista admin_login
-    Usuario->>Browser: Envia credenciales
-    Browser->>Sec: POST /admin/login
-    alt Credenciales validas
-        Sec-->>Browser: Login OK + sesion
-        Browser-->>Usuario: Redireccion a /
-    else Credenciales invalidas
-        Sec-->>Browser: Error autenticacion
-        Browser-->>Usuario: Muestra login con error
-    end
-```
-
-### 3.3 Parte admin: inscribir equipo en torneo
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Usuario as Admin
-    participant Browser
-    participant Sec as Security
-    participant TC as TorneoController
-    participant ETS as EquipoTorneoService
-    participant TS as TorneoService
-    participant ETDAO as EquipoTorneoDAOJdbc
-
-    Usuario->>Browser: Envia formulario inscripcion
-    Browser->>Sec: POST /torneos/{id}/inscribir(equipoId)
-    alt Sin rol ADMIN
-        Sec-->>Browser: Redirect /admin/login
-        Browser-->>Usuario: Solicita autenticacion
-    else Con rol ADMIN
-        Sec-->>Browser: Permitido
-        Browser->>TC: procesarInscripcion(id, equipoId)
-        TC->>ETS: existeInscripcion(id, equipoId)
-        ETS->>ETDAO: existeInscripcion(id, equipoId)
-        ETDAO-->>ETS: true/false
-        ETS-->>TC: true/false
-
-        alt No existe inscripcion
-            TC->>TS: obtenerPorId(id)
-            TS-->>TC: Torneo
-            TC->>ETS: guardar(EquipoTorneo)
-            ETS->>ETDAO: guardar(equipoTorneo)
-            ETDAO-->>ETS: ok
-            ETS-->>TC: ok
-        else Ya existe
-            Note over TC: No duplica inscripcion
-        end
-
-        TC-->>Browser: redirect /torneos/{id}
-        Browser-->>Usuario: Torneo actualizado
-    end
-```
-
-## 4. Diagrama ER (entidad-relacion)
+## 3. Diagrama ER (entidad-relacion)
 
 ```mermaid
 erDiagram
@@ -360,6 +264,190 @@ erDiagram
 
     EQUIPOS ||--o{ EQUIPOS_TORNEOS : participa
     TORNEOS ||--o{ EQUIPOS_TORNEOS : inscribe
+```
+
+## 4. Diagramas de secuencia
+
+> En esta seccion cada diagrama representa un unico caso de uso. Asi se evita mezclar flujos de usuario y de administrador dentro del mismo escenario.
+
+### 4.1 Ver detalle de torneo
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant Browser
+    participant Sec as Security
+    participant TC as TorneoController
+    participant TS as TorneoService
+    participant ETS as EquipoTorneoService
+    participant PS as PartidoService
+    participant UI as Vista torneo
+
+    U->>Browser: Accede al detalle de un torneo
+    Browser->>Sec: Solicita la pagina del torneo
+    Sec-->>Browser: Acceso permitido (ruta publica)
+    Browser->>TC: Procesa la solicitud
+    TC->>TS: Busca los datos del torneo
+    TS-->>TC: Devuelve informacion del torneo
+    TC->>ETS: Consulta los equipos inscritos
+    ETS-->>TC: Devuelve equipos participantes
+    TC->>PS: Consulta los partidos agrupados por ronda
+    PS-->>TC: Devuelve partidos ordenados por ronda
+    TC-->>UI: Prepara la vista con torneo, equipos y partidos
+    UI-->>U: Muestra torneo completo con bracket
+```
+
+### 4.2 Crear torneo
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant Browser
+    participant Auth as AuthController
+    participant Sec as Security
+    participant TC as TorneoController
+    participant TS as TorneoService
+
+    A->>Browser: Accede al panel de administracion
+    Browser->>Auth: Solicita el formulario de login
+    Auth-->>Browser: Muestra la pagina de inicio de sesion
+    A->>Browser: Introduce credenciales
+    Browser->>Sec: Envia las credenciales para verificacion
+    alt Credenciales invalidas
+        Sec-->>Browser: Autenticacion fallida
+        Browser-->>A: Muestra mensaje de error en el login
+    else Credenciales validas
+        Sec-->>Browser: Autenticacion exitosa, inicia sesion
+        A->>Browser: Rellena el formulario de nuevo torneo
+        Browser->>Sec: Solicita guardar el torneo
+        Sec-->>Browser: Acceso autorizado (rol ADMIN)
+        Browser->>TC: Procesa el registro del torneo
+        TC->>TS: Guarda el nuevo torneo
+        TS-->>TC: Torneo creado correctamente
+        TC-->>Browser: Redirige al listado de torneos
+        Browser-->>A: Muestra el torneo creado
+    end
+```
+
+### 4.3 Inscribir equipo en torneo
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant Browser
+    participant Sec as Security
+    participant TC as TorneoController
+    participant ETS as EquipoTorneoService
+
+    A->>Browser: Envia el formulario de inscripcion de equipo
+    Browser->>Sec: Tramita la peticion de inscripcion
+    Sec-->>Browser: Acceso autorizado (rol ADMIN)
+    Browser->>TC: Procesa la inscripcion del equipo
+    TC->>ETS: Comprueba si el equipo ya esta inscrito
+    ETS-->>TC: Informa si existe o no inscripcion previa
+    alt No existe inscripcion previa
+        TC->>ETS: Registra la nueva inscripcion
+        ETS-->>TC: Inscripcion completada
+    else Ya existe inscripcion
+        Note over TC: Se evita duplicar la inscripcion
+    end
+    TC-->>Browser: Redirige al detalle del torneo
+    Browser-->>A: Muestra el torneo actualizado
+```
+
+### 4.4 Ver detalle de equipo
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant Browser
+    participant Sec as Security
+    participant EC as EquipoController
+    participant ES as EquipoService
+    participant JS as JugadorService
+    participant PS as PartidoService
+    participant UI as Vista equipo
+
+    U->>Browser: Accede al detalle de un equipo
+    Browser->>Sec: Solicita la pagina del equipo
+    Sec-->>Browser: Acceso permitido (ruta publica)
+    Browser->>EC: Procesa la solicitud
+    EC->>ES: Busca los datos del equipo
+    ES-->>EC: Devuelve informacion del equipo
+    EC->>JS: Consulta los jugadores agrupados por juego
+    JS-->>EC: Devuelve plantilla de jugadores
+    EC->>PS: Consulta los partidos agrupados por torneo
+    PS-->>EC: Devuelve historial de partidos
+    EC-->>UI: Prepara la vista con equipo, plantilla e historial
+    UI-->>U: Muestra equipo con jugadores y partidos
+```
+
+### 4.5 Registrar equipo
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant Browser
+    participant Sec as Security
+    participant EC as EquipoController
+    participant ES as EquipoService
+
+    A->>Browser: Rellena el formulario de nuevo equipo
+    Browser->>Sec: Solicita guardar el equipo
+    Sec-->>Browser: Acceso autorizado (rol ADMIN)
+    Browser->>EC: Procesa el registro del equipo
+    EC->>ES: Guarda el nuevo equipo
+    ES-->>EC: Equipo creado correctamente
+    EC-->>Browser: Redirige al listado de equipos
+    Browser-->>A: Muestra el equipo creado
+```
+
+### 4.6 Ver detalle de jugador
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant Browser
+    participant Sec as Security
+    participant JC as JugadorController
+    participant JS as JugadorService
+    participant UI as Vista jugador
+
+    U->>Browser: Accede al detalle de un jugador
+    Browser->>Sec: Solicita la pagina del jugador
+    Sec-->>Browser: Acceso permitido (ruta publica)
+    Browser->>JC: Procesa la solicitud
+    JC->>JS: Busca los datos del jugador
+    JS-->>JC: Devuelve informacion del jugador con su equipo
+    JC-->>UI: Prepara la vista con los datos del jugador
+    UI-->>U: Muestra perfil completo del jugador
+```
+
+### 4.7 Registrar jugador
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant Browser
+    participant Sec as Security
+    participant JC as JugadorController
+    participant JS as JugadorService
+
+    A->>Browser: Rellena el formulario de nuevo jugador
+    Browser->>Sec: Solicita guardar el jugador
+    Sec-->>Browser: Acceso autorizado (rol ADMIN)
+    Browser->>JC: Procesa el registro del jugador
+    JC->>JS: Guarda el nuevo jugador
+    JS-->>JC: Jugador creado correctamente
+    JC-->>Browser: Redirige al listado de jugadores
+    Browser-->>A: Muestra el jugador creado
 ```
 
 ## Nota
