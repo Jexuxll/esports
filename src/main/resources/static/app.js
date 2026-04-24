@@ -403,20 +403,25 @@ function blankTeam(teamEl) {
     render();
 })();
 
-// ---- Filtro indexJugador ----
+// ---- Filtro indexJugador con paginación ----
 (function () {
-    var searchEl = document.getElementById('filterSearch');
-    var rolEl    = document.getElementById('filterRol');
-    var juegoEl  = document.getElementById('filterJuego');
-    var equipoEl = document.getElementById('filterEquipo');
-    var countEl  = document.getElementById('filterCount');
+    var searchEl  = document.getElementById('filterSearch');
+    var rolEl     = document.getElementById('filterRol');
+    var juegoEl   = document.getElementById('filterJuego');
+    var equipoEl  = document.getElementById('filterEquipo');
+    var perPageEl = document.getElementById('filterPerPage');
+    var countEl   = document.getElementById('filterCount');
+    var pagerEl   = document.getElementById('idcard-pager');
     if (!searchEl || !rolEl || !equipoEl) return;
-    var items = Array.from(document.querySelectorAll('.filter-item'));
 
+    var items = Array.from(document.querySelectorAll('.filter-item'));
+    var currentPage = 1;
+
+    // Poblar selects
     var roles = {}, juegos = {}, equipos = {};
     items.forEach(function (r) {
-        if (r.dataset.rol)    roles[r.dataset.rol]     = true;
-        if (r.dataset.juego)  juegos[r.dataset.juego]  = true;
+        if (r.dataset.rol)    roles[r.dataset.rol]      = true;
+        if (r.dataset.juego)  juegos[r.dataset.juego]   = true;
         if (r.dataset.equipo) equipos[r.dataset.equipo] = true;
     });
     Object.keys(roles).sort().forEach(function (v) {
@@ -431,27 +436,98 @@ function blankTeam(teamEl) {
         var o = document.createElement('option'); o.value = v; o.textContent = v; equipoEl.appendChild(o);
     });
 
-    function applyFilter() {
+    function getFiltered() {
         var term   = searchEl.value.toLowerCase().trim();
         var rol    = rolEl.value;
         var juego  = juegoEl ? juegoEl.value : '';
         var equipo = equipoEl.value;
-        var visible = 0;
-        items.forEach(function (r) {
-            var show = (!term   || (r.dataset.search || '').indexOf(term)  !== -1)
-                    && (!rol    || r.dataset.rol    === rol)
-                    && (!juego  || r.dataset.juego  === juego)
-                    && (!equipo || r.dataset.equipo === equipo);
-            r.style.display = show ? '' : 'none';
-            if (show) visible++;
+        return items.filter(function (r) {
+            return (!term   || (r.dataset.search || '').indexOf(term)  !== -1)
+                && (!rol    || r.dataset.rol    === rol)
+                && (!juego  || r.dataset.juego  === juego)
+                && (!equipo || r.dataset.equipo === equipo);
+        }).sort(function (a, b) {
+            var na = (a.querySelector('.idcard-nick') ? a.querySelector('.idcard-nick').textContent : '').toLowerCase().trim();
+            var nb = (b.querySelector('.idcard-nick') ? b.querySelector('.idcard-nick').textContent : '').toLowerCase().trim();
+            return na.localeCompare(nb);
         });
-        if (countEl) countEl.textContent = visible + ' / ' + items.length;
     }
-    searchEl.addEventListener('input',  applyFilter);
-    rolEl.addEventListener('change',    applyFilter);
-    if (juegoEl) juegoEl.addEventListener('change', applyFilter);
-    equipoEl.addEventListener('change', applyFilter);
-    applyFilter();
+
+    function render() {
+        var perPage  = perPageEl ? parseInt(perPageEl.value, 10) : 24;
+        var filtered = getFiltered();
+        var total    = filtered.length;
+        var pages    = Math.max(1, Math.ceil(total / perPage));
+        if (currentPage > pages) currentPage = pages;
+
+        var start = (currentPage - 1) * perPage;
+        var end   = start + perPage;
+
+        // Reordenar nodos en el DOM según el orden alfabético del array filtrado
+        var grid = items.length > 0 ? items[0].parentNode : null;
+        if (grid) {
+            // Primero todos los filtrados en su orden sorted, luego el resto
+            var remaining = items.filter(function (r) { return filtered.indexOf(r) === -1; });
+            filtered.concat(remaining).forEach(function (r) { grid.appendChild(r); });
+        }
+
+        items.forEach(function (r) { r.style.display = 'none'; });
+        filtered.forEach(function (r, i) {
+            r.style.display = (i >= start && i < end) ? '' : 'none';
+        });
+
+        if (countEl) countEl.textContent = total + ' / ' + items.length;
+
+        if (!pagerEl) return;
+        pagerEl.innerHTML = '';
+        if (pages <= 1) return;
+
+        function mkBtn(label, page, disabled, active) {
+            var b = document.createElement('button');
+            b.textContent = label;
+            b.className   = 'pager-btn' + (active ? ' pager-btn--active' : '');
+            b.disabled    = disabled;
+            b.addEventListener('click', function () {
+                currentPage = page;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            return b;
+        }
+
+        pagerEl.appendChild(mkBtn('‹', currentPage - 1, currentPage === 1, false));
+
+        var range = [];
+        for (var p = 1; p <= pages; p++) {
+            if (p === 1 || p === pages || (p >= currentPage - 2 && p <= currentPage + 2)) {
+                range.push(p);
+            } else if (range[range.length - 1] !== '…') {
+                range.push('…');
+            }
+        }
+        range.forEach(function (p) {
+            if (p === '…') {
+                var s = document.createElement('span');
+                s.className   = 'pager-ellipsis';
+                s.textContent = '…';
+                pagerEl.appendChild(s);
+            } else {
+                pagerEl.appendChild(mkBtn(p, p, false, p === currentPage));
+            }
+        });
+
+        pagerEl.appendChild(mkBtn('›', currentPage + 1, currentPage === pages, false));
+    }
+
+    function resetAndRender() { currentPage = 1; render(); }
+
+    searchEl.addEventListener('input',  resetAndRender);
+    rolEl.addEventListener('change',    resetAndRender);
+    if (juegoEl)   juegoEl.addEventListener('change',   resetAndRender);
+    equipoEl.addEventListener('change', resetAndRender);
+    if (perPageEl) perPageEl.addEventListener('change', resetAndRender);
+
+    render();
 })();
 
 // ---- Filtro indexTorneo ----

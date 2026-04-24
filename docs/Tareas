@@ -1,7 +1,10 @@
 Mejorar diseño en general
 Mejorar el nav y el boton de Admin
+incorporar logo para favicon
+Revisar forms para coherencia
 
 1. INICIO
+    Mejorar diseño de torneos en pagina principal
 
 2. EQUIPOS 
     Hacer mas grandes las cards y hacerlo a lo mejor un carrousel
@@ -9,12 +12,19 @@ Mejorar el nav y el boton de Admin
     - DETALLE EQUIPO 
         Mejorar la disposicion de los jugadores, por ejemplo centrarlos
         Mejorar header
+        Jugadores max 3 por fila
+        Arreglar cartel de derrota en partidos
 
 3. TORNEOS 
     - DETALLE TORNEO 
         Hacer mas grande el bracket y mejorarlo(hacer uno base donde ir añadiendo los partidos)
-        Añadir acceso a los partidos desde el bracket (desplegable como el del calendario)
+        Cambiar colores partidos sin jugar
         Mejorar diseño
 
 4. PARTIDOS 
+    hacer mas grande los titulos de partidos pendientes y jugados
 
+5. JUGADORES
+    Mejorar diseño
+    Enlace a detalle jugador
+    
