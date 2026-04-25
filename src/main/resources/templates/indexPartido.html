@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partidos - ESports Manager</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
 <nav>
-    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <a class="nav-brand" th:href="@{/}">
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
+        E<span>Sports</span>
+    </a>
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
@@ -31,7 +35,7 @@
 
 <div class="container">
     <div class="page-header">
-        <h1>Partidos <span>Registrados</span></h1>
+        <h1>Partidos</h1>
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/partidos/nuevo}" class="btn btn-primary">+ Nuevo Partido</a>
     </div>
 
@@ -50,6 +54,108 @@
              th:attr="data-panel=${iterStat.index}"
              th:classappend="${iterStat.first} ? 'tab-panel active' : 'tab-panel'"
              class="tab-panel">
+
+            <!-- Partidos pendientes -->
+            <th:block th:with="pendientes=${entry.value.?[marcadorLocal == null]}">
+                <div th:if="${not pendientes.isEmpty()}" class="match-section-divider"><span>Pendientes</span></div>
+                <div th:if="${not pendientes.isEmpty()}" class="match-list">
+                    <div th:each="partido : ${pendientes}" class="match-item-wrap"
+                         th:attr="data-equipos=${(partido.equipoLocal != null ? partido.equipoLocal.tag : '') + ',' + (partido.equipoVisitante != null ? partido.equipoVisitante.tag : '')}">
+                        <div class="match-item match-item--stacked match-item--expandable"
+                             data-match-toggle>
+
+                            <!-- Admin: esquina superior derecha -->
+                            <div sec:authorize="hasRole('ADMIN')" class="match-item-admin-overlay stop-propagate">
+                                <a th:href="@{/partidos/editar/{id}(id=${partido.id})}" class="btn btn-secondary btn-sm stop-propagate">✏️</a>
+                                <a th:href="@{/partidos/eliminar/{id}(id=${partido.id})}" class="btn btn-danger btn-sm stop-propagate"
+                                   data-confirm="¿Eliminar este partido?">🗑️</a>
+                            </div>
+
+                            <!-- Arriba: ronda encima de fecha, centrado -->
+                            <div class="match-item-header">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:0.2rem;">
+                                    <span class="match-item-ronda" th:text="${partido.ronda != null ? partido.ronda : '–'}">Ronda</span>
+                                    <span class="match-item-date" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy · HH:mm') : '–'}">Fecha</span>
+                                </div>
+                            </div>
+
+                            <!-- Centro: logo local + enfrentamiento + logo visitante -->
+                            <div class="match-item-matchup">
+                                <div class="match-item-logo">
+                                    <img th:if="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
+                                         th:src="@{/Imagenes/{f}(f=${partido.equipoLocal.foto})}"
+                                         class="match-item-logo__img" alt="">
+                                    <div th:unless="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
+                                         class="match-item-logo__placeholder">🛡️</div>
+                                </div>
+
+                            <span class="match-item-team"
+                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD'}">Local</span>
+
+                                <div class="match-item-score match-item-score--pending">VS</div>
+
+                            <span class="match-item-team match-item-team--rival"
+                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+
+                                <div class="match-item-logo">
+                                    <img th:if="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
+                                         th:src="@{/Imagenes/{f}(f=${partido.equipoVisitante.foto})}"
+                                         class="match-item-logo__img" alt="">
+                                    <div th:unless="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
+                                         class="match-item-logo__placeholder">🛡️</div>
+                                </div>
+                            </div>
+
+                            <!-- Abajo: pendiente + pista expand -->
+                            <div class="match-item-footer">
+                                <span class="badge badge-warning">Pendiente</span>
+                            </div>
+                        </div>
+
+                        <!-- Panel desplegable de jugadores -->
+                        <div class="match-item-players" hidden>
+                            <div class="match-item-players-cols">
+                                <div class="match-item-players-team">
+                                    <div class="match-item-players-team-title"
+                                         th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'Local'}">Local</div>
+                                    <div th:if="${partido.equipoLocal == null or partido.equipoLocal.jugadores == null or #lists.isEmpty(partido.equipoLocal.jugadores)}"
+                                         class="match-player-empty">Sin jugadores registrados</div>
+                                    <th:block th:if="${partido.equipoLocal != null and partido.equipoLocal.jugadores != null}">
+                                        <div th:each="jugador : ${partido.equipoLocal.jugadores}" class="match-player-row">
+                                            <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                                                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+                                                 class="match-player-avatar" alt="">
+                                            <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                                                th:src="@{/Imagenes/{f}(f=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                                                class="match-player-avatar" alt="">
+                                            <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
+                                            <span class="match-player-role" th:text="${jugador.rol}">rol</span>
+                                        </div>
+                                    </th:block>
+                                </div>
+                                <div class="match-item-players-team">
+                                    <div class="match-item-players-team-title"
+                                         th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'Visitante'}">Visitante</div>
+                                    <div th:if="${partido.equipoVisitante == null or partido.equipoVisitante.jugadores == null or #lists.isEmpty(partido.equipoVisitante.jugadores)}"
+                                         class="match-player-empty">Sin jugadores registrados</div>
+                                    <th:block th:if="${partido.equipoVisitante != null and partido.equipoVisitante.jugadores != null}">
+                                        <div th:each="jugador : ${partido.equipoVisitante.jugadores}" class="match-player-row">
+                                            <img th:if="${jugador.foto != null and jugador.foto != ''}"
+                                                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
+                                                 class="match-player-avatar" alt="">
+                                            <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                                                th:src="@{/Imagenes/{f}(f=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                                                class="match-player-avatar" alt="">
+                                            <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
+                                            <span class="match-player-role" th:text="${jugador.rol}">rol</span>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
 
             <!-- Partidos jugados -->
             <th:block th:with="jugados=${entry.value.?[marcadorLocal != null]}">
@@ -127,8 +233,9 @@
                                             <img th:if="${jugador.foto != null and jugador.foto != ''}"
                                                  th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
                                                  class="match-player-avatar" alt="">
-                                            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                                                 class="match-player-avatar match-player-avatar--ph">🎮</div>
+                                            <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                                                th:src="@{/Imagenes/{f}(f=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                                                class="match-player-avatar" alt="">
                                             <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
                                             <span class="match-player-role" th:text="${jugador.rol}">rol</span>
                                         </div>
@@ -144,108 +251,9 @@
                                             <img th:if="${jugador.foto != null and jugador.foto != ''}"
                                                  th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
                                                  class="match-player-avatar" alt="">
-                                            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                                                 class="match-player-avatar match-player-avatar--ph">🎮</div>
-                                            <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
-                                            <span class="match-player-role" th:text="${jugador.rol}">rol</span>
-                                        </div>
-                                    </th:block>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </th:block>
-
-            <!-- Partidos pendientes -->
-            <th:block th:with="pendientes=${entry.value.?[marcadorLocal == null]}">
-                <div th:if="${not pendientes.isEmpty()}" class="match-section-divider"><span>Pendientes</span></div>
-                <div th:if="${not pendientes.isEmpty()}" class="match-list">
-                    <div th:each="partido : ${pendientes}" class="match-item-wrap"
-                         th:attr="data-equipos=${(partido.equipoLocal != null ? partido.equipoLocal.tag : '') + ',' + (partido.equipoVisitante != null ? partido.equipoVisitante.tag : '')}">
-                        <div class="match-item match-item--stacked match-item--expandable"
-                             data-match-toggle>
-
-                            <!-- Admin: esquina superior derecha -->
-                            <div sec:authorize="hasRole('ADMIN')" class="match-item-admin-overlay stop-propagate">
-                                <a th:href="@{/partidos/editar/{id}(id=${partido.id})}" class="btn btn-secondary btn-sm stop-propagate">✏️</a>
-                                <a th:href="@{/partidos/eliminar/{id}(id=${partido.id})}" class="btn btn-danger btn-sm stop-propagate"
-                                   data-confirm="¿Eliminar este partido?">🗑️</a>
-                            </div>
-
-                            <!-- Arriba: ronda encima de fecha, centrado -->
-                            <div class="match-item-header">
-                                <div style="display:flex;flex-direction:column;align-items:center;gap:0.2rem;">
-                                    <span class="match-item-ronda" th:text="${partido.ronda != null ? partido.ronda : '–'}">Ronda</span>
-                                    <span class="match-item-date" th:text="${partido.fechaPartido != null ? #temporals.format(partido.fechaPartido, 'dd/MM/yyyy · HH:mm') : '–'}">Fecha</span>
-                                </div>
-                            </div>
-
-                            <!-- Centro: logo local + enfrentamiento + logo visitante -->
-                            <div class="match-item-matchup">
-                                <div class="match-item-logo">
-                                    <img th:if="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
-                                         th:src="@{/Imagenes/{f}(f=${partido.equipoLocal.foto})}"
-                                         class="match-item-logo__img" alt="">
-                                    <div th:unless="${partido.equipoLocal != null and partido.equipoLocal.foto != null and partido.equipoLocal.foto != ''}"
-                                         class="match-item-logo__placeholder">🛡️</div>
-                                </div>
-
-                            <span class="match-item-team"
-                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD'}">Local</span>
-
-                                <div class="match-item-score match-item-score--pending">VS</div>
-
-                            <span class="match-item-team match-item-team--rival"
-                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD'}">Visitante</span>
-
-                                <div class="match-item-logo">
-                                    <img th:if="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
-                                         th:src="@{/Imagenes/{f}(f=${partido.equipoVisitante.foto})}"
-                                         class="match-item-logo__img" alt="">
-                                    <div th:unless="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
-                                         class="match-item-logo__placeholder">🛡️</div>
-                                </div>
-                            </div>
-
-                            <!-- Abajo: pendiente + pista expand -->
-                            <div class="match-item-footer">
-                                <span class="badge badge-warning">Pendiente</span>
-                            </div>
-                        </div>
-
-                        <!-- Panel desplegable de jugadores -->
-                        <div class="match-item-players" hidden>
-                            <div class="match-item-players-cols">
-                                <div class="match-item-players-team">
-                                    <div class="match-item-players-team-title"
-                                         th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'Local'}">Local</div>
-                                    <div th:if="${partido.equipoLocal == null or partido.equipoLocal.jugadores == null or #lists.isEmpty(partido.equipoLocal.jugadores)}"
-                                         class="match-player-empty">Sin jugadores registrados</div>
-                                    <th:block th:if="${partido.equipoLocal != null and partido.equipoLocal.jugadores != null}">
-                                        <div th:each="jugador : ${partido.equipoLocal.jugadores}" class="match-player-row">
-                                            <img th:if="${jugador.foto != null and jugador.foto != ''}"
-                                                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
-                                                 class="match-player-avatar" alt="">
-                                            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                                                 class="match-player-avatar match-player-avatar--ph">🎮</div>
-                                            <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
-                                            <span class="match-player-role" th:text="${jugador.rol}">rol</span>
-                                        </div>
-                                    </th:block>
-                                </div>
-                                <div class="match-item-players-team">
-                                    <div class="match-item-players-team-title"
-                                         th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'Visitante'}">Visitante</div>
-                                    <div th:if="${partido.equipoVisitante == null or partido.equipoVisitante.jugadores == null or #lists.isEmpty(partido.equipoVisitante.jugadores)}"
-                                         class="match-player-empty">Sin jugadores registrados</div>
-                                    <th:block th:if="${partido.equipoVisitante != null and partido.equipoVisitante.jugadores != null}">
-                                        <div th:each="jugador : ${partido.equipoVisitante.jugadores}" class="match-player-row">
-                                            <img th:if="${jugador.foto != null and jugador.foto != ''}"
-                                                 th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
-                                                 class="match-player-avatar" alt="">
-                                            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                                                 class="match-player-avatar match-player-avatar--ph">🎮</div>
+                                            <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                                                th:src="@{/Imagenes/{f}(f=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                                                class="match-player-avatar" alt="">
                                             <span class="match-player-nick" th:text="${jugador.nickname}">nick</span>
                                             <span class="match-player-role" th:text="${jugador.rol}">rol</span>
                                         </div>
@@ -266,5 +274,5 @@
 </div>
 
 </body>
-<script th:src="@{/app.js}"></script>
+<script th:src="@{/app.js?v=4}"></script>
 </html>

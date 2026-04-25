@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${equipo.nombre} + ' - ESports Manager'">Detalle Equipo</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
 <nav>
-    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <a class="nav-brand" th:href="@{/}">
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
+        E<span>Sports</span>
+    </a>
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}" class="active">Equipos</a></li>
@@ -42,39 +46,45 @@
         </div>
     </div>
 
-    <div class="detail-hero detalle-equipo-wide" style="margin-bottom: 2rem;">
-        <div class="detail-hero__media">
+    <div class="torneo-mini-banner equipo-hero-banner detalle-equipo-wide" style="margin-bottom: 2rem;">
+        <div class="torneo-mini-banner__media">
             <img th:if="${equipo.foto != null and equipo.foto != ''}"
                  th:src="@{/Imagenes/{f}(f=${equipo.foto})}"
-                 class="detail-hero__image" alt="Logo equipo">
+                 class="torneo-mini-banner__cover" alt="Logo equipo">
             <div th:unless="${equipo.foto != null and equipo.foto != ''}"
-                 class="detail-hero__placeholder">🛡️</div>
+                 class="torneo-mini-banner__cover-placeholder">🛡️</div>
         </div>
 
-        <div class="detail-hero__summary">
-            <div>
-                <div class="page-kicker">Team dossier</div>
-                <h2 class="detail-hero__title" th:text="${equipo.nombre}">Nombre equipo</h2>
-                <div class="detail-inline" style="margin-top:0.9rem;">
-                    <span class="team-tag" style="font-size:1.05rem; padding:0.35rem 0.65rem;" th:text="${equipo.tag}">TAG</span>
-                    <span class="detail-meta-value" style="display:inline-flex; align-items:center; gap:0.45rem; font-size:1rem; color:var(--text-secondary);">
+        <div class="torneo-mini-banner__content">
+            <div class="torneo-mini-banner__top">
+                <h2 class="torneo-mini-banner__title" th:text="${equipo.nombre}">Nombre equipo</h2>
+                <div class="torneo-mini-banner__estado equipo-hero-stats-inline">
+                    <span class="team-tag" th:text="${equipo.tag}">TAG</span>
+                    <span class="torneo-mini-banner__value" style="display:inline-flex; align-items:center; gap:0.45rem;">
+                    </span>
+                </div>
+            </div>
+
+            <div class="torneo-mini-banner__bottom">
+                <div>
+                    <div class="torneo-mini-banner__label">Nacionalidad</div>
+                    <div class="torneo-mini-banner__value" style="display:inline-flex; align-items:center; gap:0.45rem;">
                         <img th:if="${codigoPais != null}"
                              th:src="'https://flagcdn.com/w40/' + ${codigoPais} + '.png'"
                              th:attr="alt=${paisMostrar}"
                              style="width:24px; height:auto; border-radius:2px; vertical-align:middle;">
                         <span th:text="${paisMostrar}">País</span>
-                    </span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="detail-hero__meta">
-                <div class="detail-meta-item">
-                    <span class="detail-meta-label">Plantilla</span>
-                    <span class="detail-meta-value" th:text="${#lists.size(jugadores)} + ' jugadores'">0 jugadores</span>
-                </div>
-                <div class="detail-meta-item">
-                    <span class="detail-meta-label">Calendario</span>
-                    <span class="detail-meta-value" th:text="${#lists.size(partidosEquipo)} + ' partidos'">0 partidos</span>
+                <div class="equipo-hero-stats-inline">
+                    <div>
+                        <div class="torneo-mini-banner__label">Plantilla</div>
+                        <div class="torneo-mini-banner__value" th:text="${#lists.size(jugadores)} + ' jugadores'">0 jugadores</div>
+                    </div>
+                    <div>
+                        <div class="torneo-mini-banner__label">Calendario</div>
+                        <div class="torneo-mini-banner__value" th:text="${#lists.size(partidosEquipo)} + ' partidos'">0 partidos</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,7 +109,7 @@
              th:classappend="${iterStat.first} ? 'tab-panel active' : 'tab-panel'"
                class="tab-panel tab-panel--jugadores">
 
-              <div class="grid-cards">
+              <div class="grid-cards grid-cards--centered">
                  <div th:each="jugador : ${entry.value}"
                      class="card card-link card--poster-jugador"
                      style="position:relative"
@@ -118,8 +128,9 @@
                     <img th:if="${jugador.foto != null and jugador.foto != ''}"
                          th:src="@{/Imagenes/{img}(img=${jugador.foto})}"
                          class="card-img" alt="Foto jugador">
-                    <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                         class="card-img-placeholder">🎮</div>
+                    <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                        th:src="@{/Imagenes/{img}(img=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                         class="card-img" alt="Avatar jugador">
                 </div>
             </div>
         </div>
@@ -217,7 +228,7 @@
 
 </div>
 
-<script th:src="@{/app.js}"></script>
+<script th:src="@{/app.js?v=4}"></script>
 </body>
 </html>
 

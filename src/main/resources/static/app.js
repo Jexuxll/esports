@@ -69,7 +69,7 @@
             });
 
             var torneo = slides[index].dataset.carouselTorneo || 'Torneo';
-            title.textContent = torneo + ' (' + (index + 1) + '/' + slides.length + ')';
+            title.textContent = torneo;
             btnPrev.disabled = slides.length <= 1;
             btnNext.disabled = slides.length <= 1;
         }
@@ -106,6 +106,44 @@
     // ---- Cuadro bracket: líneas conectoras SVG ----
     drawBracketLines();
     propagateBracketWinners();
+
+    // ---- editar_partido: ganador dinámico (solo los dos equipos del partido) ----
+    (function () {
+        var localSel     = document.getElementById('equipoLocalId');
+        var visitanteSel = document.getElementById('equipoVisitanteId');
+        var ganadorSel   = document.getElementById('ganadorId');
+        if (!localSel || !visitanteSel || !ganadorSel) return;
+
+        function selectedText(sel) {
+            return sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+        }
+
+        function rebuildGanador() {
+            var prev       = ganadorSel.value;
+            var localId    = localSel.value;
+            var localTxt   = selectedText(localSel);
+            var visitId    = visitanteSel.value;
+            var visitTxt   = selectedText(visitanteSel);
+
+            ganadorSel.innerHTML = '<option value="">-- Sin ganador --</option>';
+
+            function addOpt(id, txt) {
+                if (!id) return;
+                var o = document.createElement('option');
+                o.value = id;
+                o.textContent = txt;
+                if (id === prev) o.selected = true;
+                ganadorSel.appendChild(o);
+            }
+
+            addOpt(localId, localTxt);
+            addOpt(visitId, visitTxt);
+        }
+
+        localSel.addEventListener('change', rebuildGanador);
+        visitanteSel.addEventListener('change', rebuildGanador);
+        rebuildGanador();
+    })();
 
 });
 
@@ -183,26 +221,95 @@ function propagateBracketWinners() {
             var teamLocal     = teams[0];
             var teamVisitante = teams[1];
 
-            // Si el partido previo del local no tiene ganador → TBD
+            // Si el partido previo del local tiene ganador y el slot está vacío, propagar clasificado
+            if (m1 && m1.dataset.winnerId) {
+                fillTeamFromWinner(m1, m1.dataset.winnerId, teamLocal);
+            }
+
+            // Si el partido previo del local no tiene ganador → TBD (solo si no hay equipo asignado)
             if (m1 && !m1.dataset.winnerId) {
-                blankTeam(teamLocal);
-            } else if (m1 && m1.dataset.winnerId) {
-                if (teamLocal && teamLocal.dataset.teamId === m1.dataset.winnerId) {
-                    teamLocal.classList.add('bm-from-win');
+                if (!teamLocal || !teamLocal.dataset.teamId) {
+                    blankTeam(teamLocal);
                 }
             }
 
-            // Si el partido previo del visitante no tiene ganador → TBD
+            // Si el partido previo del visitante tiene ganador y el slot está vacío, propagar clasificado
+            if (m2 && m2.dataset.winnerId) {
+                fillTeamFromWinner(m2, m2.dataset.winnerId, teamVisitante);
+            }
+
+            // Si el partido previo del visitante no tiene ganador → TBD (solo si no hay equipo asignado)
             if (m2 && !m2.dataset.winnerId) {
-                blankTeam(teamVisitante);
-            } else if (m2 && m2.dataset.winnerId) {
-                if (teamVisitante && teamVisitante.dataset.teamId === m2.dataset.winnerId) {
-                    teamVisitante.classList.add('bm-from-win');
+                if (!teamVisitante || !teamVisitante.dataset.teamId) {
+                    blankTeam(teamVisitante);
                 }
             }
 
         });
 
+    }
+}
+
+function fillTeamFromWinner(prevMatchEl, winnerId, targetTeamEl) {
+    if (!prevMatchEl || !winnerId || !targetTeamEl) return;
+    if (targetTeamEl.dataset.teamId) return;
+
+    var winnerTeamEl = prevMatchEl.querySelector('.bm-team[data-team-id="' + winnerId + '"]');
+    if (!winnerTeamEl) return;
+
+    targetTeamEl.dataset.teamId = winnerId;
+    targetTeamEl.classList.remove('bm-tbd');
+
+    var sourceName = winnerTeamEl.querySelector('.bm-name');
+    var targetName = targetTeamEl.querySelector('.bm-name');
+    var targetScore = targetTeamEl.querySelector('.bm-score');
+    if (sourceName && targetName) {
+        targetName.textContent = sourceName.textContent;
+        targetName.style.opacity = '';
+    }
+
+    var sourceImg = winnerTeamEl.querySelector('.bm-logo');
+    var sourcePh = winnerTeamEl.querySelector('.bm-logo-ph');
+    var targetImg = targetTeamEl.querySelector('.bm-logo');
+    var targetPh = targetTeamEl.querySelector('.bm-logo-ph');
+
+    if (sourceImg && sourceImg.getAttribute('src')) {
+        if (!targetImg) {
+            targetImg = document.createElement('img');
+            targetImg.className = 'bm-logo';
+            targetImg.alt = '';
+            if (targetPh) {
+                targetTeamEl.insertBefore(targetImg, targetPh);
+            } else if (targetName) {
+                targetTeamEl.insertBefore(targetImg, targetName);
+            } else {
+                targetTeamEl.insertBefore(targetImg, targetTeamEl.firstChild);
+            }
+        }
+        if (targetImg) {
+            targetImg.setAttribute('src', sourceImg.getAttribute('src'));
+            targetImg.style.display = '';
+        }
+        if (targetPh) targetPh.style.display = 'none';
+    } else {
+        if (targetImg) targetImg.style.display = 'none';
+        if (!targetPh) {
+            targetPh = document.createElement('span');
+            targetPh.className = 'bm-logo-ph';
+            targetPh.textContent = sourcePh && sourcePh.textContent ? sourcePh.textContent : '🛡️';
+            if (targetName) {
+                targetTeamEl.insertBefore(targetPh, targetName);
+            } else if (targetScore) {
+                targetTeamEl.insertBefore(targetPh, targetScore);
+            } else {
+                targetTeamEl.appendChild(targetPh);
+            }
+        }
+        targetPh.style.display = '';
+    }
+
+    if (targetScore && !targetScore.textContent.trim()) {
+        targetScore.textContent = '-';
     }
 }
 

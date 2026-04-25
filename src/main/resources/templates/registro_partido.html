@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevo Partido - ESports Manager</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
 <nav>
-    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <a class="nav-brand" th:href="@{/}">
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
+        E<span>Sports</span>
+    </a>
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
@@ -85,8 +89,8 @@
                 <select id="ronda" th:field="*{ronda}" class="form-control">
                     <option value="">-- Selecciona ronda --</option>
                     <option value="Grupos">Grupos</option>
-                    <option value="Octavos">Octavos de final</option>
-                    <option value="Cuartos">Cuartos de final</option>
+                    <option value="Octavos de final">Octavos de final</option>
+                    <option value="Cuartos de final">Cuartos de final</option>
                     <option value="Semifinal">Semifinal</option>
                     <option value="Final">Final</option>
                 </select>
@@ -108,5 +112,5 @@
 </div>
 
 </body>
-<script th:src="@{/app.js}"></script>
+<script th:src="@{/app.js?v=4}"></script>
 </html>
