@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${torneo.nombre} + ' - ESports Manager'">Detalle Torneo</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
 <nav>
-    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <a class="nav-brand" th:href="@{/}">
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
+        E<span>Sports</span>
+    </a>
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
@@ -93,7 +97,7 @@
         </div>
     </div>
 
-    <div class="grid-cards" th:if="${not #lists.isEmpty(equiposInscritos)}">
+    <div class="grid-cards grid-cards--centered" th:if="${not #lists.isEmpty(equiposInscritos)}">
         <div th:each="et : ${equiposInscritos}"
              class="card card-link card--poster-equipo"
              style="position:relative"
@@ -130,7 +134,7 @@
                 <div th:each="p : ${rondaEntry.value}" class="bracket-match"
                      th:attr="data-winner-id=${p.ganador != null ? p.ganador.id : ''},data-local-id=${p.equipoLocal != null ? p.equipoLocal.id : ''},data-visitante-id=${p.equipoVisitante != null ? p.equipoVisitante.id : ''}">
 
-                    <div th:class="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')"
+                    <div th:class="${p.ganador != null and p.equipoLocal != null and p.ganador.id == p.equipoLocal.id ? 'bm-team bm-win' : (p.ganador != null and p.equipoLocal != null ? 'bm-team bm-lose' : 'bm-team')}"
                          th:attr="data-team-id=${p.equipoLocal != null ? p.equipoLocal.id : ''}">
                         <img th:if="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoLocal.foto})}" class="bm-logo" alt="">
@@ -141,7 +145,7 @@
 
                     <div class="bm-sep"></div>
 
-                    <div th:class="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id} ? 'bm-team bm-win' : (p.ganador != null ? 'bm-team bm-lose' : 'bm-team')"
+                    <div th:class="${p.ganador != null and p.equipoVisitante != null and p.ganador.id == p.equipoVisitante.id ? 'bm-team bm-win' : (p.ganador != null and p.equipoVisitante != null ? 'bm-team bm-lose' : 'bm-team')}"
                          th:attr="data-team-id=${p.equipoVisitante != null ? p.equipoVisitante.id : ''}">
                         <img th:if="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoVisitante.foto})}" class="bm-logo" alt="">
@@ -170,5 +174,5 @@
 </div>
 
 </body>
-<script th:src="@{/app.js}"></script>
+<script th:src="@{/app.js?v=4}"></script>
 </html>

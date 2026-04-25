@@ -24,7 +24,6 @@ CREATE TABLE `equipos` (
 CREATE TABLE `juegos` (
   `id_juego` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
-  `foto` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_juego`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -90,8 +89,8 @@ CREATE TABLE `jugadores` (
 CREATE TABLE `partidos` (
   `id_partido` int(11) NOT NULL AUTO_INCREMENT,
   `id_torneo` int(11) NOT NULL,
-  `id_equipo_local` int(11) NOT NULL,
-  `id_equipo_visitante` int(11) NOT NULL,
+  `id_equipo_local` int(11) DEFAULT NULL,
+  `id_equipo_visitante` int(11) DEFAULT NULL,
   `fecha_partido` datetime DEFAULT NULL,
   `ronda` varchar(50) DEFAULT NULL,
   `marcador_local` int(11) DEFAULT NULL,

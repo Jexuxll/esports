@@ -22,10 +22,9 @@ public class JuegoDAOJdbc implements JuegoDAO {
 
     @Override
     public void guardar(Juego juego) {
-        String sql = "INSERT INTO juegos (nombre, foto) VALUES (?, ?)";
+        String sql = "INSERT INTO juegos (nombre) VALUES (?)";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, juego.getNombre());
-            stmt.setString(2, juego.getFoto());
             stmt.executeUpdate();
             System.out.println("✅ Juego guardado correctamente.");
         } catch (SQLException e) {
@@ -36,11 +35,10 @@ public class JuegoDAOJdbc implements JuegoDAO {
 
     @Override
     public void actualizar(Juego juego) {
-        String sql = "UPDATE juegos SET nombre = ?, foto = ? WHERE id_juego = ?";
+        String sql = "UPDATE juegos SET nombre = ? WHERE id_juego = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, juego.getNombre());
-            stmt.setString(2, juego.getFoto());
-            stmt.setInt(3, juego.getId());
+            stmt.setInt(2, juego.getId());
             stmt.executeUpdate();
             System.out.println("✅ Juego actualizado correctamente.");
         } catch (SQLException e) {
@@ -97,6 +95,6 @@ public class JuegoDAOJdbc implements JuegoDAO {
     }
 
     private Juego mapear(ResultSet rs) throws SQLException {
-        return new Juego(rs.getInt("id_juego"), rs.getString("nombre"), rs.getString("foto"));
+        return new Juego(rs.getInt("id_juego"), rs.getString("nombre"));
     }
 }

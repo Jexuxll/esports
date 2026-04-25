@@ -35,8 +35,8 @@ public class PartidoDAOJdbc implements PartidoDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
             stmt.setInt(1, partido.getTorneo().getId());
-            stmt.setInt(2, partido.getEquipoLocal().getId());
-            stmt.setInt(3, partido.getEquipoVisitante().getId());
+            stmt.setObject(2, partido.getEquipoLocal() != null ? partido.getEquipoLocal().getId() : null);
+            stmt.setObject(3, partido.getEquipoVisitante() != null ? partido.getEquipoVisitante().getId() : null);
             stmt.setTimestamp(4, Timestamp.valueOf(partido.getFechaPartido()));
             stmt.setString(5, partido.getRonda());
             stmt.setObject(6, partido.getMarcadorLocal());
@@ -57,8 +57,8 @@ public class PartidoDAOJdbc implements PartidoDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
 
             stmt.setInt(1, partido.getTorneo().getId());
-            stmt.setInt(2, partido.getEquipoLocal().getId());
-            stmt.setInt(3, partido.getEquipoVisitante().getId());
+            stmt.setObject(2, partido.getEquipoLocal() != null ? partido.getEquipoLocal().getId() : null);
+            stmt.setObject(3, partido.getEquipoVisitante() != null ? partido.getEquipoVisitante().getId() : null);
             stmt.setTimestamp(4, Timestamp.valueOf(partido.getFechaPartido()));
             stmt.setString(5, partido.getRonda());
             stmt.setObject(6, partido.getMarcadorLocal());
@@ -153,20 +153,26 @@ public class PartidoDAOJdbc implements PartidoDAO {
         partido.setTorneo(torneo);
 
         // Equipo local
-        Equipo local = new Equipo();
-        local.setId(rs.getInt("id_equipo_local"));
-        local.setNombre(rs.getString("local_nombre"));
-        local.setTag(rs.getString("local_tag"));
-        local.setFoto(rs.getString("local_foto"));
-        partido.setEquipoLocal(local);
+        Integer localId = (Integer) rs.getObject("id_equipo_local");
+        if (localId != null) {
+            Equipo local = new Equipo();
+            local.setId(localId);
+            local.setNombre(rs.getString("local_nombre"));
+            local.setTag(rs.getString("local_tag"));
+            local.setFoto(rs.getString("local_foto"));
+            partido.setEquipoLocal(local);
+        }
 
         // Equipo visitante
-        Equipo visitante = new Equipo();
-        visitante.setId(rs.getInt("id_equipo_visitante"));
-        visitante.setNombre(rs.getString("visitante_nombre"));
-        visitante.setTag(rs.getString("visitante_tag"));
-        visitante.setFoto(rs.getString("visitante_foto"));
-        partido.setEquipoVisitante(visitante);
+        Integer visitanteId = (Integer) rs.getObject("id_equipo_visitante");
+        if (visitanteId != null) {
+            Equipo visitante = new Equipo();
+            visitante.setId(visitanteId);
+            visitante.setNombre(rs.getString("visitante_nombre"));
+            visitante.setTag(rs.getString("visitante_tag"));
+            visitante.setFoto(rs.getString("visitante_foto"));
+            partido.setEquipoVisitante(visitante);
+        }
 
         // Fecha
         Timestamp ts = rs.getTimestamp("fecha_partido");

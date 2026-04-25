@@ -1,15 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${jugador.nickname} + ' - ESports Manager'">Detalle Jugador</title>
-    <link rel="stylesheet" href="/styles.css?v=4">
+    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
 <nav>
-    <a class="nav-brand" th:href="@{/}">E<span>Sports</span></a>
+    <a class="nav-brand" th:href="@{/}">
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
+        E<span>Sports</span>
+    </a>
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
@@ -51,8 +55,10 @@
                  th:src="@{/Imagenes/{f}(f=${jugador.foto})}"
                  alt="Foto jugador"
                  class="player-profile__image">
-            <div th:unless="${jugador.foto != null and jugador.foto != ''}"
-                 class="player-profile__placeholder">🎮</div>
+              <img th:unless="${jugador.foto != null and jugador.foto != ''}"
+                  th:src="@{/Imagenes/{f}(f=${(jugador.id % 2 == 0 ? 'ja' : 'jr') + ((jugador.id % 4) + 1) + '.png'})}"
+                  alt="Avatar jugador"
+                  class="player-profile__image">
         </div>
 
         <!-- Info -->
@@ -102,5 +108,5 @@
     </div>
 </div>
 </body>
-<script th:src="@{/app.js}"></script>
+<script th:src="@{/app.js?v=4}"></script>
 </html>
