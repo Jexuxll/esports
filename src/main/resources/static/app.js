@@ -1,5 +1,13 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
 
+    // ---- Fondo dinámico del banner en detalle_torneo ----
+    document.querySelectorAll('.torneo-banner[data-banner-photo]').forEach(function (banner) {
+        var photo = (banner.dataset.bannerPhoto || '').trim();
+        if (!photo || photo === 'null' || photo === 'undefined') return;
+        var safePhoto = encodeURIComponent(photo).replace(/%2F/g, '/');
+        banner.style.setProperty('--torneo-banner-bg', "url('/Imagenes/" + safePhoto + "')");
+    });
+
     // ---- Botones volver a página previa (con fallback al href) ----
     document.querySelectorAll('.btn-back').forEach(function (el) {
         el.addEventListener('click', function (e) {
@@ -226,7 +234,7 @@ function propagateBracketWinners() {
                 fillTeamFromWinner(m1, m1.dataset.winnerId, teamLocal);
             }
 
-            // Si el partido previo del local no tiene ganador → TBD (solo si no hay equipo asignado)
+            // Si el partido previo del local no tiene ganador → Por definir (solo si no hay equipo asignado)
             if (m1 && !m1.dataset.winnerId) {
                 if (!teamLocal || !teamLocal.dataset.teamId) {
                     blankTeam(teamLocal);
@@ -238,7 +246,7 @@ function propagateBracketWinners() {
                 fillTeamFromWinner(m2, m2.dataset.winnerId, teamVisitante);
             }
 
-            // Si el partido previo del visitante no tiene ganador → TBD (solo si no hay equipo asignado)
+            // Si el partido previo del visitante no tiene ganador → Por definir (solo si no hay equipo asignado)
             if (m2 && !m2.dataset.winnerId) {
                 if (!teamVisitante || !teamVisitante.dataset.teamId) {
                     blankTeam(teamVisitante);
@@ -324,36 +332,156 @@ function blankTeam(teamEl) {
     if (ph) ph.style.display = 'none';
 
     var name = teamEl.querySelector('.bm-name');
-    if (name) { name.textContent = 'TBD'; name.style.opacity = '0.4'; }
+    if (name) { name.textContent = 'Por definir'; name.style.opacity = '0.4'; }
 
     var score = teamEl.querySelector('.bm-score');
     if (score) score.textContent = '';
 }
 
-// ---- Carrusel de torneos (index) ----
+// ---- Banner carrusel automático de torneos destacados (index) ----
 (function () {
-    var track   = document.getElementById('torneosCarousel');
-    var btnPrev = document.getElementById('torneosCarouselPrev');
-    var btnNext = document.getElementById('torneosCarouselNext');
-    if (!track || !btnPrev || !btnNext) return;
+    var carousel = document.getElementById('featuredTorneosCarousel');
+    var track = document.getElementById('featuredTorneosTrack');
+    if (!carousel || !track) return;
 
-    var CARD_GAP  = 12; // matches CSS gap
-    var visibleCards = function () {
-        var w = track.parentElement.offsetWidth - 80; // subtract buttons width
-        var cardW = track.querySelector('.torneos-carousel-card');
-        if (!cardW) return 3;
-        return Math.max(1, Math.round(w / (cardW.offsetWidth + CARD_GAP)));
-    };
+    var slides = Array.from(track.querySelectorAll('.featured-slide'));
+    if (!slides.length) return;
 
-    function scrollByCards(dir) {
-        var cardW = track.querySelector('.torneos-carousel-card');
-        if (!cardW) return;
-        var step = (cardW.offsetWidth + CARD_GAP) * visibleCards();
-        track.scrollBy({ left: dir * step, behavior: 'smooth' });
+    slides = slides.filter(function (slide) {
+        var estado = (slide.dataset.estado || '').trim().toUpperCase();
+        return estado === 'ACTIVO' || estado === 'PENDIENTE';
+    });
+
+    if (!slides.length) {
+        var wrapper = carousel.parentElement;
+        if (wrapper) wrapper.style.display = 'none';
+        return;
     }
 
-    btnPrev.addEventListener('click', function (e) { e.stopPropagation(); scrollByCards(-1); });
-    btnNext.addEventListener('click', function (e) { e.stopPropagation(); scrollByCards(1); });
+    // Mostrar solo 3 torneos: últimos por id; si no hay ids válidos, aleatorios.
+    if (slides.length > 3) {
+        var withIds = slides
+            .map(function (slide) {
+                var id = parseInt(slide.dataset.id, 10);
+                return { slide: slide, id: Number.isNaN(id) ? null : id };
+            })
+            .filter(function (it) { return it.id !== null; });
+
+        var selected;
+        if (withIds.length >= 3) {
+            selected = withIds
+                .sort(function (a, b) { return b.id - a.id; })
+                .slice(0, 3)
+                .map(function (it) { return it.slide; });
+        } else {
+            selected = slides.slice();
+            for (var i = selected.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = selected[i];
+                selected[i] = selected[j];
+                selected[j] = tmp;
+            }
+            selected = selected.slice(0, 3);
+        }
+
+        slides = selected;
+    }
+
+    track.innerHTML = '';
+    slides.forEach(function (slide) { track.appendChild(slide); });
+
+    var useInfinite = slides.length > 1;
+    var realCount = slides.length;
+
+    if (useInfinite) {
+        var firstClone = slides[0].cloneNode(true);
+        var lastClone = slides[realCount - 1].cloneNode(true);
+        firstClone.classList.add('featured-slide--clone');
+        lastClone.classList.add('featured-slide--clone');
+        track.appendChild(firstClone);
+        track.insertBefore(lastClone, track.firstChild);
+    }
+
+    var index = useInfinite ? 1 : 0;
+    var timer = null;
+    var intervalMs = 3500;
+
+    function currentRealIndex() {
+        if (!useInfinite) return index;
+        if (index === 0) return realCount - 1;
+        if (index === realCount + 1) return 0;
+        return index - 1;
+    }
+
+    function render() {
+        track.style.transform = 'translateX(' + (-index * 100) + '%)';
+    }
+
+    function goTo(nextIndex) {
+        index = nextIndex;
+        render();
+    }
+
+    function jumpWithoutTransition(targetIndex) {
+        track.style.transition = 'none';
+        index = targetIndex;
+        render();
+        track.offsetHeight;
+        track.style.transition = '';
+    }
+
+    function stopAutoplay() {
+        if (!timer) return;
+        clearInterval(timer);
+        timer = null;
+    }
+
+    function startAutoplay() {
+        if (slides.length <= 1 || timer) return;
+        timer = setInterval(function () {
+            goTo(index + 1);
+        }, intervalMs);
+    }
+
+    slides.forEach(function (_, i) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'featured-carousel__dot';
+        dot.setAttribute('aria-label', 'Ir al torneo ' + (i + 1));
+        dot.addEventListener('click', function (e) {
+            e.stopPropagation();
+            goTo(useInfinite ? i + 1 : i);
+            stopAutoplay();
+            startAutoplay();
+        });
+    });
+
+    if (useInfinite) {
+        track.addEventListener('transitionend', function () {
+            if (index === 0) {
+                jumpWithoutTransition(realCount);
+            } else if (index === realCount + 1) {
+                jumpWithoutTransition(1);
+            }
+        });
+    }
+
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', startAutoplay);
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stopAutoplay();
+        else startAutoplay();
+    });
+
+    if (useInfinite) {
+        jumpWithoutTransition(1);
+    } else {
+        render();
+    }
+    startAutoplay();
 })();
 
 // ---- Calendario de partidos (carrusel mensual) ----
@@ -374,7 +502,14 @@ function blankTeam(teamEl) {
         return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
             .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
-    function teamTag(tag) { return String(tag || '').trim() || 'TEAM'; }
+    function teamTag(tag) {
+            var t = String(tag || '').trim();
+            // Si viene "?" o "-" o "null" o "undefined" → no hay equipo
+            if (t === '' || t === '?' || t === '-' || t.toLowerCase() === 'null' || t.toLowerCase() === 'undefined') {
+                return 'Por definir';
+            }
+            return t;
+    }
     function teamLogo(foto, tag, cls, alt) {
         alt = escapeHtml(alt || teamTag(tag));
         if (!foto) return '<span class="' + cls + ' cal-logo-ph" title="' + alt + '">\uD83D\uDEE1\uFE0F</span>';

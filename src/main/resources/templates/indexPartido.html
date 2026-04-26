@@ -17,17 +17,17 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}" class="active">Partidos</a></li>
+        <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
-            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
+            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.45rem;">👤</a>
         </li>
         <li sec:authorize="isAuthenticated()">
             <form th:action="@{/admin/logout}" method="post" style="display:contents;">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit" class="btn btn-secondary">Salir Admin</button>
+                <button type="submit" class="btn btn-secondary">🔒</button>
             </form>
         </li>
     </ul>
@@ -90,12 +90,12 @@
                                 </div>
 
                             <span class="match-item-team"
-                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD'}">Local</span>
+                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'Por definir'}">Local</span>
 
                                 <div class="match-item-score match-item-score--pending">VS</div>
 
                             <span class="match-item-team match-item-team--rival"
-                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'Por definir'}">Visitante</span>
 
                                 <div class="match-item-logo">
                                     <img th:if="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"
@@ -193,7 +193,7 @@
 
                             <span class="match-item-team"
                                   th:classappend="${partido.ganador != null and partido.equipoLocal != null and partido.ganador.id == partido.equipoLocal.id} ? ' match-item-team--winner'"
-                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'TBD'}">Local</span>
+                                  th:text="${partido.equipoLocal != null ? partido.equipoLocal.nombre : 'Por definir'}">Local</span>
 
                                 <div class="match-item-score">
                                     <span th:text="${partido.marcadorLocal}">0</span>
@@ -203,7 +203,7 @@
 
                             <span class="match-item-team match-item-team--rival"
                                   th:classappend="${partido.ganador != null and partido.equipoVisitante != null and partido.ganador.id == partido.equipoVisitante.id} ? ' match-item-team--winner'"
-                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+                                  th:text="${partido.equipoVisitante != null ? partido.equipoVisitante.nombre : 'Por definir'}">Visitante</span>
 
                                 <div class="match-item-logo">
                                     <img th:if="${partido.equipoVisitante != null and partido.equipoVisitante.foto != null and partido.equipoVisitante.foto != ''}"

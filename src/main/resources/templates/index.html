@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESports Manager</title>
-    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="stylesheet" href="/styles.css?v=13">
     <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
@@ -17,17 +17,17 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
-            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
+            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.45rem;">👤</a>
         </li>
         <li sec:authorize="isAuthenticated()">
             <form th:action="@{/admin/logout}" method="post" style="display:contents;">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit" class="btn btn-secondary">Salir Admin</button>
+                <button type="submit" class="btn btn-secondary">🔒</button>
             </form>
         </li>
     </ul>
@@ -39,7 +39,8 @@
     <div class="hero">
         <div class="hero-eyebrow">ESPORTS_MANAGER ● ONLINE</div>
         <h1 class="hero-title">
-            Gestiona tu <span>universo</span><br>competitivo
+            Disfruta de los torneos <span>ESports</span><br>
+            en un solo lugar
         </h1>
         <p class="hero-subtitle">
             Rosters, brackets y resultados en tiempo real ⚡<br>
@@ -60,11 +61,6 @@
                 <span class="hero-stat-num" th:text="${totalTorneos}">0</span>
                 <span class="hero-stat-lbl">torneos</span>
             </div>
-            <div class="hero-stat-sep"></div>
-            <div class="hero-stat-item">
-                <span class="hero-stat-num" th:text="${totalPartidos}">0</span>
-                <span class="hero-stat-lbl">partidos</span>
-            </div>
         </div>
     </div>
 
@@ -75,28 +71,61 @@
             <div class="nav-card-icon">🛡️</div>
             <div class="nav-card-title">Equipos</div>
             <div class="nav-card-desc">Rosters, tags y organización de cada equipo</div>
-            <div class="nav-card-arrow">Ver equipos →</div>
         </a>
         <a th:href="@{/jugadores}" class="nav-card">
             <div class="nav-card-icon">🎮</div>
             <div class="nav-card-title">Jugadores</div>
             <div class="nav-card-desc">Perfiles, roles y estadísticas de cada jugador</div>
-            <div class="nav-card-arrow">Ver jugadores →</div>
         </a>
         <a th:href="@{/torneos}" class="nav-card">
             <div class="nav-card-icon">🏆</div>
             <div class="nav-card-title">Torneos</div>
             <div class="nav-card-desc">Fases activas, clasificaciones e inscripciones</div>
-            <div class="nav-card-arrow">Ver torneos →</div>
         </a>
         <a th:href="@{/partidos}" class="nav-card">
             <div class="nav-card-icon">⚔️</div>
             <div class="nav-card-title">Partidos</div>
             <div class="nav-card-desc">Resultados, rondas y enfrentamientos recientes</div>
-            <div class="nav-card-arrow">Ver partidos →</div>
         </a>
     </div>
 
+    <!-- Banner carrusel de torneos destacados -->
+    <div th:if="${not #lists.isEmpty(todosTorneos)}">
+        <div class="section-header" style="margin-bottom:1.5rem;">
+            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">Torneos <span>Destacados</span></div>
+            <a th:href="@{/torneos}" class="btn btn-secondary btn-sm">Ver todos →</a>
+        </div>
+        <div class="featured-carousel" id="featuredTorneosCarousel">
+            <div class="featured-carousel__track" id="featuredTorneosTrack">
+                <article th:each="torneo : ${todosTorneos}"
+                         class="featured-slide card-link"
+                         th:attr="data-href=@{/torneos/{id}(id=${torneo.id})},data-id=${torneo.id},data-estado=${torneo.estado}">
+                    <div class="featured-slide__bg">
+                        <img th:if="${torneo.foto != null and torneo.foto != ''}"
+                             th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
+                             class="featured-slide__photo" alt="">
+                        <span th:unless="${torneo.foto != null and torneo.foto != ''}"
+                              class="featured-slide__placeholder">🏆</span>
+                    </div>
+                    <div class="featured-slide__overlay"></div>
+                    <div class="featured-slide__content">
+                        <div class="featured-slide__kicker">Destacado</div>
+                        <h3 class="featured-slide__title" th:text="${torneo.nombre}">Torneo</h3>
+                        <div class="featured-slide__meta">
+                            <span class="featured-slide__game" th:text="${torneo.juego}">Juego</span>
+                            <span th:switch="${torneo.estado}">
+                                <span th:case="'ACTIVO'"     class="badge badge-success">Activo</span>
+                                <span th:case="'PENDIENTE'"  class="badge badge-warning">Pendiente</span>
+                                <span th:case="'FINALIZADO'" class="badge badge-finished">Finalizado</span>
+                                <span th:case="*"            class="badge badge-info" th:text="${torneo.estado}">Estado</span>
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    
     <!-- Calendario de Partidos -->
     <div class="section-title">Fechas de <span>Partidos</span></div>
 
@@ -110,44 +139,8 @@
         </div>
         <div class="cal-panel-body" id="cal-panel-body"></div>
     </div>
-
-    <!-- Carrusel de torneos -->
-    <div th:if="${not #lists.isEmpty(todosTorneos)}">
-        <div class="section-header" style="margin-bottom:1.5rem;">
-            <div class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none;">Todos los <span>Torneos</span></div>
-            <a th:href="@{/torneos}" class="btn btn-secondary btn-sm">Ver todos →</a>
-        </div>
-        <div class="torneos-carousel-wrapper">
-            <button class="torneos-carousel-btn torneos-carousel-btn--prev" id="torneosCarouselPrev" aria-label="Anterior">&#8249;</button>
-            <div class="torneos-carousel" id="torneosCarousel">
-                <div th:each="torneo : ${todosTorneos}"
-                     class="torneos-carousel-card card-link"
-                     th:attr="data-href=@{/torneos/{id}(id=${torneo.id})}">
-                    <div class="torneos-carousel-img">
-                        <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                             th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                             class="torneos-carousel-photo" alt="">
-                        <span th:unless="${torneo.foto != null and torneo.foto != ''}"
-                              class="torneos-carousel-placeholder">🏆</span>
-                    </div>
-                    <div class="torneos-carousel-body">
-                        <div class="torneos-carousel-name" th:text="${torneo.nombre}">Torneo</div>
-                        <div class="torneos-carousel-game" th:text="${torneo.juego}">Juego</div>
-                        <span th:switch="${torneo.estado}">
-                            <span th:case="'ACTIVO'"     class="badge badge-success">Activo</span>
-                            <span th:case="'PENDIENTE'"  class="badge badge-warning">Pendiente</span>
-                            <span th:case="'FINALIZADO'" class="badge badge-finished">Finalizado</span>
-                            <span th:case="*"            class="badge badge-info" th:text="${torneo.estado}">Estado</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <button class="torneos-carousel-btn torneos-carousel-btn--next" id="torneosCarouselNext" aria-label="Siguiente">&#8250;</button>
-        </div>
-    </div>
-
 </div>
 
 </body>
-<script th:src="@{/app.js?v=4}"></script>
+<script th:src="@{/app.js?v=5}"></script>
 </html>
