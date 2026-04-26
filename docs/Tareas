@@ -1,16 +1,16 @@
-Mejorar diseño en general
-Mejorar el nav y el boton de Admin
 Arreglar cancelar y volver
 
 1. INICIO
-    Hacer un banner/carousel con los torneos, introductorio
-
+    Dejar bien el texto de los torneos destacados
+    Cambiar el texto del banner
+    Dejar a la derecha inferior los datos de equipos, jugadores,etc.
+    
 2. EQUIPOS
     - DETALLE EQUIPO 
+    Click en el torneo te lleva al torneo
 
 3. TORNEOS 
     - DETALLE TORNEO 
-    hacer del header un background con el logo
 
 4. PARTIDOS
 

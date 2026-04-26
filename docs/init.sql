@@ -1,9 +1,9 @@
 -- ============================================
 -- CREAR BASE DE DATOS
 -- ============================================
-DROP DATABASE IF EXISTS torneogg;
-CREATE DATABASE torneogg CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE torneogg;
+DROP DATABASE IF EXISTS stadion;
+CREATE DATABASE stadion CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE stadion;
 
 -- ============================================
 -- TABLA: equipos
