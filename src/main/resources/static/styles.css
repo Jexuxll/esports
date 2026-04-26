@@ -142,7 +142,7 @@ nav {
 }
 
 .nav-links a {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     padding: 0.42rem 1rem;
     border-radius: var(--radius-sm);
     font-weight: 700;
@@ -155,10 +155,7 @@ nav {
 }
 .nav-links a:hover,
 .nav-links a.active {
-    background: linear-gradient(180deg, rgba(29,110,245,0.85) 0%, rgba(14,80,200,0.92) 100%);
-    border-color: rgba(77, 148, 255, 0.6);
-    box-shadow: 0 0 0 1px rgba(77, 148, 255, 0.2), 0 4px 12px rgba(29, 110, 245, 0.3);
-    color: #fff;
+    color: rgba(29,110,245,0.85);
 }
 
 /* ---- Contenedor principal ---- */
@@ -2497,7 +2494,7 @@ tr.row-link:hover {
     position: absolute;
     bottom: 2px;
     left: 0;
-    width: 100%;
+    width: 0%;
     height: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent-cyan));
 }

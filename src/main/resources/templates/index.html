@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESports Manager</title>
+    <title>Stadion</title>
     <link rel="stylesheet" href="/styles.css?v=13">
     <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
@@ -11,11 +11,11 @@
 
 <nav>
     <a class="nav-brand" th:href="@{/}">
-        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="ESports">
-        E<span>Sports</span>
+        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="Stadion">
+        Stadion
     </a>
     <ul class="nav-links">
-        <li><a th:href="@{/}">Inicio</a></li>
+        <li><a th:href="@{/}" class="active">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
         <li><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
@@ -37,14 +37,14 @@
 
     <!-- Hero -->
     <div class="hero">
-        <div class="hero-eyebrow">ESPORTS_MANAGER ● ONLINE</div>
+        <div class="hero-eyebrow">Stadion ● ONLINE</div>
         <h1 class="hero-title">
-            Disfruta de los torneos <span>ESports</span><br>
+            Todas las <span>competiciones</span><br>
             en un solo lugar
         </h1>
         <p class="hero-subtitle">
-            Rosters, brackets y resultados en tiempo real ⚡<br>
-            cada detalle de tu competición, desde un solo panel.
+            Rosters, brackets y resultados en tiempo real.<br>
+            Cada detalle de tu competición, desde un solo panel.
         </p>
         <div class="hero-stats-inline">
             <div class="hero-stat-item">
@@ -109,7 +109,6 @@
                     </div>
                     <div class="featured-slide__overlay"></div>
                     <div class="featured-slide__content">
-                        <div class="featured-slide__kicker">Destacado</div>
                         <h3 class="featured-slide__title" th:text="${torneo.nombre}">Torneo</h3>
                         <div class="featured-slide__meta">
                             <span class="featured-slide__game" th:text="${torneo.juego}">Juego</span>
