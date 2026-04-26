@@ -17,9 +17,9 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}" class="active">Partidos</a></li>
+        <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
     </ul>
 </nav>

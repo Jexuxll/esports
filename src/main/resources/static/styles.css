@@ -74,7 +74,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 64px;
+    height: 84px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -83,7 +83,7 @@ nav {
 }
 
 .nav-brand {
-    font-size: 1.25rem;
+    font-size: 1.65rem;
     font-weight: 900;
     letter-spacing: 2px;
     color: var(--text-primary);
@@ -100,8 +100,8 @@ nav {
 }
 
 .nav-logo {
-    width: 34px;
-    height: 34px;
+    width: 84px;
+    height: 84px;
     object-fit: contain;
     border-radius: var(--radius);
     flex-shrink: 0;
@@ -128,9 +128,17 @@ nav {
 
 /* Botón de login/logout dentro del nav */
 .nav-links .btn {
-    font-size: 0.88rem;
+    background: linear-gradient(180deg, rgba(29,110,245,0.85) 0%, rgba(14,80,200,0.92) 100%);
+    border-color: rgba(77, 148, 255, 0.6);
+    font-size: 1.4rem;
     padding: 0.38rem 0.85rem;
     line-height: 1;
+    color:#fff
+}
+
+.nav-links .btn:hover {
+    background: linear-gradient(180deg, rgba(44, 118, 247, 0.95) 0%, rgba(14,80,200,1) 100%);
+    box-shadow: 0 0 0 1px rgba(77, 148, 255, 0.3), 0 4px 12px rgba(29, 110, 245, 0.35);
 }
 
 .nav-links a {
@@ -138,7 +146,7 @@ nav {
     padding: 0.42rem 1rem;
     border-radius: var(--radius-sm);
     font-weight: 700;
-    font-size: 0.76rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border: 1px solid transparent;
@@ -606,7 +614,7 @@ select.form-control option {
 .torneo-mini-banner__title {
     order: 1;
     margin: 0;
-    text-align: left;
+    text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.01em;
     color: var(--text-primary);
@@ -2611,7 +2619,7 @@ tr.row-link:hover {
 }
 .nav-card {
     background: var(--bg-card);
-    padding: 1.8rem 1rem;
+    padding: 1rem 1rem;
     text-align: center;
     text-decoration: none;
     display: flex;
@@ -2710,147 +2718,127 @@ tr.row-link:hover {
 }
 .last-tournaments { margin-bottom: 2rem; }
 
-/* ---- Carrusel de torneos (index) ---- */
-.torneos-carousel-wrapper {
+/* ---- Banner carrusel torneos destacados (index) ---- */
+.featured-carousel {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     margin-bottom: 3rem;
-}
-
-.torneos-carousel {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    flex: 1;
-    padding: 0.25rem 0 0.5rem;
-}
-
-.torneos-carousel::-webkit-scrollbar { display: none; }
-
-.torneos-carousel-card {
-    flex: 0 0 calc(50% - 6px);
-    scroll-snap-align: start;
-    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    background: var(--bg-card);
+}
+
+.featured-carousel__track {
     display: flex;
-    flex-direction: column;
+    transition: transform 0.6s ease;
+    will-change: transform;
 }
 
-.torneos-carousel-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-accent);
-}
-
-.torneos-carousel-img {
+.featured-slide {
+    flex: 0 0 100%;
+    min-height: 560px;
     position: relative;
-    width: 100%;
-    height: 380px;
-    background: var(--bg-secondary);
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+}
+
+.featured-slide__bg {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
+    background: radial-gradient(circle at 50% 20%, rgba(29, 110, 245, 0.24), rgba(12, 16, 26, 0.96));
 }
 
-.torneos-carousel-img::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 110px;
-    background: linear-gradient(to bottom, transparent, #111621);
-    pointer-events: none;
-}
-
-.torneos-carousel-photo {
+.featured-slide__photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.torneos-carousel-placeholder {
-    font-size: 2.5rem;
-    opacity: 0.5;
+.featured-slide__placeholder {
+    font-size: clamp(3rem, 8vw, 6rem);
+    opacity: 0.35;
 }
 
-.torneos-carousel-body {
-    padding: 0.85rem 1rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-        'name badge'
-        'game badge';
-    gap: 0.25rem 0.9rem;
-    align-items: center;
+.featured-slide__overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(7, 9, 13, 0.82) 0%, rgba(7, 9, 13, 0.58) 16%, rgba(7, 9, 13, 0.08) 37%, rgba(7, 9, 13, 0.08) 63%, rgba(7, 9, 13, 0.58) 84%, rgba(7, 9, 13, 0.82) 100%),
+        linear-gradient(180deg, rgba(7, 9, 13, 0.03) 0%, rgba(7, 9, 13, 0.23) 78%, rgba(7, 9, 13, 0.5) 100%),
+        linear-gradient(rgba(29, 110, 245, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 110, 245, 0.018) 1px, transparent 1px);
 }
 
-.torneos-carousel-name {
-    grid-area: name;
-    font-size: 1.9rem;
-    font-weight: 900;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.02;
+.featured-slide__content {
+    position: relative;
+    z-index: 1;
+    width: min(980px, 100%);
+    padding: clamp(1.35rem, 3vw, 2.8rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.95rem;
+}
+
+.featured-slide__kicker {
+    display: inline-flex;
+    width: fit-content;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    font-family: var(--font-display);
-}
-
-.torneos-carousel-game {
-    grid-area: game;
-    font-size: 1.08rem;
+    letter-spacing: 0.2em;
     color: var(--accent-cyan-light);
+    font-family: var(--font-mono);
     font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border: 1px solid rgba(34, 211, 238, 0.45);
+    background: rgba(7, 9, 13, 0.44);
+    padding: 0.26rem 0.55rem;
+}
+
+.featured-slide__title {
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.85);
     font-family: var(--font-display);
 }
 
-.torneos-carousel-state {
-    grid-area: badge;
-    align-self: center;
-    justify-self: end;
+.featured-slide__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.7rem;
 }
 
-.torneos-carousel-body .badge {
+.featured-slide__game {
+    color: var(--accent-cyan-light);
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+.featured-slide__meta .badge {
     font-size: 0.78rem;
 }
 
-.torneos-carousel-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1.8rem;
-    line-height: 1;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0;
-    transition: color 0.15s, transform 0.08s;
-    z-index: 2;
-}
+@media (max-width: 860px) {
+    .featured-slide {
+        min-height: 420px;
+    }
 
-.torneos-carousel-btn:hover {
-    background: transparent;
-    color: var(--accent-light);
+    .featured-slide__content {
+        width: 100%;
+        padding: 1.15rem;
+    }
+
+    .featured-slide__game {
+        font-size: 1rem;
+    }
 }
 .section-header {
     display: flex;
@@ -3465,7 +3453,11 @@ tr.row-link:hover {
     border-radius: var(--radius);
     overflow: hidden;
     margin-bottom: 2rem;
-    background: var(--bg-card);
+    background-color: var(--bg-card);
+    background-image: var(--torneo-banner-bg, radial-gradient(ellipse at center, rgba(29, 110, 245, 0.16) 0%, rgba(12, 16, 26, 0.9) 64%, rgba(12, 16, 26, 1) 100%));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border: 1px solid var(--border);
     padding: 0 3rem;
     min-height: 460px;
@@ -3487,9 +3479,11 @@ tr.row-link:hover {
     position: absolute;
     inset: 0;
     background:
+        linear-gradient(90deg, rgba(7, 9, 13, 0.82) 0%, rgba(7, 9, 13, 0.58) 16%, rgba(7, 9, 13, 0.08) 37%, rgba(7, 9, 13, 0.08) 63%, rgba(7, 9, 13, 0.58) 84%, rgba(7, 9, 13, 0.82) 100%),
+        linear-gradient(180deg, rgba(7, 9, 13, 0.03) 0%, rgba(7, 9, 13, 0.23) 78%, rgba(7, 9, 13, 0.5) 100%),
         linear-gradient(rgba(29, 110, 245, 0.018) 1px, transparent 1px),
         linear-gradient(90deg, rgba(29, 110, 245, 0.018) 1px, transparent 1px);
-    background-size: 42px 42px;
+    background-size: auto, auto, 42px 42px, 42px 42px;
     pointer-events: none;
 }
 
@@ -3499,10 +3493,7 @@ tr.row-link:hover {
 }
 
 .torneo-banner__title {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: static;
     margin: 0;
     padding: 3.5rem 1.5rem 1.2rem;
     font-size: clamp(2.2rem, 4vw, 3.2rem);
@@ -3512,7 +3503,6 @@ tr.row-link:hover {
     text-transform: uppercase;
     letter-spacing: -0.02em;
     text-shadow: 0 2px 18px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6);
-    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 55%, transparent 100%);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3523,7 +3513,7 @@ tr.row-link:hover {
 
 .torneo-banner__layout {
     display: grid;
-    grid-template-columns: 1fr 320px 1fr;
+    grid-template-columns: 1fr minmax(300px, 560px) 1fr;
     align-items: stretch;
     gap: 3rem;
     min-height: 460px;
@@ -3608,10 +3598,10 @@ tr.row-link:hover {
 }
 
 .torneo-banner__side-label {
-    font-size: 0.72rem;
+    font-size: 0.92rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-weight: 700;
     margin-bottom: 0.25rem;
     font-family: var(--font-mono);
@@ -3652,9 +3642,20 @@ tr.row-link:hover {
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
-    nav { padding: 0 1rem; }
-    .nav-brand { font-size: 1.1rem; }
-    .nav-links a { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+    nav {
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.68rem 0.8rem;
+    }
+    .nav-brand { font-size: 1rem; }
+    .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a { padding: 0.42rem 0.68rem; font-size: 0.62rem; white-space: nowrap; }
     .container { padding: 1.5rem 1rem; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
     .form-card { padding: 1.5rem 1rem; }
@@ -3700,7 +3701,7 @@ tr.row-link:hover {
 
 @media (max-width: 480px) {
     .nav-links { gap: 0.25rem; }
-    .nav-links a { padding: 0.25rem 0.5rem; font-size: 0.8rem; }
+    .nav-links a { padding: 0.34rem 0.55rem; font-size: 0.6rem; }
 }
 
 /* ============================================================

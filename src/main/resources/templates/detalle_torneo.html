@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${torneo.nombre} + ' - ESports Manager'">Detalle Torneo</title>
-    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="stylesheet" href="/styles.css?v=13">
     <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
@@ -17,17 +17,17 @@
     <ul class="nav-links">
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/jugadores}">Jugadores</a></li>
+        <li><a th:href="@{/jugadores}">Jugadores</a></li>
         <li><a th:href="@{/torneos}" class="active">Torneos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
         <li sec:authorize="isAnonymous()">
-            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.8rem;">🔐 Iniciar sesión</a>
+            <a th:href="@{/admin/login}" class="btn btn-secondary" style="padding:0.45rem 0.45rem;">👤</a>
         </li>
         <li sec:authorize="isAuthenticated()">
             <form th:action="@{/admin/logout}" method="post" style="display:contents;">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit" class="btn btn-secondary">Salir Admin</button>
+                <button type="submit" class="btn btn-secondary">🔒</button>
             </form>
         </li>
     </ul>
@@ -44,7 +44,8 @@
     </div>
 
     <!-- BANNER TORNEO -->
-    <div class="torneo-banner">
+        <div class="torneo-banner"
+            th:attr="data-banner-photo=${torneo.foto}">
         <div class="torneo-banner__layout">
 
             <!-- Izquierda: juego (arriba) + inicio (abajo) -->
@@ -59,14 +60,9 @@
                 </div>
             </div>
 
-            <!-- Centro: solo logo -->
+            <!-- Centro: título del torneo -->
             <div class="torneo-banner__center">
-                <img th:if="${torneo.foto != null and torneo.foto != ''}"
-                     th:src="@{/Imagenes/{f}(f=${torneo.foto})}"
-                     alt="Logo torneo"
-                     class="torneo-banner__logo">
-                <div th:unless="${torneo.foto != null and torneo.foto != ''}"
-                     class="torneo-banner__placeholder">🏆</div>
+                <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
             </div>
 
             <!-- Derecha: estado (arriba) + fin (abajo) -->
@@ -87,7 +83,6 @@
             </div>
 
         </div>
-        <h1 th:text="${torneo.nombre}" class="torneo-banner__title">Nombre torneo</h1>
     </div>
     <div class="page-header torneo-banner__section">
         <h2 class="section-heading" style="margin:0;">Equipos <span>Inscritos</span></h2>
@@ -139,7 +134,7 @@
                         <img th:if="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoLocal.foto})}" class="bm-logo" alt="">
                         <span th:unless="${p.equipoLocal != null and p.equipoLocal.foto != null and p.equipoLocal.foto != ''}" class="bm-logo-ph">🛡️</span>
-                        <span class="bm-name" th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : 'TBD'}">Local</span>
+                        <span class="bm-name" th:text="${p.equipoLocal != null ? p.equipoLocal.nombre : 'Por definir'}">Local</span>
                         <span class="bm-score" th:text="${p.marcadorLocal != null ? p.marcadorLocal : '-'}">-</span>
                     </div>
 
@@ -150,7 +145,7 @@
                         <img th:if="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}"
                              th:src="@{/Imagenes/{f}(f=${p.equipoVisitante.foto})}" class="bm-logo" alt="">
                         <span th:unless="${p.equipoVisitante != null and p.equipoVisitante.foto != null and p.equipoVisitante.foto != ''}" class="bm-logo-ph">🛡️</span>
-                        <span class="bm-name" th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : 'TBD'}">Visitante</span>
+                        <span class="bm-name" th:text="${p.equipoVisitante != null ? p.equipoVisitante.nombre : 'Por definir'}">Visitante</span>
                         <span class="bm-score" th:text="${p.marcadorVisitante != null ? p.marcadorVisitante : '-'}">-</span>
                     </div>
 
@@ -174,5 +169,5 @@
 </div>
 
 </body>
-<script th:src="@{/app.js?v=4}"></script>
+<script th:src="@{/app.js?v=5}"></script>
 </html>

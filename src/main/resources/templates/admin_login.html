@@ -18,7 +18,7 @@
         <li><a th:href="@{/}">Inicio</a></li>
         <li><a th:href="@{/equipos}">Equipos</a></li>
         <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/partidos}">Partidos</a></li>
+        <li><a th:href="@{/partidos}">Partidos</a></li>
         <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
     </ul>
 </nav>
@@ -26,9 +26,6 @@
 <div class="container">
     <div class="form-card" style="max-width:460px; margin:2rem auto;">
         <h2>Acceso Admin</h2>
-        <p style="color:var(--text-secondary); margin-top:0.25rem;">
-            Solo el administrador puede crear, editar o eliminar contenido.
-        </p>
 
         <form th:action="@{/admin/login}" method="post">
             <div class="form-group">
@@ -49,7 +46,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                <button type="submit" class="btn btn-primary">Acceder</button>
                 <a th:href="@{/}" class="btn btn-secondary btn-back">Volver</a>
             </div>
         </form>
