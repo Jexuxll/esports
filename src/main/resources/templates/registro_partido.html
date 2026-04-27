@@ -1,30 +1,38 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nuevo Partido - Stadion</title>
-    <link rel="stylesheet" href="/styles.css?v=12">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles.css?v=16">
     <link rel="icon" th:href="@{/favicon.png?v=2}" href="/favicon.png?v=2" type="image/png">
 </head>
 <body>
 
-<nav>
-    <a class="nav-brand" th:href="@{/}">
-        <img class="nav-logo" th:src="@{/Imagenes/logo.png}" alt="Stadion">
-        Stadion
-    </a>
-    <ul class="nav-links">
-        <li><a th:href="@{/}">Inicio</a></li>
-        <li><a th:href="@{/equipos}">Equipos</a></li>
-        <li><a th:href="@{/jugadores}">Jugadores</a></li>
-        <li><a th:href="@{/torneos}">Torneos</a></li>
-        <li><a th:href="@{/partidos}" class="active">Partidos</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/juegos}">Juegos</a></li>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/}">
+            <img th:src="@{/Imagenes/logo.png}" alt="Stadion" style="height:52px;">
+            Stadion
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/equipos}">Equipos</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/jugadores}">Jugadores</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/torneos}">Torneos</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/partidos}">Partidos</a></li>
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/juegos}">Juegos</a></li>
     </ul>
+        </div>
+    </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid py-3">
     <div class="page-header page-header--stack">
         <div>
             <div class="page-kicker">Match builder</div>
@@ -39,7 +47,7 @@
 
         <form th:action="${torneo != null} ? @{/torneos/{idTorneo}/partidos/guardar(idTorneo=${torneo.id})} : @{/partidos/guardar}" th:object="${partido}" method="post">
 
-            <div class="form-group" th:if="${torneo == null}">
+            <div class="mb-3" th:if="${torneo == null}">
                 <label for="torneoId">Torneo</label>
                 <select id="torneoId" name="torneo.id" class="form-control" required>
                     <option value="">-- Selecciona torneo --</option>
@@ -47,12 +55,12 @@
                 </select>
             </div>
 
-            <div class="form-group" th:if="${torneo != null}">
+            <div class="mb-3" th:if="${torneo != null}">
                 <label>Torneo</label>
                 <input type="text" class="form-control" th:value="${torneo.nombre}" readonly>
             </div>
 
-            <div class="form-group" th:if="${torneo == null}">
+            <div class="mb-3" th:if="${torneo == null}">
                 <label for="equipoLocalId">Equipo Local</label>
                 <select id="equipoLocalId" name="equipoLocal.id" class="form-control" required>
                     <option value="">-- Selecciona equipo local --</option>
@@ -60,7 +68,7 @@
                 </select>
             </div>
 
-            <div class="form-group" th:if="${torneo != null}">
+            <div class="mb-3" th:if="${torneo != null}">
                 <label for="equipoLocalIdTorneo">Equipo Local</label>
                 <select id="equipoLocalIdTorneo" name="equipoLocalId" class="form-control" required>
                     <option value="">-- Selecciona equipo local --</option>
@@ -68,7 +76,7 @@
                 </select>
             </div>
 
-            <div class="form-group" th:if="${torneo == null}">
+            <div class="mb-3" th:if="${torneo == null}">
                 <label for="equipoVisitanteId">Equipo Visitante</label>
                 <select id="equipoVisitanteId" name="equipoVisitante.id" class="form-control" required>
                     <option value="">-- Selecciona equipo visitante --</option>
@@ -76,7 +84,7 @@
                 </select>
             </div>
 
-            <div class="form-group" th:if="${torneo != null}">
+            <div class="mb-3" th:if="${torneo != null}">
                 <label for="equipoVisitanteIdTorneo">Equipo Visitante</label>
                 <select id="equipoVisitanteIdTorneo" name="equipoVisitanteId" class="form-control" required>
                     <option value="">-- Selecciona equipo visitante --</option>
@@ -84,7 +92,7 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="ronda">Ronda</label>
                 <select id="ronda" th:field="*{ronda}" class="form-control">
                     <option value="">-- Selecciona ronda --</option>
@@ -96,13 +104,13 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="fechaPartido">Fecha y hora del partido</label>
                 <input type="datetime-local" id="fechaPartido" th:field="*{fechaPartido}"
                        class="form-control" required>
             </div>
 
-            <div class="form-actions">
+            <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">Crear partido</button>
                 <a th:if="${torneo == null}" th:href="@{/partidos}" class="btn btn-secondary">Cancelar</a>
                 <a th:if="${torneo != null}" th:href="@{/torneos/{id}(id=${torneo.id})}" class="btn btn-secondary">Cancelar</a>
@@ -112,5 +120,6 @@
 </div>
 
 </body>
-<script th:src="@{/app.js?v=4}"></script>
+<script th:src="@{/app.js?v=7}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </html>

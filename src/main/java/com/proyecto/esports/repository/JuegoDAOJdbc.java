@@ -26,9 +26,7 @@ public class JuegoDAOJdbc implements JuegoDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setString(1, juego.getNombre());
             stmt.executeUpdate();
-            System.out.println("✅ Juego guardado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al guardar el juego.");
             e.printStackTrace();
         }
     }
@@ -40,9 +38,7 @@ public class JuegoDAOJdbc implements JuegoDAO {
             stmt.setString(1, juego.getNombre());
             stmt.setInt(2, juego.getId());
             stmt.executeUpdate();
-            System.out.println("✅ Juego actualizado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar el juego.");
             e.printStackTrace();
         }
     }
@@ -53,9 +49,7 @@ public class JuegoDAOJdbc implements JuegoDAO {
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
-            System.out.println("✅ Juego eliminado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar el juego.");
             e.printStackTrace();
         }
     }
@@ -72,7 +66,6 @@ public class JuegoDAOJdbc implements JuegoDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener el juego por ID.");
             e.printStackTrace();
         }
         return juego;
@@ -88,7 +81,6 @@ public class JuegoDAOJdbc implements JuegoDAO {
                 juegos.add(mapear(rs));
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar los juegos.");
             e.printStackTrace();
         }
         return juegos;

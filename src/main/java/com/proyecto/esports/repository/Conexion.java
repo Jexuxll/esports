@@ -20,9 +20,7 @@ public class Conexion {
     private Conexion() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Conexión a la base de datos establecidas.");
         } catch (SQLException e) {
-            System.out.println(" Error al conectar con la base de datos.");
             e.printStackTrace();
         }
     }
@@ -49,10 +47,8 @@ public class Conexion {
         try {
             if (connection != null && !connection.isClosed()){
                 connection.close();
-                System.out.println("Conexion cerrada");
             }
         } catch (SQLException e){
-            System.out.println("Error al desconectar");
             e.printStackTrace();
         }
     }

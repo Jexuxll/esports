@@ -34,9 +34,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
             stmt.setString(3, equipo.getPais());
             stmt.setString(4, equipo.getFoto());
             stmt.executeUpdate();
-            System.out.println("✅ Equipo guardado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al guardar el equipo.");
             e.printStackTrace();
         }
     }
@@ -51,9 +49,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
             pstmt.setString(4, equipo.getFoto());
             pstmt.setInt(5, equipo.getId());
             pstmt.executeUpdate();
-            System.out.println("✅ Equipo actualizado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar el equipo.");
             e.printStackTrace();
         }
     }
@@ -64,9 +60,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
         try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
-            System.out.println("✅ Equipo eliminado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar el equipo.");
             e.printStackTrace();
         }
     }
@@ -83,7 +77,6 @@ public class EquipoDAOJdbc implements EquipoDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener el equipo por ID.");
             e.printStackTrace();
         }
         return equipo;
@@ -98,9 +91,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
             while (rs.next()) {
                 equipos.add(mapearEquipo(rs));
             }
-            System.out.println("✅ Listado de equipos recuperado correctamente.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar los equipos.");
             e.printStackTrace();
         }
         return equipos;

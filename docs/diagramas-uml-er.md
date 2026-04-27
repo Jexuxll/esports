@@ -12,16 +12,6 @@ classDiagram
         +String pais
         +String tag
         +String foto
-        +getId() int
-        +setId(id int)
-        +getNombre() String
-        +setNombre(nombre String)
-        +getPais() String
-        +setPais(pais String)
-        +getTag() String
-        +setTag(tag String)
-        +getFoto() String
-        +setFoto(foto String)
     }
 
     class Jugador {
@@ -34,37 +24,12 @@ classDiagram
         +String foto
         +int edad
         +String nacionalidad
-        +getId() int
-        +getNickname() String
-        +setNickname(nickname String)
-        +getNombre() String
-        +setNombre(nombre String)
-        +getApellido() String
-        +setApellido(apellido String)
-        +getRol() String
-        +setRol(rol String)
-        +getJuego() String
-        +setJuego(juego String)
-        +getFoto() String
-        +setFoto(foto String)
-        +getEdad() int
-        +setEdad(edad int)
-        +getNacionalidad() String
-        +setNacionalidad(nacionalidad String)
         +getEquipo() Equipo
-        +setEquipo(equipo Equipo)
     }
 
     class Juego {
         +int id
         +String nombre
-        +String foto
-        +getId() int
-        +setId(id int)
-        +getNombre() String
-        +setNombre(nombre String)
-        +getFoto() String
-        +setFoto(foto String)
     }
 
     class Torneo {
@@ -76,22 +41,6 @@ classDiagram
         +String estado
         +String foto
         +String tag
-        +getId() int
-        +setId(id int)
-        +getNombre() String
-        +setNombre(nombre String)
-        +getJuego() String
-        +setJuego(juego String)
-        +getFechaInicio() LocalDate
-        +setFechaInicio(fechaInicio LocalDate)
-        +getFechaFin() LocalDate
-        +setFechaFin(fechaFin LocalDate)
-        +getEstado() String
-        +setEstado(estado String)
-        +getFoto() String
-        +setFoto(foto String)
-        +getTag() String
-        +setTag(tag String)
     }
 
     class Partido {
@@ -100,37 +49,17 @@ classDiagram
         +String ronda
         +Integer marcadorLocal
         +Integer marcadorVisitante
-        +getId() int
-        +setId(id int)
         +getTorneo() Torneo
-        +setTorneo(torneo Torneo)
         +getEquipoLocal() Equipo
-        +setEquipoLocal(equipoLocal Equipo)
         +getEquipoVisitante() Equipo
-        +setEquipoVisitante(equipoVisitante Equipo)
-        +getFechaPartido() LocalDateTime
-        +setFechaPartido(fechaPartido LocalDateTime)
-        +getRonda() String
-        +setRonda(ronda String)
-        +getMarcadorLocal() Integer
-        +setMarcadorLocal(marcadorLocal Integer)
-        +getMarcadorVisitante() Integer
-        +setMarcadorVisitante(marcadorVisitante Integer)
         +getGanador() Equipo
-        +setGanador(ganador Equipo)
     }
 
     class EquipoTorneo {
         +int id
         +LocalDate fechaInscripcion
-        +getId() int
-        +setId(id int)
         +getEquipo() Equipo
-        +setEquipo(equipo Equipo)
         +getTorneo() Torneo
-        +setTorneo(torneo Torneo)
-        +getFechaInscripcion() LocalDate
-        +setFechaInscripcion(fechaInscripcion LocalDate)
     }
 
     Equipo "1" --> "0..*" Jugador : tiene
@@ -205,7 +134,6 @@ erDiagram
     JUEGOS {
       INT id_juego PK
       VARCHAR nombre
-      VARCHAR foto
     }
 
     TORNEOS {
