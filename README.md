@@ -126,4 +126,4 @@ Torneo       ← Partido
 
 ## Capturas de pantalla
 
-> Las imágenes de jugadores y logos de equipos se sirven desde la carpeta `Imagenes/` en el directorio raíz del proyecto.
+> Las imágenes de jugadores y logos de equipos se guardan y se sirven desde `c:/Imagenes/`.
