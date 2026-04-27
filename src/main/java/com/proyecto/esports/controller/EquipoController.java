@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -78,7 +79,10 @@ public class EquipoController {
 
     @PostMapping("/equipos/guardar")
     public String guardarEquipo(@ModelAttribute Equipo equipo,
-                                @RequestParam("logoFile") MultipartFile logoFile) throws IOException {
+                                @RequestParam("logoFile") MultipartFile logoFile,
+                                Model model) throws IOException {
+        String nombreArchivoSubido = null;
+
         if (logoFile != null && !logoFile.isEmpty()) {
             String nombre = System.currentTimeMillis() + "_" + logoFile.getOriginalFilename();
 
@@ -87,9 +91,16 @@ public class EquipoController {
 
             Files.copy(logoFile.getInputStream(), dir.resolve(nombre), StandardCopyOption.REPLACE_EXISTING);
             equipo.setFoto(nombre);
+            nombreArchivoSubido = nombre;
         }
 
-        equipoService.guardar(equipo);
+        try {
+            equipoService.guardar(equipo);
+        } catch (RuntimeException e) {
+            borrarArchivoSubidoSiExiste(nombreArchivoSubido);
+            return devolverFormularioEquipoConError(model, equipo, mensajeErrorEquipo(e));
+        }
+
         return "redirect:/equipos"; 
     }
 
@@ -102,15 +113,12 @@ public class EquipoController {
 
     @PostMapping("/equipos/actualizar")
     public String actualizarEquipo(@ModelAttribute Equipo equipo,
-                                  @RequestParam("logoFile") MultipartFile logoFile) throws IOException {
+                                  @RequestParam("logoFile") MultipartFile logoFile,
+                                  Model model) throws IOException {
         Equipo equipoExistente = equipoService.obtenerPorId(equipo.getId());
+        String nombreArchivoSubido = null;
 
         if (logoFile != null && !logoFile.isEmpty()) {
-
-            if(equipoExistente.getFoto() != null){
-                Path fotoAntigua = Paths.get(uploadDir).resolve(equipoExistente.getFoto());
-                Files.deleteIfExists(fotoAntigua);
-            }
 
             String nombre = System.currentTimeMillis() + "_" + logoFile.getOriginalFilename();
 
@@ -119,12 +127,27 @@ public class EquipoController {
 
             Files.copy(logoFile.getInputStream(), dir.resolve(nombre), StandardCopyOption.REPLACE_EXISTING);
             equipo.setFoto(nombre);
+            nombreArchivoSubido = nombre;
             
         } else {
             equipo.setFoto(equipoExistente.getFoto());
         }
 
-        equipoService.actualizar(equipo);
+        try {
+            equipoService.actualizar(equipo);
+        } catch (RuntimeException e) {
+            borrarArchivoSubidoSiExiste(nombreArchivoSubido);
+            if (equipoExistente != null) {
+                equipo.setFoto(equipoExistente.getFoto());
+            }
+            return devolverFormularioEquipoConError(model, equipo, mensajeErrorEquipo(e));
+        }
+
+        if (nombreArchivoSubido != null && equipoExistente.getFoto() != null) {
+            Path fotoAntigua = Paths.get(uploadDir).resolve(equipoExistente.getFoto());
+            Files.deleteIfExists(fotoAntigua);
+        }
+
         return "redirect:/equipos/" + equipo.getId();
     }
 
@@ -133,12 +156,13 @@ public class EquipoController {
 
         Equipo equipo = equipoService.obtenerPorId(id);
 
-        if (equipo != null && equipo.getFoto() != null) {
-
-                Path fotoPath = Paths.get(uploadDir).resolve(equipo.getFoto());
-                Files.deleteIfExists(fotoPath);
-        }
         equipoService.eliminar(id);
+
+        if (equipo != null && equipo.getFoto() != null) {
+            Path fotoPath = Paths.get(uploadDir).resolve(equipo.getFoto());
+            Files.deleteIfExists(fotoPath);
+        }
+
         return "redirect:/equipos";
     }
 
@@ -201,6 +225,35 @@ public class EquipoController {
 
         Locale localeEs = new Locale.Builder().setLanguage("es").setRegion("ES").build();
         return localePais.getDisplayCountry(localeEs);
+    }
+
+    private String devolverFormularioEquipoConError(Model model, Equipo equipo, String mensajeError) {
+        model.addAttribute("equipo", equipo);
+        model.addAttribute("errorMessage", mensajeError);
+        return "registro_equipo";
+    }
+
+    private String mensajeErrorEquipo(RuntimeException e) {
+        Throwable causa = e;
+        while (causa != null) {
+            if (causa instanceof SQLIntegrityConstraintViolationException) {
+                String mensaje = causa.getMessage();
+                if (mensaje != null && mensaje.contains("tag_equipos")) {
+                    return "Ya existe un equipo con ese tag. Usa otro distinto.";
+                }
+            }
+            causa = causa.getCause();
+        }
+        return "No se pudo guardar el equipo. Revisa los datos e intentalo de nuevo.";
+    }
+
+    private void borrarArchivoSubidoSiExiste(String nombreArchivo) throws IOException {
+        if (nombreArchivo == null || nombreArchivo.isBlank()) {
+            return;
+        }
+
+        Path archivo = Paths.get(uploadDir).resolve(nombreArchivo);
+        Files.deleteIfExists(archivo);
     }
 
     private Locale resolverLocalePais(String nombrePais) {

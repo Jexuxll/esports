@@ -48,6 +48,10 @@
         <h2 th:text="${equipo.id != 0} ? 'Editar Equipo' : 'Nuevo Equipo'">Equipo</h2>
         <p class="form-intro">Completa la base visual y administrativa del roster antes de empezar a añadir jugadores o inscribirlo en torneos.</p>
 
+        <div th:if="${errorMessage != null}" class="alert alert-danger" role="alert" th:text="${errorMessage}">
+            No se pudo guardar el equipo.
+        </div>
+
         <form th:action="${equipo.id != 0} ? @{/equipos/actualizar} : @{/equipos/guardar}"
               th:object="${equipo}"
               method="post"

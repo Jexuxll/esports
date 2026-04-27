@@ -51,7 +51,7 @@
             <p class="page-subtitle" th:if="${not #lists.isEmpty(juegos)}"
                th:text="${#lists.size(juegos)} + ' título' + (${#lists.size(juegos)} != 1 ? 's' : '') + ' registrado' + (${#lists.size(juegos)} != 1 ? 's' : '')">0 títulos registrados</p>
         </div>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/juegos/nuevo}" class="btn btn-primary">+ Nuevo Juego</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/juegos/nuevo}" class="btn btn-primary">+</a>
     </div>
 
     <div class="filter-bar" th:if="${not #lists.isEmpty(juegos)}">
