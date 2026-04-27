@@ -35,7 +35,7 @@ public class EquipoDAOJdbc implements EquipoDAO {
             stmt.setString(4, equipo.getFoto());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error al guardar el equipo " + equipo.getNombre(), e);
         }
     }
 
@@ -50,18 +50,60 @@ public class EquipoDAOJdbc implements EquipoDAO {
             pstmt.setInt(5, equipo.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar el equipo con id " + equipo.getId(), e);
         }
     }
 
     @Override
     public void eliminar(int id) {
-        String sql = "DELETE FROM equipos WHERE id_equipo = ?";
-        try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.executeUpdate();
+        Connection connection = getConnection();
+        boolean autoCommitOriginal = true;
+
+        try {
+            autoCommitOriginal = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement deletePartidos = connection.prepareStatement(
+                     "DELETE FROM partidos WHERE id_equipo_local = ? OR id_equipo_visitante = ?");
+                 PreparedStatement deleteJugadores = connection.prepareStatement(
+                     "DELETE FROM jugadores WHERE id_equipo = ?");
+                 PreparedStatement deleteInscripciones = connection.prepareStatement(
+                     "DELETE FROM equipos_torneos WHERE id_equipo = ?");
+                 PreparedStatement deleteEquipo = connection.prepareStatement(
+                     "DELETE FROM equipos WHERE id_equipo = ?")) {
+
+                deletePartidos.setInt(1, id);
+                deletePartidos.setInt(2, id);
+                deletePartidos.executeUpdate();
+
+                deleteJugadores.setInt(1, id);
+                deleteJugadores.executeUpdate();
+
+                deleteInscripciones.setInt(1, id);
+                deleteInscripciones.executeUpdate();
+
+                deleteEquipo.setInt(1, id);
+                int filasEliminadas = deleteEquipo.executeUpdate();
+
+                if (filasEliminadas == 0) {
+                    throw new SQLException("No se encontro el equipo con id " + id + " para eliminar");
+                }
+            }
+
+            connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackError) {
+                throw new RuntimeException("Error al revertir la transaccion de eliminacion del equipo " + id, rollbackError);
+            }
+            throw new RuntimeException("Error al eliminar el equipo " + id, e);
+        } finally {
+            try {
+                connection.setAutoCommit(autoCommitOriginal);
+            } catch (SQLException e) {
+                throw new RuntimeException("No se pudo restaurar autoCommit tras eliminar equipo " + id, e);
+            }
         }
     }
 

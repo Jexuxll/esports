@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es" data-bs-theme="dark">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,10 +48,9 @@
         <h2 th:text="${juego.id != 0} ? 'Editar Juego' : 'Nuevo Juego'">Juego</h2>
         <p class="form-intro">Mantén un catálogo limpio y reconocible con nombre y branding del juego.</p>
 
-        <form th:action="${juego.id != 0} ? @{/juegos/actualizar} : @{/juegos/guardar}"
+          <form th:action="${juego.id != 0} ? @{/juegos/actualizar} : @{/juegos/guardar}"
               th:object="${juego}"
-              method="post"
-              enctype="multipart/form-data">
+              method="post">
 
             <input type="hidden" th:field="*{id}">
 
@@ -59,17 +58,6 @@
                 <label for="nombre">Nombre del juego</label>
                 <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
                        placeholder="Ej: League of Legends" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="fotoFile">Logo del juego</label>
-                <input type="file" id="fotoFile" name="fotoFile" class="form-control"
-                       accept="image/*">
-                <div th:if="${juego.foto != null and juego.foto != ''}" class="current-preview">
-                    <small>Logo actual</small><br>
-                    <img th:src="@{/Imagenes/{f}(f=${juego.foto})}" class="img-thumb-lg" alt="Logo actual"
-                         style="margin-top:0.3rem;">
-                </div>
             </div>
 
             <div class="d-flex gap-2 mt-4">
