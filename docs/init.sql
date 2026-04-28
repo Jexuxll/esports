@@ -3,6 +3,15 @@
 -- ============================================
 DROP DATABASE IF EXISTS stadion;
 CREATE DATABASE stadion CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ============================================
+-- USUARIO DE APLICACION (SIN ROOT)
+-- ============================================
+CREATE USER IF NOT EXISTS 'user_stadion'@'localhost' IDENTIFIED BY 'user1234';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
+ON stadion.* TO 'user_stadion'@'localhost';
+FLUSH PRIVILEGES;
+
 USE stadion;
 
 -- ============================================
