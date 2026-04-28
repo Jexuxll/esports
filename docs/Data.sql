@@ -434,7 +434,8 @@ SET foto = CASE
     )
     THEN CONCAT('ja', MOD(id_jugador - 1, 4) + 1, '.png')
     ELSE CONCAT('jr', MOD(id_jugador - 1, 4) + 1, '.png')
-END;
+END
+WHERE id_jugador > 0;
 
 
 -- PARTIDOS
